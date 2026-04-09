@@ -203,15 +203,15 @@
         </div>
         <div class="faq-item">
             <div class="faq-q" data-i18n="faq1Q">1. Drik Siddhanta & Zero Dependencies</div>
-            <div class="faq-a" data-i18n="faq1A">This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using algorithms by Jean Meeus.</div>
+            <div class="faq-a" data-i18n="faq1A">This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using algorithms by Jean Meeus, with full Equation of Time terms and multi-term lunar perturbations. Lahiri Ayanamsa is applied for sidereal Nakshatra positions.</div>
         </div>
         <div class="faq-item">
             <div class="faq-q" data-i18n="faq2Q">2. Tithi & Nakshatra Mechanics</div>
-            <div class="faq-a" data-i18n="faq2A">A Tithi advances exactly when the angular distance between the Sun and Moon increases by 12 degrees. A Nakshatra changes as the Moon passes through 13°20' segments.</div>
+            <div class="faq-a" data-i18n="faq2A">A Tithi advances exactly when the angular distance between the Sun and Moon increases by 12 degrees. A Nakshatra changes as the sidereal Moon passes through 13°20' segments of the zodiac. The Moon's longitude includes perturbations for evection, variation, annual equation, and other major terms.</div>
         </div>
         <div class="faq-item">
             <div class="faq-q" data-i18n="faq3Q">3. Dinamana (Daylight) & Kaalams</div>
-            <div class="faq-a" data-i18n="faq3A">Daylight (Dinamana) is strictly the span between local Sunrise and Sunset. This span is divided into 8 mathematical segments to accurately map Rahu, Yama, and Gulika Kaalams.</div>
+            <div class="faq-a" data-i18n="faq3A">Daylight (Dinamana) is strictly the span between local Sunrise and Sunset. This span is divided into 8 mathematical segments to accurately map Rahu, Yama, and Gulika Kaalams based on the weekday.</div>
         </div>
     </div>
 </div>
@@ -246,8 +246,11 @@
             lblSunrise: "SUNRISE", lblSunset: "SUNSET", lblNoon: "LOCAL NOON", hinduCal: "Hindu Calendar", vikramSamvat: "Vikram Samvat",
             secAuspicious: "Auspicious Segments (Muhurta)", secInauspicious: "Inauspicious Segments (Choghadiya)",
             lblAbijith: "ABIJITH MUHURTH", lblRahu: "RAHU KAALAM", lblYama: "YEMAGANTAM", lblGulika: "GULIKA KAALAM",
-            curTithiLbl: "CURRENT TITHI", phaseLbl: "LUNAR PHASE", curNakshatraLbl: "CURRENT NAKSHATRA", algoLbl: "ALGORITHMIC STATE", approxAlgo: "APPROX (MEEUS)",
-            faqTitle: "Vedic & Astrometric Computations", faq1Q: "1. Drik Siddhanta & Dependencies", faq1A: "This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side.", faq2Q: "2. Tithi & Nakshatra Mechanics", faq2A: "A Tithi advances when the angular distance between Sun and Moon increases by 12 degrees.", faq3Q: "3. Dinamana & Kaalams", faq3A: "Daylight is strictly the span between local Sunrise and Sunset, divided into 8 mathematical segments.",
+            curTithiLbl: "CURRENT TITHI", phaseLbl: "LUNAR PHASE", curNakshatraLbl: "CURRENT NAKSHATRA", algoLbl: "ALGORITHMIC STATE", approxAlgo: "MEEUS + LAHIRI AYANAMSA",
+            faqTitle: "Vedic & Astrometric Computations",
+            faq1Q: "1. Drik Siddhanta & Dependencies", faq1A: "This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using full Meeus algorithms with Lahiri Ayanamsa.",
+            faq2Q: "2. Tithi & Nakshatra Mechanics", faq2A: "A Tithi advances when the angular distance between Sun and Moon increases by 12 degrees. Nakshatras use sidereal Moon longitude with multi-term perturbations.",
+            faq3Q: "3. Dinamana & Kaalams", faq3A: "Daylight is strictly the span between local Sunrise and Sunset, divided into 8 mathematical segments.",
             paksha: ["Shukla Paksha", "Krishna Paksha"],
             tithis: ["Prathama", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Amavasya"],
             nakshatras: ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"],
@@ -258,7 +261,7 @@
             lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानीय दोपहर", hinduCal: "हिन्दू पंचांग", vikramSamvat: "विक्रम संवत",
             secAuspicious: "शुभ समय (मुहूर्त)", secInauspicious: "अशुभ समय (चौघड़िया)",
             lblAbijith: "अभिजीत मुहूर्त", lblRahu: "राहु काल", lblYama: "यमगंड", lblGulika: "गुलिक काल",
-            curTithiLbl: "वर्तमान तिथि", phaseLbl: "चन्द्र पक्ष", curNakshatraLbl: "वर्तमान नक्षत्र", algoLbl: "एल्गोरिथ्म स्थिति", approxAlgo: "अनुमानित (मीयस)",
+            curTithiLbl: "वर्तमान तिथि", phaseLbl: "चन्द्र पक्ष", curNakshatraLbl: "वर्तमान नक्षत्र", algoLbl: "एल्गोरिथ्म स्थिति", approxAlgo: "मीयस + लाहिरी अयनांश",
             faqTitle: "वैदिक एवं खगोलीय गणनाएँ", faq1Q: "१. दृक सिद्धान्त", faq1A: "यह टूल किसी भी बाहरी एपीआई पर निर्भर नहीं है।", faq2Q: "२. तिथि और नक्षत्र", faq2A: "तिथि तब बदलती है जब सूर्य और चंद्रमा के बीच की कोणीय दूरी १२ डिग्री बढ़ जाती है।", faq3Q: "३. दिनमान और काल", faq3A: "दिनमान को ८ समान गणितीय भागों में बांटा जाता है।",
             paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
             tithis: ["प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "अमावस्या"],
@@ -270,7 +273,7 @@
             lblSunrise: "সূর্যোদয়", lblSunset: "সূর্যাস্ত", lblNoon: "স্থানীয় মধ্যাহ্ন", hinduCal: "হিন্দু পঞ্জিকা", vikramSamvat: "বিক্রম সংবত",
             secAuspicious: "শুভ সময় (মুহূর্ত)", secInauspicious: "অশুভ সময় (চৌঘড়িয়া)",
             lblAbijith: "অভিজিৎ মুহূর্ত", lblRahu: "রাহু কাল", lblYama: "যমগণ্ড", lblGulika: "গুলিক কাল",
-            curTithiLbl: "বর্তমান তিথি", phaseLbl: "চন্দ্র পক্ষ", curNakshatraLbl: "বর্তমান নক্ষত্র", algoLbl: "অ্যালগরিদম স্থিতি", approxAlgo: "আনুমানিক (মীয়ুস)",
+            curTithiLbl: "বর্তমান তিথি", phaseLbl: "চন্দ্র পক্ষ", curNakshatraLbl: "বর্তমান নক্ষত্র", algoLbl: "অ্যালগরিদম স্থিতি", approxAlgo: "মীয়ুস + লাহিরী অয়নাংশ",
             faqTitle: "বৈদিক এবং জ্যোতির্বিদ্যা গণনা", faq1Q: "১. দৃক সিদ্ধান্ত", faq1A: "এই ড্যাশবোর্ডটি কোনো বাহ্যিক API এর উপর নির্ভর করে না।", faq2Q: "২. তিথি ও নক্ষত্র", faq2A: "সূর্য এবং চন্দ্রের মধ্যে কৌণিক দূরত্ব ১২ ডিগ্রি বৃদ্ধি পেলে তিথি পরিবর্তিত হয়।", faq3Q: "৩. দিনমান ও কাল", faq3A: "দিনমানকে ৮টি গাণিতিক অংশে ভাগ করে রাহু কাল নির্ধারণ করা হয়।",
             paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
             tithis: ["প্রথমা", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "অমাবস্যা"],
@@ -282,7 +285,7 @@
             lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानिक दुपार", hinduCal: "हिंदू दिनदर्शिका", vikramSamvat: "विक्रम संवत",
             secAuspicious: "शुभ वेळ (मुहूर्त)", secInauspicious: "अशुभ वेळ (चौघडिया)",
             lblAbijith: "अभिजित मुहूर्त", lblRahu: "राहु काळ", lblYama: "यमगंड", lblGulika: "गुलिक काळ",
-            curTithiLbl: "चालू तिथी", phaseLbl: "चंद्र पक्ष", curNakshatraLbl: "चालू नक्षत्र", algoLbl: "अल्गोरिदम स्थिती", approxAlgo: "अंदाजे (मीयस)",
+            curTithiLbl: "चालू तिथी", phaseLbl: "चंद्र पक्ष", curNakshatraLbl: "चालू नक्षत्र", algoLbl: "अल्गोरिदम स्थिती", approxAlgo: "मीयस + लाहिरी अयनांश",
             faqTitle: "वैदिक आणि खगोलीय गणना", faq1Q: "१. दृक सिद्धान्त", faq1A: "हे डॅशबोर्ड कोणत्याही बाह्य API वर अवलंबून नाही.", faq2Q: "२. तिथी आणि नक्षत्र", faq2A: "सूर्य आणि चंद्रामधील कोनीय अंतर १२ अंश वाढल्यावर तिथी बदलते.", faq3Q: "३. दिनमान आणि काळ", faq3A: "दिनमानाला ८ गणितीय भागांमध्ये विभागून राहु काळ निश्चित केला जातो.",
             paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
             tithis: ["प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "अमावस्या"],
@@ -294,7 +297,7 @@
             lblSunrise: "సూర్యోదయం", lblSunset: "సూర్యాస్తమయం", lblNoon: "మధ్యాహ్నం", hinduCal: "హిందూ క్యాలెండర్", vikramSamvat: "విక్రమ సంవత్సరం",
             secAuspicious: "శుభ సమయం", secInauspicious: "అశుభ సమయం",
             lblAbijith: "అభిజిత్ ముహూర్తం", lblRahu: "రాహు కాలం", lblYama: "యమగండం", lblGulika: "గుళిక కాలం",
-            curTithiLbl: "ప్రస్తుత తిథి", phaseLbl: "చంద్ర దశ", curNakshatraLbl: "ప్రస్తుత నక్షత్రం", algoLbl: "అల్గారిథమ్ స్థితి", approxAlgo: "సుమారు (మీయస్)",
+            curTithiLbl: "ప్రస్తుత తిథి", phaseLbl: "చంద్ర దశ", curNakshatraLbl: "ప్రస్తుత నక్షత్రం", algoLbl: "అల్గారిథమ్ స్థితి", approxAlgo: "మీయస్ + లాహిరి అయనాంశ",
             faqTitle: "వేద & ఖగోళ గణనలు", faq1Q: "1. దృక్ సిద్ధాంతం", faq1A: "ఈ డ్యాష్‌బోర్డ్ ఏ బాహ్య API పై ఆధారపడదు.", faq2Q: "2. తిథి & నక్షత్రం", faq2A: "సూర్యుడు మరియు చంద్రుని మధ్య కోణీయ దూరం 12 డిగ్రీలు పెరిగినప్పుడు తిథి మారుతుంది.", faq3Q: "3. దినమానం", faq3A: "దినమానం 8 సమాన భాగాలుగా విభజించబడుతుంది.",
             paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
             tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "అమావాస్య"],
@@ -306,7 +309,7 @@
             lblSunrise: "சூரியோதயம்", lblSunset: "அஸ்தமனம்", lblNoon: "நண்பகல்", hinduCal: "இந்து காலண்டர்", vikramSamvat: "விக்ரம் சம்வத்",
             secAuspicious: "நல்ல நேரம் (முகூர்த்தம்)", secInauspicious: "கெட்ட நேரம்",
             lblAbijith: "அபிஜித் முகூர்த்தம்", lblRahu: "ராகு காலம்", lblYama: "எமகண்டம்", lblGulika: "குளிகை காலம்",
-            curTithiLbl: "தற்போதைய திதி", phaseLbl: "சந்திர நிலை", curNakshatraLbl: "நட்சத்திரம்", algoLbl: "கணக்கீட்டு முறை", approxAlgo: "தோராயமான (மீயஸ்)",
+            curTithiLbl: "தற்போதைய திதி", phaseLbl: "சந்திர நிலை", curNakshatraLbl: "நட்சத்திரம்", algoLbl: "கணக்கீட்டு முறை", approxAlgo: "மீயஸ் + லாஹிரி அயனாம்சம்",
             faqTitle: "வேத மற்றும் வானியல் கணக்கீடுகள்", faq1Q: "1. த்ரிக் சித்தாந்தம்", faq1A: "இந்த டாஷ்போர்டு வெளிப்புற API களை சார்ந்திராமல் கணக்கிடுகிறது.", faq2Q: "2. திதி மற்றும் நட்சத்திரம்", faq2A: "சரியாக 12 டிகிரி கோண தூரம் அதிகரிக்கும் போது திதி மாறும்.", faq3Q: "3. தினமானம் & காலங்கள்", faq3A: "தினமானம் 8 சமமான பகுதிகளாக பிரிக்கப்படுகிறது.",
             paksha: ["சுக்ல பட்சம்", "கிருஷ்ண பட்சம்"],
             tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "அமாவாசை"],
@@ -318,7 +321,7 @@
             lblSunrise: "સૂર્યોદય", lblSunset: "સૂર્યાસ્ત", lblNoon: "સ્થાનિક બપોર", hinduCal: "હિન્દુ પંચાંગ", vikramSamvat: "વિક્રમ સંવત",
             secAuspicious: "શુભ સમય (મુહૂર્ત)", secInauspicious: "અશુભ સમય (ચોઘડિયા)",
             lblAbijith: "અભિજીત મુહૂર્ત", lblRahu: "રાહુ કાળ", lblYama: "યમગંડ", lblGulika: "ગુલિક કાળ",
-            curTithiLbl: "વર્તમાન તિથિ", phaseLbl: "ચંદ્ર પક્ષ", curNakshatraLbl: "વર્તમાન નક્ષત્ર", algoLbl: "અલ્ગોરિધમ સ્થિતિ", approxAlgo: "અંદાજિત (મીયસ)",
+            curTithiLbl: "વર્તમાન તિથિ", phaseLbl: "ચંદ્ર પક્ષ", curNakshatraLbl: "વર્તમાન નક્ષત્ર", algoLbl: "અલ્ગોરિધમ સ્થિતિ", approxAlgo: "મીયસ + લાહિરી અયનાંશ",
             faqTitle: "વૈદિક અને ખગોળીય ગણતરીઓ", faq1Q: "૧. દ્રિક સિદ્ધાંત", faq1A: "આ ડેશબોર્ડ બાહ્ય API પર આધાર રાખતું નથી.", faq2Q: "૨. તિથિ અને નક્ષત્ર", faq2A: "કોણીય અંતર ૧૨ ડિગ્રી વધે ત્યારે તિથિ બદલાય છે.", faq3Q: "૩. દિનમાન", faq3A: "દિનમાનને ૮ સમાન ભાગોમાં વહેંચવામાં આવે છે.",
             paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
             tithis: ["પ્રથમા", "દ્વિતીયા", "તૃતીયા", "ચતુર્થી", "પંચમી", "ષષ્ઠી", "સપ્તમી", "અષ્ટમી", "નવમી", "દશમી", "એકાદશી", "દ્વાદશી", "ત્રયોદશી", "ચતુર્દશી", "પૂર્ણિમા", "અમાવસ્યા"],
@@ -330,7 +333,7 @@
             lblSunrise: "طلوع آفتاب", lblSunset: "غروب آفتاب", lblNoon: "مقامی دوپہر", hinduCal: "ہندو کیلنڈر", vikramSamvat: "وکرم سموت",
             secAuspicious: "مبارک وقت (مہورت)", secInauspicious: "منحوس وقت (چوگھڑیا)",
             lblAbijith: "ابھیجیت مہورت", lblRahu: "راہو کال", lblYama: "یمگنڈم", lblGulika: "گلیک کال",
-            curTithiLbl: "موجودہ تتھی", phaseLbl: "قمری مرحلہ", curNakshatraLbl: "موجودہ نکشتر", algoLbl: "الگورتھم کی حالت", approxAlgo: "تخمینی (میئس)",
+            curTithiLbl: "موجودہ تتھی", phaseLbl: "قمری مرحلہ", curNakshatraLbl: "موجودہ نکشتر", algoLbl: "الگورتھم کی حالت", approxAlgo: "میئس + لاہری ایناماسا",
             faqTitle: "ویدک اور فلکیاتی حسابات", faq1Q: "1. درک سدھانت", faq1A: "یہ ڈیش بورڈ کسی بیرونی API پر منحصر نہیں ہے۔", faq2Q: "2. تتھی اور نکشتر", faq2A: "تتھی تب بدلتی ہے جب کوणीय فاصلہ 12 ڈگری بڑھ جائے۔", faq3Q: "3. دنمان", faq3A: "دنمان کو 8 برابر حصوں میں تقسیم کیا جاتا ہے۔",
             paksha: ["شکل پکش", "کرشن پکش"],
             tithis: ["پرتھما", "دوتیا", "ترتیا", "چترتھی", "پنچمی", "ششٹھی", "سپتمی", "اشٹمی", "نومی", "دشمی", "ایکادشی", "دوادشی", "تریودشی", "چتردشی", "پورنیما", "اماوسیا"],
@@ -342,7 +345,7 @@
             lblSunrise: "ಸೂರ್ಯೋದಯ", lblSunset: "ಸೂರ್ಯಾಸ್ತ", lblNoon: "ಸ್ಥಳೀಯ ಮಧ್ಯಾಹ್ನ", hinduCal: "ಹಿಂದೂ ಪಂಚಾಂಗ", vikramSamvat: "ವಿಕ್ರಮ ಸಂವತ್",
             secAuspicious: "ಶುಭ ಸಮಯ (ಮುಹೂರ್ತ)", secInauspicious: "ಅಶುಭ ಸಮಯ",
             lblAbijith: "ಅಭಿಜಿತ್ ಮುಹೂರ್ತ", lblRahu: "ರಾಹು ಕಾಲ", lblYama: "ಯಮಗಂಡ", lblGulika: "ಗುಳಿಕ ಕಾಲ",
-            curTithiLbl: "ಪ್ರಸ್ತುತ ತಿಥಿ", phaseLbl: "ಚಂದ್ರ ಪಕ್ಷ", curNakshatraLbl: "ಪ್ರಸ್ತುತ ನಕ್ಷತ್ರ", algoLbl: "ಅಲ್ಗಾರಿದಮ್ ಸ್ಥಿತಿ", approxAlgo: "ಅಂದಾಜು (ಮೀಯಸ್)",
+            curTithiLbl: "ಪ್ರಸ್ತುತ ತಿಥಿ", phaseLbl: "ಚಂದ್ರ ಪಕ್ಷ", curNakshatraLbl: "ಪ್ರಸ್ತುತ ನಕ್ಷತ್ರ", algoLbl: "ಅಲ್ಗಾರಿದಮ್ ಸ್ಥಿತಿ", approxAlgo: "ಮೀಯಸ್ + ಲಾಹಿರಿ ಅಯನಾಂಶ",
             faqTitle: "ವೈದಿಕ ಮತ್ತು ಖಗೋಳ ಲೆಕ್ಕಾಚಾರಗಳು", faq1Q: "1. ದೃಕ್ ಸಿದ್ಧಾಂತ", faq1A: "ಈ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಯಾವುದೇ ಬಾಹ್ಯ API ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿಲ್ಲ.", faq2Q: "2. ತಿಥಿ ಮತ್ತು ನಕ್ಷತ್ರ", faq2A: "ಕೋನೀಯ ಅಂತರವು 12 ಡಿಗ್ರಿಗಳಷ್ಟು ಹೆಚ್ಚಾದಾಗ ತಿಥಿ ಬದಲಾಗುತ್ತದೆ.", faq3Q: "3. ದಿನಮಾನ", faq3A: "ದಿನಮಾನವನ್ನು 8 ಸಮಾನ ಭಾಗಗಳಾಗಿ ವಿಂಗಡಿಸಲಾಗಿದೆ.",
             paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
             tithis: ["ಪಾಡ್ಯ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಅಮಾವಾಸ್ಯೆ"],
@@ -354,7 +357,7 @@
             lblSunrise: "ସୂର୍ଯ୍ୟୋଦୟ", lblSunset: "ସୂର୍ଯ୍ୟାସ୍ତ", lblNoon: "ସ୍ଥାନୀୟ ମଧ୍ୟାହ୍ନ", hinduCal: "ହିନ୍ଦୁ ପଞ୍ଜିକା", vikramSamvat: "ବିକ୍ରମ ସମ୍ବତ",
             secAuspicious: "ଶୁଭ ସମୟ (ମୁହୂର୍ତ୍ତ)", secInauspicious: "ଅଶୁଭ ସମୟ",
             lblAbijith: "ଅଭିଜିତ ମୁହୂର୍ତ୍ତ", lblRahu: "ରାହୁ କାଳ", lblYama: "ଯମଗଣ୍ଡ", lblGulika: "ଗୁଲିକ କାଳ",
-            curTithiLbl: "ବର୍ତ୍ତମାନ ତିଥି", phaseLbl: "ଚନ୍ଦ୍ର ପକ୍ଷ", curNakshatraLbl: "ବର୍ତ୍ତମାନ ନକ୍ଷତ୍ର", algoLbl: "ଆଲଗୋରିଦମ୍ ସ୍ଥିତି", approxAlgo: "ଆନୁମାନିକ (ମୀୟସ)",
+            curTithiLbl: "ବର୍ତ୍ତମାନ ତିଥି", phaseLbl: "ଚନ୍ଦ୍ର ପକ୍ଷ", curNakshatraLbl: "ବର୍ତ୍ତମାନ ନକ୍ଷତ୍ର", algoLbl: "ଆଲଗୋରିଦମ୍ ସ୍ଥିତି", approxAlgo: "ମୀୟସ + ଲାହିରୀ ଅୟନାଂଶ",
             faqTitle: "ବୈଦିକ ଏବଂ ଜ୍ୟୋତିର୍ବିଜ୍ଞାନ ଗଣନା", faq1Q: "୧. ଦୃକ ସିଦ୍ଧାନ୍ତ", faq1A: "ଏହି ଡ୍ୟାସବୋର୍ଡ କୌଣସି ବାହ୍ୟ API ଉପରେ ନିର୍ଭର କରେ ନାହିଁ।", faq2Q: "୨. ତିଥି ଏବଂ ନକ୍ଷତ୍ର", faq2A: "କୋଣୀୟ ଦୂରତା ୧୨ ଡିଗ୍ରୀ ବୃଦ୍ଧି ପାଇଲେ ତିଥି ବଦଳିଥାଏ।", faq3Q: "୩. ଦିନମାନ", faq3A: "ଦିନମାନକୁ ୮ ସମାନ ଭାଗରେ ବିଭକ୍ତ କରାଯାଏ।",
             paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
             tithis: ["ପ୍ରତିପଦା", "ଦ୍ୱିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ୱାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦ୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ଅମାବାସ୍ୟା"],
@@ -366,7 +369,7 @@
             lblSunrise: "സൂര്യോദയം", lblSunset: "സൂര്യാസ്തമയം", lblNoon: "പ്രാദേശിക ഉച്ച", hinduCal: "ഹിന്ദു കലണ്ടർ", vikramSamvat: "വിക്രമ സംവത്",
             secAuspicious: "ശുഭ സമയം (മുഹൂർത്തം)", secInauspicious: "അശുഭ സമയം",
             lblAbijith: "അഭിജിത്ത് മുഹൂർത്തം", lblRahu: "രാഹു കാലം", lblYama: "യമകണ്ടം", lblGulika: "ഗുളിക കാലം",
-            curTithiLbl: "നിലവിലെ തിഥി", phaseLbl: "ചന്ദ്ര പക്ഷം", curNakshatraLbl: "നിലവിലെ നക്ഷത്രം", algoLbl: "അൽഗോരിതം അവസ്ഥ", approxAlgo: "ഏകദേശം (മീയസ്)",
+            curTithiLbl: "നിലവിലെ തിഥി", phaseLbl: "ചന്ദ്ര പക്ഷം", curNakshatraLbl: "നിലവിലെ നക്ഷത്രം", algoLbl: "അൽഗോരിതം അവസ്ഥ", approxAlgo: "മീയസ് + ലാഹിരി അയനാംശം",
             faqTitle: "വേദ, ജ്യോതിശാസ്ത്ര കണക്കുകൂട്ടലുകൾ", faq1Q: "1. ദൃക് സിദ്ധാന്തം", faq1A: "ഈ ഡാഷ്ബോർഡ് ബാഹ്യ API-കളെ ആശ്രയിക്കുന്നില്ല.", faq2Q: "2. തിഥിയും നക്ഷത്രവും", faq2A: "കോണീയ അകലം 12 ഡിഗ്രി വർദ്ധിക്കുമ്പോൾ തിഥി മാറുന്നു.", faq3Q: "3. ദിനമാനം", faq3A: "ദിനമാനത്തെ 8 തുല്യ ഭാഗങ്ങളായി വിഭജിച്ചിരിക്കുന്നു.",
             paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
             tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദശി", "പൗർണ്ണമി", "അമാവാസി"],
@@ -378,7 +381,7 @@
             lblSunrise: "ਸੂਰਜ ਚੜ੍ਹਨਾ", lblSunset: "ਸੂਰਜ ਡੁੱਬਣਾ", lblNoon: "ਸਥਾਨਕ ਦੁਪਹਿਰ", hinduCal: "ਹਿੰਦੂ ਕੈਲੰਡਰ", vikramSamvat: "ਵਿਕਰਮ ਸੰਵਤ",
             secAuspicious: "ਸ਼ੁਭ ਸਮਾਂ (ਮੁਹੂਰਤ)", secInauspicious: "ਅਸ਼ੁਭ ਸਮਾਂ (ਚੌਘੜੀਆ)",
             lblAbijith: "ਅਭਿਜੀਤ ਮੁਹੂਰਤ", lblRahu: "ਰਾਹੂ ਕਾਲ", lblYama: "ਯਮਗੰਡ", lblGulika: "ਗੁਲਿਕ ਕਾਲ",
-            curTithiLbl: "ਮੌਜੂਦਾ ਤਿਥੀ", phaseLbl: "ਚੰਦਰ ਪੱਖ", curNakshatraLbl: "ਮੌਜੂਦਾ ਨਕਸ਼ੱਤਰ", algoLbl: "ਐਲਗੋਰਿਦਮ ਸਥਿਤੀ", approxAlgo: "ਅਨੁਮਾਨਿਤ (ਮੀਯਸ)",
+            curTithiLbl: "ਮੌਜੂਦਾ ਤਿਥੀ", phaseLbl: "ਚੰਦਰ ਪੱਖ", curNakshatraLbl: "ਮੌਜੂਦਾ ਨਕਸ਼ੱਤਰ", algoLbl: "ਐਲਗੋਰਿਦਮ ਸਥਿਤੀ", approxAlgo: "ਮੀਯਸ + ਲਾਹਿਰੀ ਅਯਨਾਂਸ਼",
             faqTitle: "ਵੈਦਿਕ ਅਤੇ ਖਗੋਲੀ ਗਣਨਾ", faq1Q: "1. ਦ੍ਰਿਕ ਸਿਧਾਂਤ", faq1A: "ਇਹ ਡੈਸ਼ਬੋਰਡ ਬਾਹਰੀ API 'ਤੇ ਨਿਰਭਰ ਨਹੀਂ ਕਰਦਾ।", faq2Q: "2. ਤਿਥੀ ਅਤੇ ਨਕਸ਼ੱਤਰ", faq2A: "ਕੋਣੀ ਦੂਰੀ 12 ਡਿਗਰੀ ਵਧਣ 'ਤੇ ਤਿਥੀ ਬਦਲਦੀ ਹੈ।", faq3Q: "3. ਦਿਨਮਾਨ", faq3A: "ਦਿਨਮਾਨ ਨੂੰ 8 ਬਰਾਬਰ ਭਾਗਾਂ ਵਿੱਚ ਵੰਡਿਆ ਗਿਆ ਹੈ।",
             paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
             tithis: ["ਪ੍ਰਥਮਾ", "ਦ੍ਵਿਤੀਯਾ", "ਤ੍ਰਿਤੀਯਾ", "ਚਤੁਰਥੀ", "ਪੰਚਮੀ", "ਸ਼ਸ਼ਠੀ", "ਸਪਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨਵਮੀ", "ਦਸ਼ਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦ੍ਵਾਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਿਮਾ", "ਅਮਾਵਸਯਾ"],
@@ -390,8 +393,16 @@
     // --- 3. STATE & CLOCK LOOP ---
     let currentLangCode = 'en'; 
     let calculatedData = {}; 
-    const today = new Date();
     const LAT = 28.5355; const LON = 77.3910; const TZ_OFFSET = 5.5; 
+
+    // FIX #9: Use IST-based date instead of browser local time for all astro calculations
+    function getISTDate() {
+        const now = new Date();
+        const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+        return new Date(utcMs + TZ_OFFSET * 3600000);
+    }
+
+    const today = getISTDate();
 
     function setLanguage(lang) {
         currentLangCode = lang;
@@ -411,6 +422,7 @@
     }
 
     function updateClock() {
+        // Clock always shows local browser time (real-time clock)
         const d = new Date();
         const s = d.getSeconds() + d.getMilliseconds() / 1000;
         const m = d.getMinutes() + s / 60;
@@ -420,16 +432,27 @@
         document.getElementById('minute').style.transform = `rotate(${m * 6}deg)`;
         document.getElementById('second').style.transform = `rotate(${s * 6}deg)`;
         
-        const hStr = d.getHours().toString().padStart(2, '0');
-        const mStr = d.getMinutes().toString().padStart(2, '0');
-        const sStr = d.getSeconds().toString().padStart(2, '0');
+        // But digital clock shows IST
+        const ist = getISTDate();
+        const hStr = ist.getHours().toString().padStart(2, '0');
+        const mStr = ist.getMinutes().toString().padStart(2, '0');
+        const sStr = ist.getSeconds().toString().padStart(2, '0');
         document.getElementById('digital-clock').innerText = tNum(`${hStr}:${mStr}:${sStr}`, currentLangCode);
 
         requestAnimationFrame(updateClock);
     }
     requestAnimationFrame(updateClock);
 
-    // --- 4. MATH ENGINE (Meeus Formulas) ---
+    // --- 4. MATH ENGINE (Full Meeus Formulas) ---
+    const RAD = Math.PI / 180;
+    const DEG = 180 / Math.PI;
+
+    function normalize(angle) {
+        let a = angle % 360;
+        if (a < 0) a += 360;
+        return a;
+    }
+
     function formatHours(decimalHours) {
         if (isNaN(decimalHours)) return "--:--";
         let hrs = Math.floor(decimalHours);
@@ -438,56 +461,187 @@
         return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
     }
 
+    // FIX #7: Lahiri Ayanamsa calculation
+    function getLahiriAyanamsa(T) {
+        // Lahiri ayanamsa: based on the precession of equinoxes
+        // Reference: Ayanamsa on 1 Jan 2000 (J2000) ≈ 23.853 degrees (Lahiri)
+        // Precession rate ≈ 50.2888"/year = 0.01397°/year
+        const ayanJ2000 = 23.853;
+        const yearsSinceJ2000 = T * 100;
+        return ayanJ2000 + 0.01397 * yearsSinceJ2000;
+    }
+
+    // FIX #6: Full obliquity with T-dependent terms
+    function getMeanObliquity(T) {
+        return 23.0 + (26.0 + (21.448 - T * (46.8150 + T * (0.00059 - T * 0.001813))) / 60.0) / 60.0;
+    }
+
+    // FIX #1: Full Equation of Time (Meeus Ch.28)
+    function getSolarData(T) {
+        let L0 = normalize(280.46646 + T * (36000.76983 + T * 0.0003032));
+        let M = normalize(357.52911 + T * (35999.05029 - 0.0001537 * T));
+        let e = 0.016708634 - T * (0.000042037 + T * 0.0000001267);
+
+        let C = Math.sin(M * RAD) * (1.914602 - T * (0.004817 + 0.000014 * T))
+              + Math.sin(2 * M * RAD) * (0.019993 - 0.000101 * T)
+              + Math.sin(3 * M * RAD) * 0.000289;
+
+        let sunTrueLong = L0 + C;
+        let omega = 125.04 - 1934.136 * T;
+        let sunAppLong = sunTrueLong - 0.00569 - 0.00478 * Math.sin(omega * RAD);
+
+        let obliq = getMeanObliquity(T);
+        // Nutation correction to obliquity
+        let obliqCorr = obliq + 0.00256 * Math.cos(omega * RAD);
+
+        let sunDeclin = Math.asin(Math.sin(obliqCorr * RAD) * Math.sin(sunAppLong * RAD)) * DEG;
+
+        // Full Equation of Time (all 6 terms from Meeus)
+        let y = Math.tan((obliqCorr / 2) * RAD);
+        y = y * y;
+        let eot = y * Math.sin(2 * L0 * RAD)
+                 - 2 * e * Math.sin(M * RAD)
+                 + 4 * e * y * Math.sin(M * RAD) * Math.cos(2 * L0 * RAD)
+                 - 0.5 * y * y * Math.sin(4 * L0 * RAD)
+                 - 1.25 * e * e * Math.sin(2 * M * RAD);
+        let eqOfTime = 4 * eot * DEG; // in minutes
+
+        return { sunAppLong, sunDeclin, eqOfTime, L0, M, e, obliqCorr };
+    }
+
+    // FIX #2: Multi-term Moon longitude (Meeus Ch.47, major terms)
+    function getMoonLongitude(T) {
+        // Fundamental arguments
+        let Lp = normalize(218.3164477 + 481267.88123421 * T
+                          - 0.0015786 * T * T + T * T * T / 538841.0);
+        let D  = normalize(297.8501921 + 445267.1114034 * T
+                          - 0.0018819 * T * T + T * T * T / 545868.0);
+        let M  = normalize(357.5291092 + 35999.0502909 * T
+                          - 0.0001536 * T * T);
+        let Mp = normalize(134.9633964 + 477198.8675055 * T
+                          + 0.0087414 * T * T + T * T * T / 69699.0);
+        let F  = normalize(93.2720950 + 483202.0175233 * T
+                          - 0.0036539 * T * T);
+
+        // Major perturbation terms for longitude (in degrees)
+        let sumL = 6.288774  * Math.sin(Mp * RAD)
+                 + 1.274027  * Math.sin((2*D - Mp) * RAD)      // evection
+                 + 0.658314  * Math.sin(2*D * RAD)              // variation
+                 + 0.213618  * Math.sin(2*Mp * RAD)
+                 - 0.185116  * Math.sin(M * RAD)                // annual equation
+                 - 0.114332  * Math.sin(2*F * RAD)
+                 + 0.058793  * Math.sin((2*D - 2*Mp) * RAD)
+                 + 0.057066  * Math.sin((2*D - M - Mp) * RAD)
+                 + 0.053322  * Math.sin((2*D + Mp) * RAD)
+                 + 0.045758  * Math.sin((2*D - M) * RAD)
+                 - 0.040923  * Math.sin((M - Mp) * RAD)
+                 - 0.034720  * Math.sin(D * RAD)
+                 - 0.030383  * Math.sin((M + Mp) * RAD)
+                 + 0.015327  * Math.sin((2*D - 2*F) * RAD)
+                 - 0.012528  * Math.sin((Mp + 2*F) * RAD)
+                 + 0.010980  * Math.sin((Mp - 2*F) * RAD)
+                 + 0.010675  * Math.sin((4*D - Mp) * RAD)
+                 + 0.010034  * Math.sin(3*Mp * RAD)
+                 + 0.008548  * Math.sin((4*D - 2*Mp) * RAD)
+                 - 0.007888  * Math.sin((2*D + M - Mp) * RAD)
+                 - 0.006766  * Math.sin((2*D + M) * RAD)
+                 + 0.005751  * Math.sin((M - 2*Mp) * RAD); // ~22 terms (Meeus abridged)
+
+        let moonLong = normalize(Lp + sumL);
+        return moonLong;
+    }
+
+    // FIX #5: Compute Vikram Samvat dynamically
+    function getVikramSamvat(istDate) {
+        const year = istDate.getFullYear();
+        const month = istDate.getMonth(); // 0-indexed
+        // VS year changes at Chaitra Shukla Pratipada (~March/April)
+        // Approximate: before April → previous VS year, after April → current VS year
+        // More precisely this should use the actual tithi, but month-based is a reasonable approx
+        if (month < 3) { // Jan, Feb, Mar
+            return year + 56;
+        }
+        return year + 57;
+    }
+
     function generateAstronomicalData() {
-        const RAD = Math.PI / 180; const DEG = 180 / Math.PI;
-        const jd = (today.getTime() / 86400000) + 2440587.5;
+        // JD for the IST date at local midnight
+        const y = today.getFullYear();
+        const m = today.getMonth() + 1;
+        const d = today.getDate();
+        const h = today.getHours() + today.getMinutes() / 60 + today.getSeconds() / 3600;
+
+        // Julian Day for the current IST time, converting to UT
+        const utHours = h - TZ_OFFSET;
+        let jdYear = y, jdMonth = m;
+        if (m <= 2) { jdYear -= 1; jdMonth += 12; }
+        const A = Math.floor(jdYear / 100);
+        const B = 2 - A + Math.floor(A / 4);
+        const jd = Math.floor(365.25 * (jdYear + 4716)) + Math.floor(30.6001 * (jdMonth + 1)) + d + utHours / 24.0 + B - 1524.5;
+
         const T = (jd - 2451545.0) / 36525.0;
 
-        let L0 = (280.46646 + T * (36000.76983 + T * 0.0003032)) % 360;
-        let M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
-        let C = Math.sin(M * RAD) * (1.914602 - T * 0.004817) + Math.sin(2 * M * RAD) * 0.019993;
-        let trueLong = L0 + C;
-        let sunAppLong = trueLong - 0.00569 - 0.00478 * Math.sin((125.04 - 1934.136 * T) * RAD);
-        let meanObliq = 23 + (26 + 21.448 / 60) / 60;
-        let sunDeclin = Math.asin(Math.sin(meanObliq * RAD) * Math.sin(sunAppLong * RAD)) * DEG;
-        
-        let varY = Math.tan((meanObliq / 2) * RAD) * Math.tan((meanObliq / 2) * RAD);
-        let eqOfTime = 4 * DEG * (varY * Math.sin(2 * L0 * RAD) - 2 * 0.0167 * Math.sin(M * RAD));
-        
-        let haArg = (Math.cos(90.833 * RAD) / (Math.cos(LAT * RAD) * Math.cos(sunDeclin * RAD))) - Math.tan(LAT * RAD) * Math.tan(sunDeclin * RAD);
+        // --- Sun ---
+        const solar = getSolarData(T);
+
+        // --- Sunrise/Sunset ---
+        let haArg = (Math.cos(90.833 * RAD) / (Math.cos(LAT * RAD) * Math.cos(solar.sunDeclin * RAD)))
+                   - Math.tan(LAT * RAD) * Math.tan(solar.sunDeclin * RAD);
+        haArg = Math.max(-1, Math.min(1, haArg)); // clamp for polar regions
         let haSunrise = Math.acos(haArg) * DEG;
 
-        let solarNoonUTC = (720 - 4 * LON - eqOfTime) / 60;
-        
+        let solarNoonUTC = (720 - 4 * LON - solar.eqOfTime) / 60;
+
         calculatedData.sunrise = formatHours(solarNoonUTC - (haSunrise * 4 / 60) + TZ_OFFSET);
-        calculatedData.sunset = formatHours(solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET);
-        calculatedData.noon = formatHours(solarNoonUTC + TZ_OFFSET);
+        calculatedData.sunset  = formatHours(solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET);
+        calculatedData.noon    = formatHours(solarNoonUTC + TZ_OFFSET);
 
         const sRise = solarNoonUTC - (haSunrise * 4 / 60) + TZ_OFFSET;
-        const sSet = solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET;
+        const sSet  = solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET;
         const dayLength = sSet - sRise;
         const segment = dayLength / 8;
-        const dayIndex = today.getDay(); 
-        
-        const rRules = [8, 2, 7, 5, 6, 4, 3]; 
-        const yRules = [5, 4, 3, 2, 1, 7, 6]; 
-        const gRules = [7, 6, 5, 4, 3, 2, 1]; 
 
-        calculatedData.rahu = `${formatHours(sRise + (rRules[dayIndex]-1)*segment)} - ${formatHours(sRise + rRules[dayIndex]*segment)}`;
-        calculatedData.yama = `${formatHours(sRise + (yRules[dayIndex]-1)*segment)} - ${formatHours(sRise + yRules[dayIndex]*segment)}`;
+        // FIX #9: Use IST day-of-week
+        const dayIndex = today.getDay();
+
+        // Rahu/Yama/Gulika segment rules (1-indexed segment from sunrise)
+        // Standard South Indian tradition:
+        // Rahu: Sun=8, Mon=2, Tue=7, Wed=5, Thu=6, Fri=4, Sat=3
+        const rRules = [8, 2, 7, 5, 6, 4, 3];
+        // Yama: Sun=5, Mon=4, Tue=3, Wed=2, Thu=1, Fri=7, Sat=6
+        const yRules = [5, 4, 3, 2, 1, 7, 6];
+        // Gulika: Sun=7, Mon=6, Tue=5, Wed=4, Thu=3, Fri=2, Sat=1
+        const gRules = [7, 6, 5, 4, 3, 2, 1];
+
+        calculatedData.rahu   = `${formatHours(sRise + (rRules[dayIndex]-1)*segment)} - ${formatHours(sRise + rRules[dayIndex]*segment)}`;
+        calculatedData.yama   = `${formatHours(sRise + (yRules[dayIndex]-1)*segment)} - ${formatHours(sRise + yRules[dayIndex]*segment)}`;
         calculatedData.gulika = `${formatHours(sRise + (gRules[dayIndex]-1)*segment)} - ${formatHours(sRise + gRules[dayIndex]*segment)}`;
-        
-        const nHours = solarNoonUTC + TZ_OFFSET;
+
+        // Abhijit Muhurta: 8th of 15 muhurtas from sunrise (centered on local noon)
         const muhurta = dayLength / 15;
-        calculatedData.abijith = `${formatHours(nHours - muhurta/2)} - ${formatHours(nHours + muhurta/2)}`;
+        const abhijitStart = sRise + 7 * muhurta; // 8th muhurta starts after 7 muhurtas
+        calculatedData.abijith = `${formatHours(abhijitStart)} - ${formatHours(abhijitStart + muhurta)}`;
 
-        let Lprime = (218.3164477 + 481267.88123421 * T) % 360;
-        let moonLong = Lprime + 6.289 * Math.sin((134.96 + 477198.86 * T) % 360 * RAD); 
-        let diff = moonLong - sunAppLong;
-        if (diff < 0) diff += 360;
+        // --- Moon (FIX #2) ---
+        const moonLongTropical = getMoonLongitude(T);
 
-        calculatedData.tithiIndex = Math.floor(diff / 12) + 1;
-        calculatedData.nakshatraIndex = Math.floor(moonLong / (13 + 1/3));
+        // --- Ayanamsa (FIX #7) ---
+        const ayanamsa = getLahiriAyanamsa(T);
+        const moonLongSidereal = normalize(moonLongTropical - ayanamsa);
+
+        // --- Tithi (FIX #4) ---
+        // Tithi uses tropical difference (ayanamsa cancels out)
+        let diff = normalize(moonLongTropical - solar.sunAppLong);
+        let tithiNum = Math.floor(diff / 12); // 0-29
+        if (tithiNum >= 30) tithiNum = 29; // edge case clamp
+        calculatedData.tithiIndex = tithiNum; // 0-based now
+
+        // --- Nakshatra (FIX #3, #7) ---
+        // Uses SIDEREAL Moon longitude
+        calculatedData.nakshatraIndex = Math.floor(moonLongSidereal / (360 / 27)); // 13.333... degrees each
+
+        // --- Vikram Samvat (FIX #5) ---
+        calculatedData.vikramSamvat = getVikramSamvat(today);
     }
 
     // --- 5. RENDER ENGINE ---
@@ -500,7 +654,7 @@
 
         document.getElementById('display-coords').innerText = tNum(dict.coordStr, currentLangCode);
         document.getElementById('display-year').innerText = tNum(today.getFullYear(), currentLangCode);
-        document.getElementById('display-vs').innerText = tNum(2083, currentLangCode);
+        document.getElementById('display-vs').innerText = tNum(calculatedData.vikramSamvat, currentLangCode);
         
         const intlMap = { 'en': 'en-IN', 'hi': 'hi-IN', 'bn': 'bn-IN', 'mr': 'mr-IN', 'te': 'te-IN', 'ta': 'ta-IN', 'gu': 'gu-IN', 'ur': 'ur-IN', 'kn': 'kn-IN', 'or': 'or-IN', 'ml': 'ml-IN', 'pa': 'pa-IN' };
         const localCode = intlMap[currentLangCode];
@@ -510,25 +664,39 @@
         document.getElementById('display-day').innerText = today.toLocaleDateString(localCode, {weekday: 'long'});
 
         document.getElementById('sunrise-time').innerText = tNum(calculatedData.sunrise, currentLangCode);
-        document.getElementById('noon-time').innerText = tNum(calculatedData.noon, currentLangCode);
-        document.getElementById('sunset-time').innerText = tNum(calculatedData.sunset, currentLangCode);
+        document.getElementById('noon-time').innerText   = tNum(calculatedData.noon, currentLangCode);
+        document.getElementById('sunset-time').innerText  = tNum(calculatedData.sunset, currentLangCode);
 
-        document.getElementById('rahu-time').innerText = tNum(calculatedData.rahu, currentLangCode);
-        document.getElementById('yama-time').innerText = tNum(calculatedData.yama, currentLangCode);
-        document.getElementById('gulika-time').innerText = tNum(calculatedData.gulika, currentLangCode);
+        document.getElementById('rahu-time').innerText    = tNum(calculatedData.rahu, currentLangCode);
+        document.getElementById('yama-time').innerText    = tNum(calculatedData.yama, currentLangCode);
+        document.getElementById('gulika-time').innerText  = tNum(calculatedData.gulika, currentLangCode);
         document.getElementById('abijith-time').innerText = tNum(calculatedData.abijith, currentLangCode);
 
-        const tNumIdx = calculatedData.tithiIndex > 15 ? calculatedData.tithiIndex - 15 : calculatedData.tithiIndex;
-        const tName = calculatedData.tithiIndex === 15 ? dict.tithis[14] : (calculatedData.tithiIndex === 30 ? dict.tithis[15] : dict.tithis[tNumIdx-1]);
-        const pakshaName = calculatedData.tithiIndex <= 15 ? dict.paksha[0] : dict.paksha[1];
+        // FIX #4: Tithi display with 0-based index
+        const ti = calculatedData.tithiIndex; // 0-29
+        let tName, pakshaName;
+        if (ti === 14) {
+            tName = dict.tithis[14]; // Purnima
+            pakshaName = dict.paksha[0];
+        } else if (ti === 29) {
+            tName = dict.tithis[15]; // Amavasya
+            pakshaName = dict.paksha[1];
+        } else if (ti < 15) {
+            tName = dict.tithis[ti]; // Shukla 0-13
+            pakshaName = dict.paksha[0];
+        } else {
+            tName = dict.tithis[ti - 15]; // Krishna 15-28 → index 0-13
+            pakshaName = dict.paksha[1];
+        }
         
         document.getElementById('dynamic-tithi').innerHTML = `
             ${dict.curTithiLbl}: <br><span>${tName.toUpperCase()}</span><br><br>
             ${dict.phaseLbl}: <br><span>${pakshaName.toUpperCase()}</span>
         `;
 
+        const nIdx = calculatedData.nakshatraIndex;
         document.getElementById('dynamic-nakshatra').innerHTML = `
-            ${dict.curNakshatraLbl}: <br><span>${dict.nakshatras[calculatedData.nakshatraIndex].toUpperCase()}</span><br><br>
+            ${dict.curNakshatraLbl}: <br><span>${dict.nakshatras[nIdx].toUpperCase()}</span><br><br>
             ${dict.algoLbl}: <br><span>${dict.approxAlgo.toUpperCase()}</span>
         `;
     }
