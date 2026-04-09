@@ -7,45 +7,36 @@
     <style>
         /* --- ANTIQUE VEDIC THEME VARIABLES --- */
         :root {
-            /* Dark/Night Theme (Default) */
             --bg-color: #0d1117;
             --panel-bg: #161b22;
             --text-primary: #e6edf3;
             --text-secondary: #8b949e;
-            --text-accent: #d2a85e; /* Antique Brass/Gold */
+            --text-accent: #d2a85e; 
             --border-color: #30363d;
-            
-            /* Antique Clock (Dark Mode) */
             --clock-bg: radial-gradient(circle, #cca462 0%, #8c6b32 100%);
             --clock-border: #211810; 
             --clock-markings: #3d2b1f;
             --hand-hour: #1a130d;
             --hand-min: #2b1d14;
-            --hand-sec: #800000; /* Deep Crimson */
-            
+            --hand-sec: #800000; 
             --shadow: 0 12px 40px rgba(0,0,0,0.8);
             --modal-bg: rgba(0,0,0,0.85);
         }
 
         [data-theme="light"] {
-            /* Light/Parchment Theme */
-            --bg-color: #f4eedd; /* Aged Parchment */
+            --bg-color: #f4eedd; 
             --panel-bg: #ffffff;
             --text-primary: #211810;
             --text-secondary: #5c4033;
-            --text-accent: #b87333; /* Copper */
+            --text-accent: #b87333; 
             --border-color: #d1c5b4;
-            
-            /* Antique Clock (Light Mode) */
             --clock-bg: radial-gradient(circle, #f9f1d8 0%, #dfb875 100%);
             --clock-border: #4a3525;
-            
             --shadow: 0 10px 30px rgba(92, 64, 51, 0.15);
             --modal-bg: rgba(244, 238, 221, 0.9);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; transition: background-color 0.3s, color 0.3s; }
-        
         body { background: var(--bg-color); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; align-items: stretch; padding: 2vw; }
 
         .panchang-wrapper {
@@ -53,18 +44,15 @@
             box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; border: 1px solid var(--border-color);
         }
 
-        /* Top Controls */
         .top-controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 25px; width: 100%; }
         button, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--text-accent); padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; font-family: inherit;}
         button:hover, select:hover { background: var(--text-accent); color: var(--bg-color); }
 
         h1 { color: var(--text-accent); text-align: center; font-size: clamp(26px, 4vw, 36px); margin-bottom: 35px; text-transform: uppercase; letter-spacing: 2px;}
 
-        /* Main Grid */
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 40px; flex-grow: 1; }
         @media (min-width: 900px) { .grid-layout { grid-template-columns: 1fr 1.2fr 1fr; align-items: center; } }
 
-        /* Typography & Data Blocks */
         .info-panel { display: flex; flex-direction: column; gap: 25px; }
         .data-block { font-size: clamp(14px, 2vw, 16px); }
         .data-block.left { text-align: left; border-left: 4px solid var(--text-accent); padding-left: 15px; }
@@ -76,28 +64,19 @@
         .astro-data { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; line-height: 1.8; font-weight: 600; word-break: break-word;}
         .astro-data span { color: var(--text-accent); font-size: 15px;}
 
-        /* Antique Clock System */
         .clock-container { display: flex; flex-direction: column; align-items: center; }
         .clock { 
-            width: clamp(220px, 35vw, 320px); 
-            aspect-ratio: 1; 
-            border-radius: 50%; 
-            border: 10px solid var(--clock-border); 
-            background: var(--clock-bg); 
-            position: relative; 
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.7), 0 15px 25px rgba(0,0,0,0.4);
+            width: clamp(220px, 35vw, 320px); aspect-ratio: 1; border-radius: 50%; border: 10px solid var(--clock-border); 
+            background: var(--clock-bg); position: relative; box-shadow: inset 0 0 25px rgba(0,0,0,0.7), 0 15px 25px rgba(0,0,0,0.4);
         }
         [data-theme="light"] .clock { box-shadow: inset 0 0 20px rgba(92,64,51,0.4), 0 15px 25px rgba(92,64,51,0.2); }
-        
         .clock-markings { position: absolute; width: 100%; height: 100%; background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 28.5deg, var(--clock-markings) 28.5deg, var(--clock-markings) 30deg); opacity: 0.5; border-radius: 50%; }
         
-        /* Localized Digital Clock */
         .digital-clock {
             position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%);
             font-family: monospace; font-size: clamp(14px, 2vw, 18px); font-weight: 900;
             color: #211810; background: rgba(255, 255, 255, 0.5);
-            padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); z-index: 4; letter-spacing: 1px;
+            padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); z-index: 4; letter-spacing: 1px;
         }
 
         .center-dot { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; background: var(--clock-border); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.6); }
@@ -109,10 +88,8 @@
         .sun-times { display: flex; justify-content: space-between; width: 105%; margin-top: 25px; font-size: 12px; font-weight: bold; color: var(--text-secondary); text-align: center; }
         .sun-times span { display: block; color: var(--text-accent); font-weight: bold; margin-top: 6px; font-size: 14px;}
 
-        /* Timings Grid */
         .timings-wrapper { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 45px; }
         @media (min-width: 768px) { .timings-wrapper { grid-template-columns: 1fr 2fr; } }
-
         .timing-box { background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
         [data-theme="light"] .timing-box { background: rgba(0,0,0,0.03); }
         .section-title { text-align: center; font-size: 15px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; color: var(--text-primary);}
@@ -167,9 +144,7 @@
                 <div id="display-day">Day</div>
                 <div class="sub-text" id="display-coords">LAT: 28.53° N | LON: 77.39° E</div>
             </div>
-            <div class="astro-data left" id="dynamic-nakshatra">
-                Computing...
-            </div>
+            <div class="astro-data left" id="dynamic-nakshatra">Computing...</div>
         </div>
 
         <div class="clock-container">
@@ -194,9 +169,7 @@
                 <div class="highlight-text" id="display-vs">2083</div>
                 <div data-i18n="hinduCal" class="sub-text" style="font-size: 14px;">Hindu Calendar</div>
             </div>
-            <div class="astro-data right" id="dynamic-tithi" style="text-align: right;">
-                Computing...
-            </div>
+            <div class="astro-data right" id="dynamic-tithi" style="text-align: right;">Computing...</div>
         </div>
     </div>
 
@@ -228,20 +201,17 @@
             <h2 style="color: var(--text-primary);" data-i18n="faqTitle">Vedic & Astrometric Computations</h2>
             <button class="close-btn" onclick="toggleModal()">&times;</button>
         </div>
-        
         <div class="faq-item">
             <div class="faq-q" data-i18n="faq1Q">1. Drik Siddhanta & Zero Dependencies</div>
-            <div class="faq-a" data-i18n="faq1A">This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using algorithms by Jean Meeus. By computing the True Longitude of celestial bodies based on local coordinates, it adheres strictly to modern observational accuracy (Drik Siddhanta) rather than ancient static constants (Surya Siddhanta).</div>
+            <div class="faq-a" data-i18n="faq1A">This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using algorithms by Jean Meeus.</div>
         </div>
-
         <div class="faq-item">
             <div class="faq-q" data-i18n="faq2Q">2. Tithi & Nakshatra Mechanics</div>
-            <div class="faq-a" data-i18n="faq2A">A Tithi (Lunar Day) advances exactly when the angular distance between the Sun and Moon increases by 12 degrees. A Nakshatra (Lunar Mansion) changes as the Moon passes through 13°20' segments of the ecliptic. This system uses an embedded algebraic expansion to approximate these true degrees dynamically.</div>
+            <div class="faq-a" data-i18n="faq2A">A Tithi advances exactly when the angular distance between the Sun and Moon increases by 12 degrees. A Nakshatra changes as the Moon passes through 13°20' segments.</div>
         </div>
-
         <div class="faq-item">
             <div class="faq-q" data-i18n="faq3Q">3. Dinamana (Daylight) & Kaalams</div>
-            <div class="faq-a" data-i18n="faq3A">Vedic timekeeping defines daylight (Dinamana) strictly as the span between exact local Sunrise (factoring -0.833° for atmospheric refraction) and Sunset. This span is divided into 8 equal mathematical segments to assign Rahu, Yama, and Gulika Kaalams based on the day of the week, ensuring sub-minute local accuracy over generic printed calendars.</div>
+            <div class="faq-a" data-i18n="faq3A">Daylight (Dinamana) is strictly the span between local Sunrise and Sunset. This span is divided into 8 mathematical segments to accurately map Rahu, Yama, and Gulika Kaalams.</div>
         </div>
     </div>
 </div>
@@ -269,7 +239,7 @@
         return str.toString().replace(/[0-9]/g, match => localDigits[lang][match]);
     }
 
-    // --- 2. LOCALIZATION DICTIONARY ---
+    // --- 2. FULL LOCALIZATION DICTIONARY (ALL 12 LANGUAGES) ---
     const i18n = {
         en: {
             mainTitle: "Panchangam Dashboard", faqBtn: "Scientific FAQ", themeAuto: "Auto Theme", themeDark: "Dark Theme", themeLight: "Light Theme",
@@ -277,10 +247,7 @@
             secAuspicious: "Auspicious Segments (Muhurta)", secInauspicious: "Inauspicious Segments (Choghadiya)",
             lblAbijith: "ABIJITH MUHURTH", lblRahu: "RAHU KAALAM", lblYama: "YEMAGANTAM", lblGulika: "GULIKA KAALAM",
             curTithiLbl: "CURRENT TITHI", phaseLbl: "LUNAR PHASE", curNakshatraLbl: "CURRENT NAKSHATRA", algoLbl: "ALGORITHMIC STATE", approxAlgo: "APPROX (MEEUS)",
-            faqTitle: "Vedic & Astrometric Computations",
-            faq1Q: "1. Drik Siddhanta & Zero Dependencies", faq1A: "This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using algorithms by Jean Meeus. By computing the True Longitude of celestial bodies based on local coordinates, it adheres strictly to modern observational accuracy (Drik Siddhanta).",
-            faq2Q: "2. Tithi & Nakshatra Mechanics", faq2A: "A Tithi advances exactly when the angular distance between the Sun and Moon increases by 12 degrees. A Nakshatra changes as the Moon passes through 13°20' segments. This system uses an embedded algebraic expansion to approximate these true degrees.",
-            faq3Q: "3. Dinamana (Daylight) & Kaalams", faq3A: "Daylight (Dinamana) is strictly the span between local Sunrise (factoring -0.833° for refraction) and Sunset. This span is divided into 8 mathematical segments to accurately map Rahu, Yama, and Gulika Kaalams based on the weekday.",
+            faqTitle: "Vedic & Astrometric Computations", faq1Q: "1. Drik Siddhanta & Dependencies", faq1A: "This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side.", faq2Q: "2. Tithi & Nakshatra Mechanics", faq2A: "A Tithi advances when the angular distance between Sun and Moon increases by 12 degrees.", faq3Q: "3. Dinamana & Kaalams", faq3A: "Daylight is strictly the span between local Sunrise and Sunset, divided into 8 mathematical segments.",
             paksha: ["Shukla Paksha", "Krishna Paksha"],
             tithis: ["Prathama", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Amavasya"],
             nakshatras: ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"],
@@ -292,29 +259,35 @@
             secAuspicious: "शुभ समय (मुहूर्त)", secInauspicious: "अशुभ समय (चौघड़िया)",
             lblAbijith: "अभिजीत मुहूर्त", lblRahu: "राहु काल", lblYama: "यमगंड", lblGulika: "गुलिक काल",
             curTithiLbl: "वर्तमान तिथि", phaseLbl: "चन्द्र पक्ष", curNakshatraLbl: "वर्तमान नक्षत्र", algoLbl: "एल्गोरिथ्म स्थिति", approxAlgo: "अनुमानित (मीयस)",
-            faqTitle: "वैदिक एवं खगोलीय गणनाएँ",
-            faq1Q: "१. दृक सिद्धान्त और शून्य निर्भरता", faq1A: "यह टूल किसी भी बाहरी एपीआई (API) पर निर्भर नहीं है। यह ज्यां मीयस (Jean Meeus) के खगोलीय सूत्रों का उपयोग करके पूरी तरह से आपके ब्राउज़र में काम करता है। स्थानीय अक्षांश-देशांतर के आधार पर सूर्य-चंद्रमा की 'स्पष्ट स्थिति' निकालकर, यह प्राचीन सूर्य सिद्धांत के बजाय आधुनिक 'दृक सिद्धान्त' का पालन करता है।",
-            faq2Q: "२. तिथि और नक्षत्र विज्ञान", faq2A: "तिथि तब बदलती है जब सूर्य और चंद्रमा के बीच की कोणीय दूरी ठीक १२ डिग्री बढ़ जाती है। इसी तरह, चंद्रमा जब १३°२०' का सफर तय करता है तो नक्षत्र बदलता है। यह प्रणाली इन स्पष्ट डिग्रियों की गणना बीजीय विस्तार (Algebraic expansion) के माध्यम से करती है।",
-            faq3Q: "३. दिनमान और काल", faq3A: "वैदिक समय गणना में दिनमान का अर्थ है स्पष्ट सूर्योदय (-०.८३३° वायुमंडलीय अपवर्तन सहित) और सूर्यास्त के बीच का सटीक समय। राहु काल, यमगंड और गुलिक काल की सटीक गणना के लिए इस दिनमान को ८ समान गणितीय भागों में बांटा जाता है।",
+            faqTitle: "वैदिक एवं खगोलीय गणनाएँ", faq1Q: "१. दृक सिद्धान्त", faq1A: "यह टूल किसी भी बाहरी एपीआई पर निर्भर नहीं है।", faq2Q: "२. तिथि और नक्षत्र", faq2A: "तिथि तब बदलती है जब सूर्य और चंद्रमा के बीच की कोणीय दूरी १२ डिग्री बढ़ जाती है।", faq3Q: "३. दिनमान और काल", faq3A: "दिनमान को ८ समान गणितीय भागों में बांटा जाता है।",
             paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
             tithis: ["प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "अमावस्या"],
             nakshatras: ["अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशिरा", "आर्द्रा", "पुनर्वसु", "पुष्य", "आश्लेषा", "मघा", "पूर्वा फाल्गुनी", "उत्तरा फाल्गुनी", "हस्त", "चित्रा", "स्वाती", "विशाखा", "अनुराधा", "ज्येष्ठा", "मूल", "पूर्वाषाढा", "उत्तराषाढा", "श्रवण", "धनिष्ठा", "शतभिषा", "पूर्वा भाद्रपद", "उत्तरा भाद्रपद", "रेवती"],
             coordStr: "अक्षांश: 28.53° N | देशांतर: 77.39° E"
         },
-        ta: {
-            mainTitle: "பஞ்சாங்கம் டாஷ்போர்டு", faqBtn: "அறிவியல் FAQ", themeAuto: "தானியங்கி", themeDark: "டார்க் தீம்", themeLight: "லைட் தீம்",
-            lblSunrise: "சூரியோதயம்", lblSunset: "அஸ்தமனம்", lblNoon: "நண்பகல்", hinduCal: "இந்து காலண்டர்", vikramSamvat: "விக்ரம் சம்வத்",
-            secAuspicious: "நல்ல நேரம் (முகூர்த்தம்)", secInauspicious: "கெட்ட நேரம்",
-            lblAbijith: "அபிஜித் முகூர்த்தம்", lblRahu: "ராகு காலம்", lblYama: "எமகண்டம்", lblGulika: "குளிகை காலம்",
-            curTithiLbl: "தற்போதைய திதி", phaseLbl: "சந்திர நிலை", curNakshatraLbl: "நட்சத்திரம்", algoLbl: "கணக்கீட்டு முறை", approxAlgo: "தோராயமான (மீயஸ்)",
-            faqTitle: "வேத மற்றும் வானியல் கணக்கீடுகள்",
-            faq1Q: "1. த்ரிக் சித்தாந்தம் & கணக்கீடு", faq1A: "இந்த டாஷ்போர்டு வெளிப்புற API களை சார்ந்திராமல், Jean Meeus இன் வானியல் சூத்திரங்களைப் பயன்படுத்தி உலாவிக்குள்ளேயே துல்லியமாக கணக்கிடுகிறது. இது நவீன 'த்ரிக் சித்தாந்த' முறையைப் பின்பற்றுகிறது.",
-            faq2Q: "2. திதி மற்றும் நட்சத்திரம்", faq2A: "சூரியனுக்கும் சந்திரனுக்கும் இடையிலான கோண தூரம் சரியாக 12 டிகிரி அதிகரிக்கும் போது ஒரு திதி மாறும். சந்திரன் 13°20' தூரத்தை கடக்கும்போது நட்சத்திரம் மாறும்.",
-            faq3Q: "3. தினமானம் & காலங்கள்", faq3A: "துல்லியமான சூரியோதயம் மற்றும் அஸ்தமனத்திற்கு இடைப்பட்ட நேரம் 'தினமானம்' எனப்படும். ராகு காலம், எமகண்டம் போன்றவைகளை கணக்கிட இது 8 சமமான பகுதிகளாக பிரிக்கப்படுகிறது.",
-            paksha: ["சுக்ல பட்சம்", "கிருஷ்ண பட்சம்"],
-            tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "அமாவாசை"],
-            nakshatras: ["அஸ்வினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசீரிடம்", "திருவாதிரை", "புனர்பூசம்", "பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "அஸ்தம்", "சித்திரை", "சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்", "திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி"],
-            coordStr: "அட்சரேகை: 28.53° N | தீர்க்கரேகை: 77.39° E"
+        bn: {
+            mainTitle: "পঞ্চাঙ্গ ড্যাশবোর্ড", faqBtn: "বৈজ্ঞানিক FAQ", themeAuto: "অটো থিম", themeDark: "ডার্ক থিম", themeLight: "লাইট থিম",
+            lblSunrise: "সূর্যোদয়", lblSunset: "সূর্যাস্ত", lblNoon: "স্থানীয় মধ্যাহ্ন", hinduCal: "হিন্দু পঞ্জিকা", vikramSamvat: "বিক্রম সংবত",
+            secAuspicious: "শুভ সময় (মুহূর্ত)", secInauspicious: "অশুভ সময় (চৌঘড়িয়া)",
+            lblAbijith: "অভিজিৎ মুহূর্ত", lblRahu: "রাহু কাল", lblYama: "যমগণ্ড", lblGulika: "গুলিক কাল",
+            curTithiLbl: "বর্তমান তিথি", phaseLbl: "চন্দ্র পক্ষ", curNakshatraLbl: "বর্তমান নক্ষত্র", algoLbl: "অ্যালগরিদম স্থিতি", approxAlgo: "আনুমানিক (মীয়ুস)",
+            faqTitle: "বৈদিক এবং জ্যোতির্বিদ্যা গণনা", faq1Q: "১. দৃক সিদ্ধান্ত", faq1A: "এই ড্যাশবোর্ডটি কোনো বাহ্যিক API এর উপর নির্ভর করে না।", faq2Q: "২. তিথি ও নক্ষত্র", faq2A: "সূর্য এবং চন্দ্রের মধ্যে কৌণিক দূরত্ব ১২ ডিগ্রি বৃদ্ধি পেলে তিথি পরিবর্তিত হয়।", faq3Q: "৩. দিনমান ও কাল", faq3A: "দিনমানকে ৮টি গাণিতিক অংশে ভাগ করে রাহু কাল নির্ধারণ করা হয়।",
+            paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
+            tithis: ["প্রথমা", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "অমাবস্যা"],
+            nakshatras: ["অশ্বিনী", "ভরণী", "কৃত্তিকা", "রোহিণী", "মৃগশিরা", "আর্দ্রা", "পুনর্বসু", "পুষ্যা", "অশ্লেষা", "মঘা", "পূর্ব ফাল্গুনী", "উত্তর ফাল্গুনী", "হস্ত", "চিত্রা", "স্বাতী", "বিশাখা", "অনুরাধা", "জ্যেষ্ঠা", "মূলা", "পূর্বাষাঢ়া", "উত্তরাষাঢ়া", "শ্রবণা", "ধনিষ্ঠা", "শতভিষা", "পূর্ব ভাদ্রপদ", "উত্তর ভাদ্রপদ", "রেবতী"],
+            coordStr: "অক্ষাংশ: 28.53° N | দ্রাঘিমাংশ: 77.39° E"
+        },
+        mr: {
+            mainTitle: "पंचांग डॅशबोर्ड", faqBtn: "वैज्ञानिक FAQ", themeAuto: "ऑटो थीम", themeDark: "डार्क थीम", themeLight: "लाईट थीम",
+            lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानिक दुपार", hinduCal: "हिंदू दिनदर्शिका", vikramSamvat: "विक्रम संवत",
+            secAuspicious: "शुभ वेळ (मुहूर्त)", secInauspicious: "अशुभ वेळ (चौघडिया)",
+            lblAbijith: "अभिजित मुहूर्त", lblRahu: "राहु काळ", lblYama: "यमगंड", lblGulika: "गुलिक काळ",
+            curTithiLbl: "चालू तिथी", phaseLbl: "चंद्र पक्ष", curNakshatraLbl: "चालू नक्षत्र", algoLbl: "अल्गोरिदम स्थिती", approxAlgo: "अंदाजे (मीयस)",
+            faqTitle: "वैदिक आणि खगोलीय गणना", faq1Q: "१. दृक सिद्धान्त", faq1A: "हे डॅशबोर्ड कोणत्याही बाह्य API वर अवलंबून नाही.", faq2Q: "२. तिथी आणि नक्षत्र", faq2A: "सूर्य आणि चंद्रामधील कोनीय अंतर १२ अंश वाढल्यावर तिथी बदलते.", faq3Q: "३. दिनमान आणि काळ", faq3A: "दिनमानाला ८ गणितीय भागांमध्ये विभागून राहु काळ निश्चित केला जातो.",
+            paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+            tithis: ["प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "अमावस्या"],
+            nakshatras: ["अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशीर्ष", "आर्द्रा", "पुनर्वसू", "पुष्य", "आश्लेषा", "मघा", "पूर्वा फाल्गुनी", "उत्तरा फाल्गुनी", "हस्त", "चित्रा", "स्वाती", "विशाखा", "अनुराधा", "ज्येष्ठा", "मूळ", "पूर्वाषाढा", "उत्तराषाढा", "श्रवण", "धनिष्ठा", "शततारका", "पूर्वा भाद्रपदा", "उत्तरा भाद्रपदा", "रेवती"],
+            coordStr: "अक्षांश: 28.53° N | रेखांश: 77.39° E"
         },
         te: {
             mainTitle: "పంచాంగం డాష్‌బోర్డ్", faqBtn: "శాస్త్రీయ FAQ", themeAuto: "ఆటో థీమ్", themeDark: "డార్క్ థీమ్", themeLight: "లైట్ థీమ్",
@@ -322,25 +295,96 @@
             secAuspicious: "శుభ సమయం", secInauspicious: "అశుభ సమయం",
             lblAbijith: "అభిజిత్ ముహూర్తం", lblRahu: "రాహు కాలం", lblYama: "యమగండం", lblGulika: "గుళిక కాలం",
             curTithiLbl: "ప్రస్తుత తిథి", phaseLbl: "చంద్ర దశ", curNakshatraLbl: "ప్రస్తుత నక్షత్రం", algoLbl: "అల్గారిథమ్ స్థితి", approxAlgo: "సుమారు (మీయస్)",
-            faqTitle: "వేద & ఖగోళ గణనలు",
-            faq1Q: "1. దృక్ సిద్ధాంతం & స్వతంత్రత", faq1A: "ఈ డ్యాష్‌బోర్డ్ ఏ బాహ్య API పై ఆధారపడదు. జీన్ మీయస్ (Jean Meeus) ఖగోళ సూత్రాలను ఉపయోగించి బ్రౌజర్‌లోనే కచ్చితమైన గణనలు చేస్తుంది. ఇది దృక్ సిద్ధాంతానికి కట్టుబడి ఉంటుంది.",
-            faq2Q: "2. తిథి & నక్షత్రం", faq2A: "సూర్యుడు మరియు చంద్రుని మధ్య కోణీయ దూరం 12 డిగ్రీలు పెరిగినప్పుడు ఒక తిథి మారుతుంది. చంద్రుడు 13°20' దూరాన్ని దాటినప్పుడు నక్షత్రం మారుతుంది.",
-            faq3Q: "3. దినమానం & కాలాలు", faq3A: "సూర్యోదయం మరియు సూర్యాస్తమయం మధ్య ఖచ్చితమైన కాలాన్ని దినమానం అంటారు. రాహు కాలం, యమగండం కొరకు దీనిని 8 సమాన భాగాలుగా విభజిస్తారు.",
+            faqTitle: "వేద & ఖగోళ గణనలు", faq1Q: "1. దృక్ సిద్ధాంతం", faq1A: "ఈ డ్యాష్‌బోర్డ్ ఏ బాహ్య API పై ఆధారపడదు.", faq2Q: "2. తిథి & నక్షత్రం", faq2A: "సూర్యుడు మరియు చంద్రుని మధ్య కోణీయ దూరం 12 డిగ్రీలు పెరిగినప్పుడు తిథి మారుతుంది.", faq3Q: "3. దినమానం", faq3A: "దినమానం 8 సమాన భాగాలుగా విభజించబడుతుంది.",
             paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
             tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "అమావాస్య"],
             nakshatras: ["అశ్విని", "భరణి", "కృత్తిక", "రోహిణి", "మృగశిర", "ఆరుద్ర", "పునర్వసు", "పుష్యమి", "ఆశ్లేష", "మఖ", "పుబ్బ", "ఉత్తర", "హస్త", "చిత్త", "స్వాతి", "విశాఖ", "అనూరాధ", "జ్యేష్ఠ", "మూల", "పూర్వాషాఢ", "ఉత్తరాషాఢ", "శ్రవణం", "ధనిష్ఠ", "శతభిషం", "పూర్వాభాద్ర", "ఉత్తరాభాద్ర", "రేవతి"],
             coordStr: "అక్షాంశం: 28.53° N | రేఖాంశం: 77.39° E"
         },
-        // Using Base English Data Structures for remaining 8 languages as robust placeholders to prevent output truncation.
-        // The numeral engine `tNum()` will automatically convert all numbers in these views natively.
-        bn: { mainTitle: "পঞ্চাঙ্গ ড্যাশবোর্ড", faqBtn: "FAQ", hinduCal: "হিন্দু পঞ্জিকা", vikramSamvat: "বিক্রম সংবত", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        mr: { mainTitle: "पंचांग डॅशबोर्ड", faqBtn: "FAQ", hinduCal: "हिंदू दिनदर्शिका", vikramSamvat: "विक्रम संवत", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        gu: { mainTitle: "પંચાંગ ડેશબોર્ડ", faqBtn: "FAQ", hinduCal: "હિન્દુ પંચાંગ", vikramSamvat: "વિક્રમ સંવત", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        ur: { mainTitle: "پنچانگ ڈیش بورڈ", faqBtn: "FAQ", hinduCal: "ہندو کیلنڈر", vikramSamvat: "وکرم سموت", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        kn: { mainTitle: "ಪಂಚಾಂಗ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್", faqBtn: "FAQ", hinduCal: "ಹಿಂದೂ ಪಂಚಾಂಗ", vikramSamvat: "ವಿಕ್ರಮ ಸಂವತ್", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        or: { mainTitle: "ପଞ୍ଚାଙ୍ଗ ଡ୍ୟାସବୋର୍ଡ", faqBtn: "FAQ", hinduCal: "ହିନ୍ଦୁ କ୍ୟାଲେଣ୍ଡର", vikramSamvat: "ବିକ୍ରମ ସମ୍ବତ", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        ml: { mainTitle: "പഞ്ചാംഗം ഡാഷ്ബോർഡ്", faqBtn: "FAQ", hinduCal: "ഹിന്ദു കലണ്ടർ", vikramSamvat: "വിക്രമ സംവത്", coordStr: "LAT: 28.53° N | LON: 77.39° E" },
-        pa: { mainTitle: "ਪੰਚਾਂਗ ਡੈਸ਼ਬੋਰਡ", faqBtn: "FAQ", hinduCal: "ਹਿੰਦੂ ਕੈਲੰਡਰ", vikramSamvat: "ਵਿਕਰਮ ਸੰਵਤ", coordStr: "LAT: 28.53° N | LON: 77.39° E" }
+        ta: {
+            mainTitle: "பஞ்சாங்கம் டாஷ்போர்டு", faqBtn: "அறிவியல் FAQ", themeAuto: "தானியங்கி", themeDark: "டார்க் தீம்", themeLight: "லைட் தீம்",
+            lblSunrise: "சூரியோதயம்", lblSunset: "அஸ்தமனம்", lblNoon: "நண்பகல்", hinduCal: "இந்து காலண்டர்", vikramSamvat: "விக்ரம் சம்வத்",
+            secAuspicious: "நல்ல நேரம் (முகூர்த்தம்)", secInauspicious: "கெட்ட நேரம்",
+            lblAbijith: "அபிஜித் முகூர்த்தம்", lblRahu: "ராகு காலம்", lblYama: "எமகண்டம்", lblGulika: "குளிகை காலம்",
+            curTithiLbl: "தற்போதைய திதி", phaseLbl: "சந்திர நிலை", curNakshatraLbl: "நட்சத்திரம்", algoLbl: "கணக்கீட்டு முறை", approxAlgo: "தோராயமான (மீயஸ்)",
+            faqTitle: "வேத மற்றும் வானியல் கணக்கீடுகள்", faq1Q: "1. த்ரிக் சித்தாந்தம்", faq1A: "இந்த டாஷ்போர்டு வெளிப்புற API களை சார்ந்திராமல் கணக்கிடுகிறது.", faq2Q: "2. திதி மற்றும் நட்சத்திரம்", faq2A: "சரியாக 12 டிகிரி கோண தூரம் அதிகரிக்கும் போது திதி மாறும்.", faq3Q: "3. தினமானம் & காலங்கள்", faq3A: "தினமானம் 8 சமமான பகுதிகளாக பிரிக்கப்படுகிறது.",
+            paksha: ["சுக்ல பட்சம்", "கிருஷ்ண பட்சம்"],
+            tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "அமாவாசை"],
+            nakshatras: ["அஸ்வினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசீரிடம்", "திருவாதிரை", "புனர்பூசம்", "பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "அஸ்தம்", "சித்திரை", "சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்", "திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி"],
+            coordStr: "அட்சரேகை: 28.53° N | தீர்க்கரேகை: 77.39° E"
+        },
+        gu: {
+            mainTitle: "પંચાંગ ડેશબોર્ડ", faqBtn: "વૈજ્ઞાનિક FAQ", themeAuto: "ઓટો થીમ", themeDark: "ડાર્ક થીમ", themeLight: "લાઇટ થીમ",
+            lblSunrise: "સૂર્યોદય", lblSunset: "સૂર્યાસ્ત", lblNoon: "સ્થાનિક બપોર", hinduCal: "હિન્દુ પંચાંગ", vikramSamvat: "વિક્રમ સંવત",
+            secAuspicious: "શુભ સમય (મુહૂર્ત)", secInauspicious: "અશુભ સમય (ચોઘડિયા)",
+            lblAbijith: "અભિજીત મુહૂર્ત", lblRahu: "રાહુ કાળ", lblYama: "યમગંડ", lblGulika: "ગુલિક કાળ",
+            curTithiLbl: "વર્તમાન તિથિ", phaseLbl: "ચંદ્ર પક્ષ", curNakshatraLbl: "વર્તમાન નક્ષત્ર", algoLbl: "અલ્ગોરિધમ સ્થિતિ", approxAlgo: "અંદાજિત (મીયસ)",
+            faqTitle: "વૈદિક અને ખગોળીય ગણતરીઓ", faq1Q: "૧. દ્રિક સિદ્ધાંત", faq1A: "આ ડેશબોર્ડ બાહ્ય API પર આધાર રાખતું નથી.", faq2Q: "૨. તિથિ અને નક્ષત્ર", faq2A: "કોણીય અંતર ૧૨ ડિગ્રી વધે ત્યારે તિથિ બદલાય છે.", faq3Q: "૩. દિનમાન", faq3A: "દિનમાનને ૮ સમાન ભાગોમાં વહેંચવામાં આવે છે.",
+            paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
+            tithis: ["પ્રથમા", "દ્વિતીયા", "તૃતીયા", "ચતુર્થી", "પંચમી", "ષષ્ઠી", "સપ્તમી", "અષ્ટમી", "નવમી", "દશમી", "એકાદશી", "દ્વાદશી", "ત્રયોદશી", "ચતુર્દશી", "પૂર્ણિમા", "અમાવસ્યા"],
+            nakshatras: ["અશ્વિની", "ભરણી", "કૃત્તિકા", "રોહિણી", "મૃગશીર્ષ", "આર્દ્રા", "પુનર્વસુ", "પુષ્ય", "આશ્લેષા", "મઘા", "પૂર્વા ફાલ્ગુની", "ઉત્તરા ફાલ્ગુની", "હસ્ત", "ચિત્રા", "સ્વાતિ", "વિશાખા", "અનુરાધા", "જ્યેષ્ઠા", "મૂળ", "પૂર્વાષાઢા", "ઉત્તરાષાઢા", "શ્રવણ", "ધનિષ્ઠા", "શતભિષા", "પૂર્વા ભાદ્રપદ", "ઉત્તરા ભાદ્રપદ", "રેવતી"],
+            coordStr: "અક્ષાંશ: 28.53° N | રેખાંશ: 77.39° E"
+        },
+        ur: {
+            mainTitle: "پنچانگ ڈیش بورڈ", faqBtn: "سائنسی سوالات", themeAuto: "آٹو تھیم", themeDark: "ڈارک تھیم", themeLight: "لائٹ تھیم",
+            lblSunrise: "طلوع آفتاب", lblSunset: "غروب آفتاب", lblNoon: "مقامی دوپہر", hinduCal: "ہندو کیلنڈر", vikramSamvat: "وکرم سموت",
+            secAuspicious: "مبارک وقت (مہورت)", secInauspicious: "منحوس وقت (چوگھڑیا)",
+            lblAbijith: "ابھیجیت مہورت", lblRahu: "راہو کال", lblYama: "یمگنڈم", lblGulika: "گلیک کال",
+            curTithiLbl: "موجودہ تتھی", phaseLbl: "قمری مرحلہ", curNakshatraLbl: "موجودہ نکشتر", algoLbl: "الگورتھم کی حالت", approxAlgo: "تخمینی (میئس)",
+            faqTitle: "ویدک اور فلکیاتی حسابات", faq1Q: "1. درک سدھانت", faq1A: "یہ ڈیش بورڈ کسی بیرونی API پر منحصر نہیں ہے۔", faq2Q: "2. تتھی اور نکشتر", faq2A: "تتھی تب بدلتی ہے جب کوणीय فاصلہ 12 ڈگری بڑھ جائے۔", faq3Q: "3. دنمان", faq3A: "دنمان کو 8 برابر حصوں میں تقسیم کیا جاتا ہے۔",
+            paksha: ["شکل پکش", "کرشن پکش"],
+            tithis: ["پرتھما", "دوتیا", "ترتیا", "چترتھی", "پنچمی", "ششٹھی", "سپتمی", "اشٹمی", "نومی", "دشمی", "ایکادشی", "دوادشی", "تریودشی", "چتردشی", "پورنیما", "اماوسیا"],
+            nakshatras: ["اشونی", "بھرنی", "کرتیکا", "روہنی", "مرگشیرا", "اردرا", "پنروسو", "پشیا", "اشلیشا", "مگھا", "پوروا پھالگنی", "اترا پھالگنی", "ہست", "چترا", "سواتی", "وشاکھا", "انورادھا", "جیشٹھا", "مولا", "پورواشاڑھا", "اتراشاڑھا", "شراون", "دھنشٹھا", "شتبھشا", "پوروا بھادرپد", "اترا بھادرپد", "ریوتی"],
+            coordStr: "عرض البلد: 28.53° N | طول البلد: 77.39° E"
+        },
+        kn: {
+            mainTitle: "ಪಂಚಾಂಗ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್", faqBtn: "ವೈಜ್ಞಾನಿಕ FAQ", themeAuto: "ಆಟೋ ಥೀಮ್", themeDark: "ಡಾರ್ಕ್ ಥೀಮ್", themeLight: "ಲೈಟ್ ಥೀಮ್",
+            lblSunrise: "ಸೂರ್ಯೋದಯ", lblSunset: "ಸೂರ್ಯಾಸ್ತ", lblNoon: "ಸ್ಥಳೀಯ ಮಧ್ಯಾಹ್ನ", hinduCal: "ಹಿಂದೂ ಪಂಚಾಂಗ", vikramSamvat: "ವಿಕ್ರಮ ಸಂವತ್",
+            secAuspicious: "ಶುಭ ಸಮಯ (ಮುಹೂರ್ತ)", secInauspicious: "ಅಶುಭ ಸಮಯ",
+            lblAbijith: "ಅಭಿಜಿತ್ ಮುಹೂರ್ತ", lblRahu: "ರಾಹು ಕಾಲ", lblYama: "ಯಮಗಂಡ", lblGulika: "ಗುಳಿಕ ಕಾಲ",
+            curTithiLbl: "ಪ್ರಸ್ತುತ ತಿಥಿ", phaseLbl: "ಚಂದ್ರ ಪಕ್ಷ", curNakshatraLbl: "ಪ್ರಸ್ತುತ ನಕ್ಷತ್ರ", algoLbl: "ಅಲ್ಗಾರಿದಮ್ ಸ್ಥಿತಿ", approxAlgo: "ಅಂದಾಜು (ಮೀಯಸ್)",
+            faqTitle: "ವೈದಿಕ ಮತ್ತು ಖಗೋಳ ಲೆಕ್ಕಾಚಾರಗಳು", faq1Q: "1. ದೃಕ್ ಸಿದ್ಧಾಂತ", faq1A: "ಈ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಯಾವುದೇ ಬಾಹ್ಯ API ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿಲ್ಲ.", faq2Q: "2. ತಿಥಿ ಮತ್ತು ನಕ್ಷತ್ರ", faq2A: "ಕೋನೀಯ ಅಂತರವು 12 ಡಿಗ್ರಿಗಳಷ್ಟು ಹೆಚ್ಚಾದಾಗ ತಿಥಿ ಬದಲಾಗುತ್ತದೆ.", faq3Q: "3. ದಿನಮಾನ", faq3A: "ದಿನಮಾನವನ್ನು 8 ಸಮಾನ ಭಾಗಗಳಾಗಿ ವಿಂಗಡಿಸಲಾಗಿದೆ.",
+            paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
+            tithis: ["ಪಾಡ್ಯ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಅಮಾವಾಸ್ಯೆ"],
+            nakshatras: ["ಅಶ್ವಿನಿ", "ಭರಣಿ", "ಕೃತ್ತಿಕಾ", "ರೋಹಿಣಿ", "ಮೃಗಶಿರ", "ಆರ್ದ್ರಾ", "ಪುನರ್ವಸು", "ಪುಷ್ಯ", "ಆಶ್ಲೇಷಾ", "ಮಘಾ", "ಹುಬ್ಬಾ", "ಉತ್ತರ ಫಲ್ಗುಣಿ", "ಹಸ್ತ", "ಚಿತ್ತಾ", "ಸ್ವಾತಿ", "ವಿಶಾಖಾ", "ಅನುರಾಧಾ", "ಜ್ಯೇಷ್ಠಾ", "ಮೂಲಾ", "ಪೂರ್ವಾಷಾಢಾ", "ಉತ್ತರಾಷಾಢಾ", "ಶ್ರವಣ", "ಧನಿಷ್ಠಾ", "ಶತಭಿಷಾ", "ಪೂರ್ವಾಭಾದ್ರ", "ಉತ್ತರಾಭಾದ್ರ", "ರೇವತಿ"],
+            coordStr: "ಅಕ್ಷಾಂಶ: 28.53° N | ರೇಖಾಂಶ: 77.39° E"
+        },
+        or: {
+            mainTitle: "ପଞ୍ଚାଙ୍ଗ ଡ୍ୟାସବୋର୍ଡ", faqBtn: "ବୈଜ୍ଞାନିକ FAQ", themeAuto: "ଅଟୋ ଥିମ୍", themeDark: "ଡାର୍କ ଥିମ୍", themeLight: "ଲାଇଟ୍ ଥିମ୍",
+            lblSunrise: "ସୂର୍ଯ୍ୟୋଦୟ", lblSunset: "ସୂର୍ଯ୍ୟାସ୍ତ", lblNoon: "ସ୍ଥାନୀୟ ମଧ୍ୟାହ୍ନ", hinduCal: "ହିନ୍ଦୁ ପଞ୍ଜିକା", vikramSamvat: "ବିକ୍ରମ ସମ୍ବତ",
+            secAuspicious: "ଶୁଭ ସମୟ (ମୁହୂର୍ତ୍ତ)", secInauspicious: "ଅଶୁଭ ସମୟ",
+            lblAbijith: "ଅଭିଜିତ ମୁହୂର୍ତ୍ତ", lblRahu: "ରାହୁ କାଳ", lblYama: "ଯମଗଣ୍ଡ", lblGulika: "ଗୁଲିକ କାଳ",
+            curTithiLbl: "ବର୍ତ୍ତମାନ ତିଥି", phaseLbl: "ଚନ୍ଦ୍ର ପକ୍ଷ", curNakshatraLbl: "ବର୍ତ୍ତମାନ ନକ୍ଷତ୍ର", algoLbl: "ଆଲଗୋରିଦମ୍ ସ୍ଥିତି", approxAlgo: "ଆନୁମାନିକ (ମୀୟସ)",
+            faqTitle: "ବୈଦିକ ଏବଂ ଜ୍ୟୋତିର୍ବିଜ୍ଞାନ ଗଣନା", faq1Q: "୧. ଦୃକ ସିଦ୍ଧାନ୍ତ", faq1A: "ଏହି ଡ୍ୟାସବୋର୍ଡ କୌଣସି ବାହ୍ୟ API ଉପରେ ନିର୍ଭର କରେ ନାହିଁ।", faq2Q: "୨. ତିଥି ଏବଂ ନକ୍ଷତ୍ର", faq2A: "କୋଣୀୟ ଦୂରତା ୧୨ ଡିଗ୍ରୀ ବୃଦ୍ଧି ପାଇଲେ ତିଥି ବଦଳିଥାଏ।", faq3Q: "୩. ଦିନମାନ", faq3A: "ଦିନମାନକୁ ୮ ସମାନ ଭାଗରେ ବିଭକ୍ତ କରାଯାଏ।",
+            paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
+            tithis: ["ପ୍ରତିପଦା", "ଦ୍ୱିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ୱାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦ୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ଅମାବାସ୍ୟା"],
+            nakshatras: ["ଅଶ୍ୱିନୀ", "ଭରଣୀ", "କୃତ୍ତିକା", "ରୋହିଣୀ", "ମୃଗଶିରା", "ଆର୍ଦ୍ରା", "ପୁନର୍ବସୁ", "ପୁଷ୍ୟା", "ଅଶ୍ଳେଷା", "ମଘା", "ପୂର୍ବ ଫାଲ୍ଗୁନୀ", "ଉତ୍ତର ଫାଲ୍ଗୁନୀ", "ହସ୍ତା", "ଚିତ୍ରା", "ସ୍ୱାତୀ", "ବିଶାଖା", "ଅନୁରାଧା", "ଜ୍ୟେଷ୍ଠା", "ମୂଳା", "ପୂର୍ବାଷାଢ଼ା", "ଉତ୍ତରାଷାଢ଼ା", "ଶ୍ରବଣା", "ଧନିଷ୍ଠା", "ଶତଭିଷା", "ପୂର୍ବ ଭାଦ୍ରପଦ", "ଉତ୍ତର ଭାଦ୍ରପଦ", "ରେବତୀ"],
+            coordStr: "ଅକ୍ଷାଂଶ: 28.53° N | ଦ୍ରାଘିମାଂଶ: 77.39° E"
+        },
+        ml: {
+            mainTitle: "പഞ്ചാംഗം ഡാഷ്ബോർഡ്", faqBtn: "ശാസ്ത്രീയ FAQ", themeAuto: "ഓട്ടോ തീം", themeDark: "ഡാർക്ക് തീം", themeLight: "ലൈറ്റ് തീം",
+            lblSunrise: "സൂര്യോദയം", lblSunset: "സൂര്യാസ്തമയം", lblNoon: "പ്രാദേശിക ഉച്ച", hinduCal: "ഹിന്ദു കലണ്ടർ", vikramSamvat: "വിക്രമ സംവത്",
+            secAuspicious: "ശുഭ സമയം (മുഹൂർത്തം)", secInauspicious: "അശുഭ സമയം",
+            lblAbijith: "അഭിജിത്ത് മുഹൂർത്തം", lblRahu: "രാഹു കാലം", lblYama: "യമകണ്ടം", lblGulika: "ഗുളിക കാലം",
+            curTithiLbl: "നിലവിലെ തിഥി", phaseLbl: "ചന്ദ്ര പക്ഷം", curNakshatraLbl: "നിലവിലെ നക്ഷത്രം", algoLbl: "അൽഗോരിതം അവസ്ഥ", approxAlgo: "ഏകദേശം (മീയസ്)",
+            faqTitle: "വേദ, ജ്യോതിശാസ്ത്ര കണക്കുകൂട്ടലുകൾ", faq1Q: "1. ദൃക് സിദ്ധാന്തം", faq1A: "ഈ ഡാഷ്ബോർഡ് ബാഹ്യ API-കളെ ആശ്രയിക്കുന്നില്ല.", faq2Q: "2. തിഥിയും നക്ഷത്രവും", faq2A: "കോണീയ അകലം 12 ഡിഗ്രി വർദ്ധിക്കുമ്പോൾ തിഥി മാറുന്നു.", faq3Q: "3. ദിനമാനം", faq3A: "ദിനമാനത്തെ 8 തുല്യ ഭാഗങ്ങളായി വിഭജിച്ചിരിക്കുന്നു.",
+            paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
+            tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദശി", "പൗർണ്ണമി", "അമാവാസി"],
+            nakshatras: ["അശ്വതി", "ഭരണി", "കാർത്തിക", "രോഹിണി", "മകയിരം", "തിരുവാതിര", "പുണർതം", "പൂയം", "ആയില്യം", "മകം", "പൂരം", "ഉത്രം", "അത്തം", "ചിത്തിര", "ചോതി", "വിശാഖം", "അനിഴം", "തൃക്കേട്ട", "മൂലം", "പൂരാടം", "ഉത്രാടം", "തിരുവോണം", "അവിട്ടം", "ചതയം", "പൂരുരുട്ടാതി", "ഉത്രട്ടാതി", "രേവതി"],
+            coordStr: "അക്ഷാംശം: 28.53° N | രേഖാംശം: 77.39° E"
+        },
+        pa: {
+            mainTitle: "ਪੰਚਾਂਗ ਡੈਸ਼ਬੋਰਡ", faqBtn: "ਵਿਗਿਆਨਕ FAQ", themeAuto: "ਆਟੋ ਥੀਮ", themeDark: "ਡਾਰਕ ਥੀਮ", themeLight: "ਲਾਈਟ ਥੀਮ",
+            lblSunrise: "ਸੂਰਜ ਚੜ੍ਹਨਾ", lblSunset: "ਸੂਰਜ ਡੁੱਬਣਾ", lblNoon: "ਸਥਾਨਕ ਦੁਪਹਿਰ", hinduCal: "ਹਿੰਦੂ ਕੈਲੰਡਰ", vikramSamvat: "ਵਿਕਰਮ ਸੰਵਤ",
+            secAuspicious: "ਸ਼ੁਭ ਸਮਾਂ (ਮੁਹੂਰਤ)", secInauspicious: "ਅਸ਼ੁਭ ਸਮਾਂ (ਚੌਘੜੀਆ)",
+            lblAbijith: "ਅਭਿਜੀਤ ਮੁਹੂਰਤ", lblRahu: "ਰਾਹੂ ਕਾਲ", lblYama: "ਯਮਗੰਡ", lblGulika: "ਗੁਲਿਕ ਕਾਲ",
+            curTithiLbl: "ਮੌਜੂਦਾ ਤਿਥੀ", phaseLbl: "ਚੰਦਰ ਪੱਖ", curNakshatraLbl: "ਮੌਜੂਦਾ ਨਕਸ਼ੱਤਰ", algoLbl: "ਐਲਗੋਰਿਦਮ ਸਥਿਤੀ", approxAlgo: "ਅਨੁਮਾਨਿਤ (ਮੀਯਸ)",
+            faqTitle: "ਵੈਦਿਕ ਅਤੇ ਖਗੋਲੀ ਗਣਨਾ", faq1Q: "1. ਦ੍ਰਿਕ ਸਿਧਾਂਤ", faq1A: "ਇਹ ਡੈਸ਼ਬੋਰਡ ਬਾਹਰੀ API 'ਤੇ ਨਿਰਭਰ ਨਹੀਂ ਕਰਦਾ।", faq2Q: "2. ਤਿਥੀ ਅਤੇ ਨਕਸ਼ੱਤਰ", faq2A: "ਕੋਣੀ ਦੂਰੀ 12 ਡਿਗਰੀ ਵਧਣ 'ਤੇ ਤਿਥੀ ਬਦਲਦੀ ਹੈ।", faq3Q: "3. ਦਿਨਮਾਨ", faq3A: "ਦਿਨਮਾਨ ਨੂੰ 8 ਬਰਾਬਰ ਭਾਗਾਂ ਵਿੱਚ ਵੰਡਿਆ ਗਿਆ ਹੈ।",
+            paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
+            tithis: ["ਪ੍ਰਥਮਾ", "ਦ੍ਵਿਤੀਯਾ", "ਤ੍ਰਿਤੀਯਾ", "ਚਤੁਰਥੀ", "ਪੰਚਮੀ", "ਸ਼ਸ਼ਠੀ", "ਸਪਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨਵਮੀ", "ਦਸ਼ਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦ੍ਵਾਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਿਮਾ", "ਅਮਾਵਸਯਾ"],
+            nakshatras: ["ਅਸ਼ਵਿਨੀ", "ਭਰਣੀ", "ਕ੍ਰਿਤਿਕਾ", "ਰੋਹਿਣੀ", "ਮ੍ਰਿਗਸ਼ਿਰਾ", "ਆਰਦ੍ਰਾ", "ਪੁਨਰਵਸੁ", "ਪੁਸ਼ਯਾ", "ਅਸ਼ਲੇਸ਼ਾ", "ਮਘਾ", "ਪੂਰਵ ਫਾਲਗੁਨੀ", "ਉੱਤਰ ਫਾਲਗੁਨੀ", "ਹਸਤ", "ਚਿਤ੍ਰਾ", "ਸਵਾਤੀ", "ਵਿਸ਼ਾਖਾ", "ਅਨੁਰਾਧਾ", "ਜਯੇਸ਼ਠਾ", "ਮੂਲਾ", "ਪੂਰਵਾਸ਼ਾਢਾ", "ਉੱਤਰਾਸ਼ਾਢਾ", "ਸ਼੍ਰਵਣ", "ਧਨਿਸ਼ਠਾ", "ਸ਼ਤਭਿਸ਼ਾ", "ਪੂਰਵ ਭਾਦਰਪਦ", "ਉੱਤਰ ਭਾਦਰਪਦ", "ਰੇਵਤੀ"],
+            coordStr: "ਅਕਸ਼ਾਂਸ਼: 28.53° N | ਦੇਸ਼ਾਂਤਰ: 77.39° E"
+        }
     };
 
     // --- 3. STATE & CLOCK LOOP ---
@@ -376,7 +420,6 @@
         document.getElementById('minute').style.transform = `rotate(${m * 6}deg)`;
         document.getElementById('second').style.transform = `rotate(${s * 6}deg)`;
         
-        // Push digital clock digits through translation engine
         const hStr = d.getHours().toString().padStart(2, '0');
         const mStr = d.getMinutes().toString().padStart(2, '0');
         const sStr = d.getSeconds().toString().padStart(2, '0');
@@ -449,29 +492,23 @@
 
     // --- 5. RENDER ENGINE ---
     function renderUI() {
-        const dict = i18n[currentLangCode] || i18n['en']; 
-        const fallback = i18n['en'];
+        const dict = i18n[currentLangCode];
 
-        // Static Translations
         document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            el.innerText = dict[key] || fallback[key];
+            el.innerText = dict[el.getAttribute('data-i18n')];
         });
 
-        // Numeric Localizations
-        document.getElementById('display-coords').innerText = tNum(dict.coordStr || fallback.coordStr, currentLangCode);
+        document.getElementById('display-coords').innerText = tNum(dict.coordStr, currentLangCode);
         document.getElementById('display-year').innerText = tNum(today.getFullYear(), currentLangCode);
         document.getElementById('display-vs').innerText = tNum(2083, currentLangCode);
         
         const intlMap = { 'en': 'en-IN', 'hi': 'hi-IN', 'bn': 'bn-IN', 'mr': 'mr-IN', 'te': 'te-IN', 'ta': 'ta-IN', 'gu': 'gu-IN', 'ur': 'ur-IN', 'kn': 'kn-IN', 'or': 'or-IN', 'ml': 'ml-IN', 'pa': 'pa-IN' };
         const localCode = intlMap[currentLangCode];
         
-        // Native browser date string conversion
         const rawDate = today.toLocaleDateString(localCode, {month: 'long', day: 'numeric'});
         document.getElementById('display-date').innerText = tNum(rawDate, currentLangCode); 
         document.getElementById('display-day').innerText = today.toLocaleDateString(localCode, {weekday: 'long'});
 
-        // Push calculated timings through tNum engine
         document.getElementById('sunrise-time').innerText = tNum(calculatedData.sunrise, currentLangCode);
         document.getElementById('noon-time').innerText = tNum(calculatedData.noon, currentLangCode);
         document.getElementById('sunset-time').innerText = tNum(calculatedData.sunset, currentLangCode);
@@ -481,29 +518,18 @@
         document.getElementById('gulika-time').innerText = tNum(calculatedData.gulika, currentLangCode);
         document.getElementById('abijith-time').innerText = tNum(calculatedData.abijith, currentLangCode);
 
-        // Dynamic Astrometric Resolution
-        const activeTithis = dict.tithis || fallback.tithis;
-        const activeNakshatras = dict.nakshatras || fallback.nakshatras;
-        const activePaksha = dict.paksha || fallback.paksha;
-
         const tNumIdx = calculatedData.tithiIndex > 15 ? calculatedData.tithiIndex - 15 : calculatedData.tithiIndex;
-        const tName = calculatedData.tithiIndex === 15 ? activeTithis[14] : (calculatedData.tithiIndex === 30 ? activeTithis[15] : activeTithis[tNumIdx-1]);
-        const pakshaName = calculatedData.tithiIndex <= 15 ? activePaksha[0] : activePaksha[1];
+        const tName = calculatedData.tithiIndex === 15 ? dict.tithis[14] : (calculatedData.tithiIndex === 30 ? dict.tithis[15] : dict.tithis[tNumIdx-1]);
+        const pakshaName = calculatedData.tithiIndex <= 15 ? dict.paksha[0] : dict.paksha[1];
         
-        const algoState = dict.approxAlgo || fallback.approxAlgo;
-        const lblTithi = dict.curTithiLbl || fallback.curTithiLbl;
-        const lblPhase = dict.phaseLbl || fallback.phaseLbl;
-        const lblNak = dict.curNakshatraLbl || fallback.curNakshatraLbl;
-        const lblAlgo = dict.algoLbl || fallback.algoLbl;
-
         document.getElementById('dynamic-tithi').innerHTML = `
-            ${lblTithi}: <br><span>${tName.toUpperCase()}</span><br><br>
-            ${lblPhase}: <br><span>${pakshaName.toUpperCase()}</span>
+            ${dict.curTithiLbl}: <br><span>${tName.toUpperCase()}</span><br><br>
+            ${dict.phaseLbl}: <br><span>${pakshaName.toUpperCase()}</span>
         `;
 
         document.getElementById('dynamic-nakshatra').innerHTML = `
-            ${lblNak}: <br><span>${activeNakshatras[calculatedData.nakshatraIndex].toUpperCase()}</span><br><br>
-            ${lblAlgo}: <br><span>${algoState.toUpperCase()}</span>
+            ${dict.curNakshatraLbl}: <br><span>${dict.nakshatras[calculatedData.nakshatraIndex].toUpperCase()}</span><br><br>
+            ${dict.algoLbl}: <br><span>${dict.approxAlgo.toUpperCase()}</span>
         `;
     }
 
