@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Precision Local Panchangam</title>
+    <style>
+        /* --- THEME & BASE STYLES --- */
+        :root {
+            --bg-color: #0f111a;
+            --panel-bg: #1a1c29;
+            --text-primary: #ffffff;
+            --text-secondary: #e2e8f0;
+            --text-accent: #f68c1f;
+            --text-muted: #8b92a5;
+            --border-color: #2d3748;
+            --clock-bg: radial-gradient(circle, #2a2d3e 0%, #1a1c29 100%);
+            --clock-border: #f68c1f;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --modal-bg: rgba(0,0,0,0.8);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --panel-bg: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-accent: #d9700b;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --clock-bg: radial-gradient(circle, #f9f9f9 0%, #e0e0e0 100%);
+            --clock-border: #d9700b;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --modal-bg: rgba(255,255,255,0.8);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        
+        body { background: var(--bg-color); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; align-items: stretch; padding: 2vw; }
+
+        .panchang-wrapper {
+            background: var(--panel-bg); width: 100%; max-width: 1200px; border-radius: 16px; padding: clamp(20px, 4vw, 40px);
+            box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+
+        .top-controls { position: absolute; top: 20px; right: 20px; z-index: 100; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;}
+        
+        button, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--text-muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;}
+        button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        h1 { color: var(--text-accent); text-align: center; font-size: clamp(24px, 4vw, 32px); margin-bottom: 30px; }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 40px; flex-grow: 1; }
+        @media (min-width: 900px) { .grid-layout { grid-template-columns: 1fr 1fr 1fr; align-items: center; } }
+
+        /* Typography & Blocks */
+        .info-panel { display: flex; flex-direction: column; gap: 20px; }
+        .data-block { font-size: clamp(14px, 2vw, 16px); }
+        .data-block.left { text-align: left; border-left: 4px solid var(--text-accent); padding-left: 15px; }
+        .data-block.right { text-align: right; border-right: 4px solid var(--text-accent); padding-right: 15px; }
+        .highlight-text { color: var(--text-accent); font-size: clamp(18px, 3vw, 24px); font-weight: bold; margin: 5px 0; }
+        .astro-data { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; line-height: 1.8; font-weight: 600; word-break: break-word;}
+        .astro-data span { color: var(--text-accent); }
+
+        /* Clock */
+        .clock-container { display: flex; flex-direction: column; align-items: center; }
+        .clock { width: clamp(200px, 30vw, 300px); aspect-ratio: 1; border-radius: 50%; border: 4px solid var(--clock-border); background: var(--clock-bg); position: relative; }
+        .clock-markings { position: absolute; width: 100%; height: 100%; background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 28deg, var(--text-muted) 28deg, var(--text-muted) 30deg); opacity: 0.3; border-radius: 50%; }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 4px; }
+        .hour-hand { width: 6px; height: 25%; background: var(--text-primary); margin-left: -3px; }
+        .min-hand { width: 4px; height: 38%; background: var(--text-primary); margin-left: -2px; }
+        .sec-hand { width: 2px; height: 45%; background: var(--text-accent); margin-left: -1px; }
+        .sun-times { display: flex; justify-content: space-between; width: 100%; margin-top: 20px; font-size: 12px; font-weight: bold; color: var(--text-accent); text-align: center; }
+        .sun-times span { display: block; color: var(--text-primary); font-weight: normal; margin-top: 5px; }
+
+        /* Timings */
+        .timings-wrapper { display: flex; flex-direction: column; gap: 20px; margin-top: 40px; }
+        .timing-box { background: rgba(0,0,0,0.1); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+        [data-theme="light"] .timing-box { background: rgba(0,0,0,0.02); }
+        .section-title { text-align: center; font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
+        .timings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; text-align: center; font-size: 13px; }
+        .timing-label { font-weight: bold; color: var(--text-secondary); margin-bottom: 5px; }
+        .timing-val { color: var(--text-accent); font-family: monospace; font-size: 14px;}
+
+        /* Modal FAQ */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--panel-bg); width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto; border-radius: 12px; padding: 30px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
+        .close-btn { background: none; border: none; font-size: 24px; color: var(--text-accent); cursor: pointer; padding: 0; }
+        .faq-item { margin-bottom: 25px; }
+        .faq-q { color: var(--text-accent); font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+        .faq-a { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="panchang-wrapper">
+    <div class="top-controls">
+        <select id="lang-select" onchange="setLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="ur">اردو (Urdu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="or">ଓଡ଼ିଆ (Odia)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+        </select>
+        <select id="theme-select" onchange="setTheme(this.value)">
+            <option value="system" data-i18n="themeAuto">Auto Theme</option>
+            <option value="dark" data-i18n="themeDark">Dark</option>
+            <option value="light" data-i18n="themeLight">Light</option>
+        </select>
+        <button onclick="toggleModal()" data-i18n="faqBtn">Scientific FAQ</button>
+    </div>
+
+    <h1 data-i18n="mainTitle">Panchangam Dashboard</h1>
+
+    <div class="grid-layout">
+        <div class="info-panel">
+            <div class="data-block left">
+                <div id="display-year">YYYY</div>
+                <div class="highlight-text" id="display-date">DD MMM</div>
+                <div id="display-day">Day</div>
+                <div style="font-size: 11px; margin-top:5px; color: var(--text-muted)">LAT: 28.53° N | LON: 77.39° E</div>
+            </div>
+            <div class="astro-data left" id="dynamic-nakshatra">
+                Computing Astrometrics...
+            </div>
+        </div>
+
+        <div class="clock-container">
+            <div class="clock">
+                <div class="clock-markings"></div>
+                <div class="hand hour-hand" id="hour"></div>
+                <div class="hand min-hand" id="minute"></div>
+                <div class="hand sec-hand" id="second"></div>
+            </div>
+            <div class="sun-times">
+                <div><span data-i18n="lblSunrise">SUNRISE</span> <span id="sunrise-time">--:--:--</span></div>
+                <div><span data-i18n="lblNoon">LOCAL NOON</span> <span id="noon-time">--:--:--</span></div>
+                <div><span data-i18n="lblSunset">SUNSET</span> <span id="sunset-time">--:--:--</span></div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="data-block right">
+                <div>Vikram Samvat</div>
+                <div class="highlight-text">2083</div>
+                <div data-i18n="hinduCal">Hindu Calendar</div>
+            </div>
+            <div class="astro-data right" id="dynamic-tithi" style="text-align: right;">
+                Computing Astrometrics...
+            </div>
+        </div>
+    </div>
+
+    <div class="timings-wrapper">
+        <div class="timing-box">
+            <div class="section-title" data-i18n="secAuspicious">Auspicious Segments (Muhurta)</div>
+            <div class="timings-grid">
+                <div><div class="timing-label" data-i18n="lblAbijith">ABIJITH MUHURTH</div><div class="timing-val" id="abijith-time">--:--</div></div>
+            </div>
+        </div>
+
+        <div class="timing-box">
+            <div class="section-title" data-i18n="secInauspicious">Inauspicious Segments (Choghadiya / Kaalam)</div>
+            <div class="timings-grid">
+                <div><div class="timing-label" data-i18n="lblRahu">RAHU KAALAM</div><div class="timing-val" id="rahu-time">--:--</div></div>
+                <div><div class="timing-label" data-i18n="lblYama">YEMAGANTAM</div><div class="timing-val" id="yama-time">--:--</div></div>
+                <div><div class="timing-label" data-i18n="lblGulika">GULIKA KAALAM</div><div class="timing-val" id="gulika-time">--:--</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="faq-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Mathematical Specifications & Citations</h2>
+            <button class="close-btn" onclick="toggleModal()">&times;</button>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-q">Are there any external dependencies in this tool?</div>
+            <div class="faq-a">No. This dashboard relies on zero external libraries, APIs, translation packs, or static JSON files. All computations and localizations are handled entirely within the browser executing native JavaScript mathematics and the standard <code>Intl</code> API.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">How are Sunrise and Sunset calculated precisely?</div>
+            <div class="faq-a">The math relies on formulas developed by NOAA and the algorithms of Belgian astronomer <strong>Jean Meeus</strong>. It calculates the Julian Day, Mean Anomaly, and applies the Equation of Center to derive the True Longitude. The Hour Angle is calculated using <code>-0.833°</code> to account for standard atmospheric refraction.</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-q">How does the Multilingual feature work without an API?</div>
+            <div class="faq-a">The UI frame elements use a built-in static JSON dictionary mapping English keys to 11 Indian languages. Dynamic calendar objects (like the Day of the Week and Month Names) are rendered perfectly on-the-fly using the browser's native <code>Intl.DateTimeFormat</code> API mapped to localized standard codes (e.g., <code>hi-IN</code>, <code>ta-IN</code>, <code>bn-IN</code>).</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. LOCALIZATION DICTIONARY & ENGINE ---
+    // Covering top 12 spoken/used Indian languages + English
+    const i18n = {
+        en: {
+            mainTitle: "Panchangam Dashboard", faqBtn: "Scientific FAQ", themeAuto: "Auto Theme", themeDark: "Dark", themeLight: "Light",
+            lblSunrise: "SUNRISE", lblSunset: "SUNSET", lblNoon: "LOCAL NOON", hinduCal: "Hindu Calendar",
+            secAuspicious: "Auspicious Segments (Muhurta)", secInauspicious: "Inauspicious Segments (Choghadiya / Kaalam)",
+            lblAbijith: "ABIJITH MUHURTH", lblRahu: "RAHU KAALAM", lblYama: "YEMAGANTAM", lblGulika: "GULIKA KAALAM",
+            curTithiLbl: "CURRENT TITHI", phaseLbl: "LUNAR PHASE", curNakshatraLbl: "CURRENT NAKSHATRA", algoLbl: "ALGORITHMIC STATE"
+        },
+        hi: {
+            mainTitle: "पंचांग डैशबोर्ड", faqBtn: "वैज्ञानिक प्रश्नोत्तर", themeAuto: "ऑटो थीम", themeDark: "डार्क", themeLight: "लाइट",
+            lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानीय दोपहर", hinduCal: "हिन्दू पंचांग",
+            secAuspicious: "शुभ समय (मुहूर्त)", secInauspicious: "अशुभ समय (चौघड़िया / काल)",
+            lblAbijith: "अभिजीत मुहूर्त", lblRahu: "राहु काल", lblYama: "यमगंड", lblGulika: "गुलिक काल",
+            curTithiLbl: "वर्तमान तिथि", phaseLbl: "चन्द्र पक्ष", curNakshatraLbl: "वर्तमान नक्षत्र", algoLbl: "एल्गोरिथ्म स्थिति"
+        },
+        bn: {
+            mainTitle: "পঞ্চাঙ্গ ড্যাশবোর্ড", faqBtn: "বৈজ্ঞানিক প্রশ্নোত্তর", themeAuto: "অটো থিম", themeDark: "ডার্ক", themeLight: "লাইট",
+            lblSunrise: "সূর্যোদয়", lblSunset: "সূর্যাস্ত", lblNoon: "স্থানীয় মধ্যাহ্ন", hinduCal: "হিন্দু পঞ্জিকা",
+            secAuspicious: "শুভ সময় (মুহূর্ত)", secInauspicious: "অশুভ সময় (চৌঘড়িয়া / কাল)",
+            lblAbijith: "অভিজিৎ মুহূর্ত", lblRahu: "রাহু কাল", lblYama: "যমগণ্ড", lblGulika: "গুলিক কাল",
+            curTithiLbl: "বর্তমান তিথি", phaseLbl: "চন্দ্র পক্ষ", curNakshatraLbl: "বর্তমান নক্ষত্র", algoLbl: "অ্যালগরিদম স্থিতি"
+        },
+        mr: {
+            mainTitle: "पंचांग डॅशबोर्ड", faqBtn: "वैज्ञानिक प्रश्न", themeAuto: "ऑटो थीम", themeDark: "डार्क", themeLight: "लाइट",
+            lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानिक दुपार", hinduCal: "हिंदू दिनदर्शिका",
+            secAuspicious: "शुभ वेळ (मुहूर्त)", secInauspicious: "अशुभ वेळ (चौघडिया / काळ)",
+            lblAbijith: "अभिजित मुहूर्त", lblRahu: "राहु काळ", lblYama: "यमगंड", lblGulika: "गुलिक काळ",
+            curTithiLbl: "चालू तिथी", phaseLbl: "चंद्र पक्ष", curNakshatraLbl: "चालू नक्षत्र", algoLbl: "अल्गोरिथम स्थिती"
+        },
+        te: {
+            mainTitle: "పంచాంగం డాష్‌బోర్డ్", faqBtn: "శాస్త్రీయ FAQ", themeAuto: "ఆటో థీమ్", themeDark: "డార్క్", themeLight: "లైట్",
+            lblSunrise: "సూర్యోదయం", lblSunset: "సూర్యాస్తమయం", lblNoon: "మధ్యాహ్నం", hinduCal: "హిందూ క్యాలెండర్",
+            secAuspicious: "శుభ సమయం", secInauspicious: "అశుభ సమయం (రాహు/యమ/గుళిక)",
+            lblAbijith: "అభిజిత్ ముహూర్తం", lblRahu: "రాహు కాలం", lblYama: "యమగండం", lblGulika: "గుళిక కాలం",
+            curTithiLbl: "ప్రస్తుత తిథి", phaseLbl: "చంద్ర దశ", curNakshatraLbl: "ప్రస్తుత నక్షత్రం", algoLbl: "అల్గారిథమ్ స్థితి"
+        },
+        ta: {
+            mainTitle: "பஞ்சாங்கம் டாஷ்போர்டு", faqBtn: "அறிவியல் FAQ", themeAuto: "ஆட்டோ தீம்", themeDark: "டார்க்", themeLight: "லைட்",
+            lblSunrise: "சூரியோதயம்", lblSunset: "அஸ்தமனம்", lblNoon: "நண்பகல்", hinduCal: "இந்து காலண்டர்",
+            secAuspicious: "நல்ல நேரம் (முகூர்த்தம்)", secInauspicious: "கெட்ட நேரம் (ராகு/எம/குளிகை)",
+            lblAbijith: "அபிஜித் முகூர்த்தம்", lblRahu: "ராகு காலம்", lblYama: "எமகண்டம்", lblGulika: "குளிகை",
+            curTithiLbl: "தற்போதைய திதி", phaseLbl: "சந்திர நிலை", curNakshatraLbl: "தற்போதைய நட்சத்திரம்", algoLbl: "கணக்கீட்டு நிலை"
+        },
+        gu: {
+            mainTitle: "પંચાંગ ડેશબોર્ડ", faqBtn: "વૈજ્ઞાનિક પ્રશ્નોત્તરી", themeAuto: "ઓટો થીમ", themeDark: "ડાર્ક", themeLight: "લાઇટ",
+            lblSunrise: "સૂર્યોદય", lblSunset: "સૂર્યાસ્ત", lblNoon: "સ્થાનિક બપોર", hinduCal: "હિન્દુ પંચાંગ",
+            secAuspicious: "શુભ સમય (મુહૂર્ત)", secInauspicious: "અશુભ સમય (ચોઘડિયા / કાળ)",
+            lblAbijith: "અભિજીત મુહૂર્ત", lblRahu: "રાહુ કાળ", lblYama: "યમગંડ", lblGulika: "ગુલિક કાળ",
+            curTithiLbl: "વર્તમાન તિથિ", phaseLbl: "ચંદ્ર પક્ષ", curNakshatraLbl: "વર્તમાન નક્ષત્ર", algoLbl: "અલ્ગોરિધમ સ્થિતિ"
+        },
+        ur: {
+            mainTitle: "پنچانگ ڈیش بورڈ", faqBtn: "سائنسی سوالات", themeAuto: "آٹو تھیم", themeDark: "ڈارک", themeLight: "لائٹ",
+            lblSunrise: "طلوع آفتاب", lblSunset: "غروب آفتاب", lblNoon: "دوپہر", hinduCal: "ہندو کیلنڈر",
+            secAuspicious: "مبارک وقت (مہورت)", secInauspicious: "منحوس وقت",
+            lblAbijith: "ابھیجیت مہورت", lblRahu: "راہو کال", lblYama: "یمگنڈم", lblGulika: "گلیک کال",
+            curTithiLbl: "موجودہ تتھی", phaseLbl: "قمری مرحلہ", curNakshatraLbl: "موجودہ نکشتر", algoLbl: "الگورتھم کی حالت"
+        },
+        kn: {
+            mainTitle: "ಪಂಚಾಂಗ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್", faqBtn: "ವೈಜ್ಞಾನಿಕ FAQ", themeAuto: "ಆಟೋ ಥೀಮ್", themeDark: "ಡಾರ್ಕ್", themeLight: "ಲೈಟ್",
+            lblSunrise: "ಸೂರ್ಯೋದಯ", lblSunset: "ಸೂರ್ಯಾಸ್ತ", lblNoon: "ಸ್ಥಳೀಯ ಮಧ್ಯಾಹ್ನ", hinduCal: "ಹಿಂದೂ ಪಂಚಾಂಗ",
+            secAuspicious: "ಶುಭ ಸಮಯ (ಮುಹೂರ್ತ)", secInauspicious: "ಅಶುಭ ಸಮಯ (ರಾಹು/ಯಮ/ಗುಳಿಕ)",
+            lblAbijith: "ಅಭಿಜಿತ್ ಮುಹೂರ್ತ", lblRahu: "ರಾಹು ಕಾಲ", lblYama: "ಯಮಗಂಡ", lblGulika: "ಗುಳಿಕ ಕಾಲ",
+            curTithiLbl: "ಪ್ರಸ್ತುತ ತಿಥಿ", phaseLbl: "ಚಂದ್ರ ಪಕ್ಷ", curNakshatraLbl: "ಪ್ರಸ್ತುತ ನಕ್ಷತ್ರ", algoLbl: "ಅಲ್ಗಾರಿದಮ್ ಸ್ಥಿತಿ"
+        },
+        or: {
+            mainTitle: "ପଞ୍ଚାଙ୍ଗ ଡ୍ୟାସବୋର୍ଡ", faqBtn: "ବୈଜ୍ଞାନିକ FAQ", themeAuto: "ଅଟୋ ଥିମ୍", themeDark: "ଡାର୍କ", themeLight: "ଲାଇଟ୍",
+            lblSunrise: "ସୂର୍ଯ୍ୟୋଦୟ", lblSunset: "ସୂର୍ଯ୍ୟାସ୍ତ", lblNoon: "ସ୍ଥାନୀୟ ମଧ୍ୟାହ୍ନ", hinduCal: "ହିନ୍ଦୁ କ୍ୟାଲେଣ୍ଡର",
+            secAuspicious: "ଶୁଭ ସମୟ (ମୁହୂର୍ତ୍ତ)", secInauspicious: "ଅଶୁଭ ସମୟ (ରାହୁ/ଯମ/ଗୁଲିକ)",
+            lblAbijith: "ଅଭିଜିତ ମୁହୂର୍ତ୍ତ", lblRahu: "ରାହୁ କାଳ", lblYama: "ଯମଗଣ୍ଡ", lblGulika: "ଗୁଲିକ କାଳ",
+            curTithiLbl: "ବର୍ତ୍ତମାନ ତିଥି", phaseLbl: "ଚନ୍ଦ୍ର ପକ୍ଷ", curNakshatraLbl: "ବର୍ତ୍ତମାନ ନକ୍ଷତ୍ର", algoLbl: "ଆଲଗୋରିଦମ୍ ସ୍ଥିତି"
+        },
+        ml: {
+            mainTitle: "പഞ്ചാംഗം ഡാഷ്ബോർഡ്", faqBtn: "ശാസ്ത്രീയ FAQ", themeAuto: "ഓട്ടോ തീം", themeDark: "ഡാർക്ക്", themeLight: "ലൈറ്റ്",
+            lblSunrise: "സൂര്യോദയം", lblSunset: "സൂര്യാസ്തമയം", lblNoon: "പ്രാദേശിക ഉച്ച", hinduCal: "ഹിന്ദു കലണ്ടർ",
+            secAuspicious: "ശുഭ സമയം (മുഹൂർത്തം)", secInauspicious: "അശുഭ സമയം (രാഹു/യമ/ഗുളിക)",
+            lblAbijith: "അഭിജിത്ത് മുഹൂർത്തം", lblRahu: "രാഹു കാലം", lblYama: "യമകണ്ടം", lblGulika: "ഗുളിക കാലം",
+            curTithiLbl: "നിലവിലെ തിഥി", phaseLbl: "ചന്ദ്ര പക്ഷം", curNakshatraLbl: "നിലവിലെ നക്ഷത്രം", algoLbl: "അൽഗോരിതം അവസ്ഥ"
+        },
+        pa: {
+            mainTitle: "ਪੰਚਾਂਗ ਡੈਸ਼ਬੋਰਡ", faqBtn: "ਵਿਗਿਆਨਕ ਸਵਾਲ", themeAuto: "ਆਟੋ ਥੀਮ", themeDark: "ਡਾਰਕ", themeLight: "ਲਾਈਟ",
+            lblSunrise: "ਸੂਰਜ ਚੜ੍ਹਨਾ", lblSunset: "ਸੂਰਜ ਡੁੱਬਣਾ", lblNoon: "ਸਥਾਨਕ ਦੁਪਹਿਰ", hinduCal: "ਹਿੰਦੂ ਕੈਲੰਡਰ",
+            secAuspicious: "ਸ਼ੁਭ ਸਮਾਂ (ਮੁਹੂਰਤ)", secInauspicious: "ਅਸ਼ੁਭ ਸਮਾਂ (ਰਾਹੂ/ਯਮ/ਗੁਲਿਕ)",
+            lblAbijith: "ਅਭਿਜੀਤ ਮੁਹੂਰਤ", lblRahu: "ਰਾਹੂ ਕਾਲ", lblYama: "ਯਮਗੰਡ", lblGulika: "ਗੁਲਿਕ ਕਾਲ",
+            curTithiLbl: "ਮੌਜੂਦਾ ਤਿਥੀ", phaseLbl: "ਚੰਦਰ ਪੱਖ", curNakshatraLbl: "ਮੌਜੂਦਾ ਨਕਸ਼ੱਤਰ", algoLbl: "ਐਲਗੋਰਿਦਮ ਸਥਿਤੀ"
+        }
+    };
+
+    const nakshatraNames = ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"];
+    const tithiNames = ["Prathama", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Amavasya"];
+
+    // Globals for App State
+    let currentLangCode = 'en';
+    let calculatedData = {}; 
+    const today = new Date();
+
+    function setLanguage(lang) {
+        currentLangCode = lang;
+        // Handle RTL for Urdu
+        document.body.style.direction = lang === 'ur' ? 'rtl' : 'ltr';
+        renderUI();
+    }
+
+    // --- 2. THEME & MODAL LOGIC ---
+    function setTheme(val) {
+        if(val==='system') val = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', val);
+    }
+    setTheme('system');
+
+    function toggleModal() {
+        const modal = document.getElementById('faq-modal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // --- 3. CLOCK ENGINE ---
+    function updateClock() {
+        const d = new Date();
+        const s = d.getSeconds() + d.getMilliseconds() / 1000;
+        const m = d.getMinutes() + s / 60;
+        const h = (d.getHours() % 12) + m / 60;
+
+        document.getElementById('hour').style.transform = `rotate(${h * 30}deg)`;
+        document.getElementById('minute').style.transform = `rotate(${m * 6}deg)`;
+        document.getElementById('second').style.transform = `rotate(${s * 6}deg)`;
+        requestAnimationFrame(updateClock);
+    }
+    requestAnimationFrame(updateClock);
+
+    // --- 4. MATH ENGINE (MEEUS ASTROMETRICS) ---
+    const LAT = 28.5355; const LON = 77.3910; const TZ_OFFSET = 5.5; const RAD = Math.PI / 180; const DEG = 180 / Math.PI;
+
+    function calcJulianDate(date) { return (date.getTime() / 86400000) + 2440587.5; }
+
+    function formatHours(decimalHours) {
+        if (isNaN(decimalHours)) return "--:--";
+        let hrs = Math.floor(decimalHours);
+        let mins = Math.floor((decimalHours - hrs) * 60);
+        if (hrs >= 24) hrs -= 24; if (hrs < 0) hrs += 24;
+        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    }
+
+    function generateAstronomicalData() {
+        // 1. Solar Data
+        const jd = calcJulianDate(today);
+        const T = (jd - 2451545.0) / 36525.0;
+
+        let L0 = (280.46646 + T * (36000.76983 + T * 0.0003032)) % 360;
+        let M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+        let C = Math.sin(M * RAD) * (1.914602 - T * 0.004817) + Math.sin(2 * M * RAD) * 0.019993;
+        let trueLong = L0 + C;
+        let sunAppLong = trueLong - 0.00569 - 0.00478 * Math.sin((125.04 - 1934.136 * T) * RAD);
+        let meanObliq = 23 + (26 + 21.448 / 60) / 60;
+        let sunDeclin = Math.asin(Math.sin(meanObliq * RAD) * Math.sin(sunAppLong * RAD)) * DEG;
+        
+        let varY = Math.tan((meanObliq / 2) * RAD) * Math.tan((meanObliq / 2) * RAD);
+        let eqOfTime = 4 * DEG * (varY * Math.sin(2 * L0 * RAD) - 2 * 0.0167 * Math.sin(M * RAD));
+        
+        let haArg = (Math.cos(90.833 * RAD) / (Math.cos(LAT * RAD) * Math.cos(sunDeclin * RAD))) - Math.tan(LAT * RAD) * Math.tan(sunDeclin * RAD);
+        let haSunrise = Math.acos(haArg) * DEG;
+
+        let solarNoonUTC = (720 - 4 * LON - eqOfTime) / 60;
+        
+        calculatedData.sunrise = solarNoonUTC - (haSunrise * 4 / 60) + TZ_OFFSET;
+        calculatedData.sunset = solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET;
+        calculatedData.noon = solarNoonUTC + TZ_OFFSET;
+
+        // 2. Timings (Kaalam & Muhurta)
+        const dayLength = calculatedData.sunset - calculatedData.sunrise;
+        const segment = dayLength / 8;
+        const dayIndex = today.getDay(); // 0=Sun
+        
+        const rRules = [8, 2, 7, 5, 6, 4, 3]; 
+        const yRules = [5, 4, 3, 2, 1, 7, 6]; 
+        const gRules = [7, 6, 5, 4, 3, 2, 1]; 
+
+        calculatedData.rahu = `${formatHours(calculatedData.sunrise + (rRules[dayIndex]-1)*segment)} - ${formatHours(calculatedData.sunrise + rRules[dayIndex]*segment)}`;
+        calculatedData.yama = `${formatHours(calculatedData.sunrise + (yRules[dayIndex]-1)*segment)} - ${formatHours(calculatedData.sunrise + yRules[dayIndex]*segment)}`;
+        calculatedData.gulika = `${formatHours(calculatedData.sunrise + (gRules[dayIndex]-1)*segment)} - ${formatHours(calculatedData.sunrise + gRules[dayIndex]*segment)}`;
+        
+        const muhurta = dayLength / 15;
+        calculatedData.abijith = `${formatHours(calculatedData.noon - muhurta/2)} - ${formatHours(calculatedData.noon + muhurta/2)}`;
+
+        // 3. Lunar Approximation
+        let Lprime = (218.3164477 + 481267.88123421 * T) % 360;
+        let moonLong = Lprime + 6.289 * Math.sin((134.96 + 477198.86 * T) % 360 * RAD); 
+        
+        let diff = moonLong - sunAppLong;
+        if (diff < 0) diff += 360;
+
+        calculatedData.tithiIndex = Math.floor(diff / 12) + 1;
+        calculatedData.nakshatraIndex = Math.floor(moonLong / (13 + 1/3));
+    }
+
+    // --- 5. UI RENDERING ENGINE ---
+    function renderUI() {
+        const dict = i18n[currentLangCode];
+
+        // Apply Static Translations
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            el.innerText = dict[el.getAttribute('data-i18n')];
+        });
+
+        // Locale mapping for native date formatting
+        const intlMap = { 
+            'en': 'en-IN', 'hi': 'hi-IN', 'bn': 'bn-IN', 'mr': 'mr-IN', 
+            'te': 'te-IN', 'ta': 'ta-IN', 'gu': 'gu-IN', 'ur': 'ur-IN', 
+            'kn': 'kn-IN', 'or': 'or-IN', 'ml': 'ml-IN', 'pa': 'pa-IN' 
+        };
+        const localCode = intlMap[currentLangCode];
+
+        document.getElementById('display-year').innerText = today.getFullYear();
+        document.getElementById('display-date').innerText = today.toLocaleDateString(localCode, {month: 'long', day: 'numeric'});
+        document.getElementById('display-day').innerText = today.toLocaleDateString(localCode, {weekday: 'long'});
+
+        // Bind Math Outputs
+        document.getElementById('sunrise-time').innerText = formatHours(calculatedData.sunrise);
+        document.getElementById('noon-time').innerText = formatHours(calculatedData.noon);
+        document.getElementById('sunset-time').innerText = formatHours(calculatedData.sunset);
+
+        document.getElementById('rahu-time').innerText = calculatedData.rahu;
+        document.getElementById('yama-time').innerText = calculatedData.yama;
+        document.getElementById('gulika-time').innerText = calculatedData.gulika;
+        document.getElementById('abijith-time').innerText = calculatedData.abijith;
+
+        // Tithi Output 
+        const tNum = calculatedData.tithiIndex > 15 ? calculatedData.tithiIndex - 15 : calculatedData.tithiIndex;
+        const tName = calculatedData.tithiIndex === 15 ? "Purnima" : (calculatedData.tithiIndex === 30 ? "Amavasya" : tithiNames[tNum-1]);
+        const paksha = calculatedData.tithiIndex <= 15 ? "Shukla Paksha" : "Krishna Paksha";
+
+        document.getElementById('dynamic-tithi').innerHTML = `
+            ${dict.curTithiLbl}: <br><span>${tName.toUpperCase()}</span><br><br>
+            ${dict.phaseLbl}: <br><span>${paksha.toUpperCase()}</span>
+        `;
+
+        document.getElementById('dynamic-nakshatra').innerHTML = `
+            ${dict.curNakshatraLbl}: <br><span>${nakshatraNames[calculatedData.nakshatraIndex].toUpperCase()}</span><br><br>
+            ${dict.algoLbl}: <br><span>APPROX (MEEUS)</span>
+        `;
+    }
+
+    // Initialize Math once, then render
+    generateAstronomicalData();
+    renderUI();
+
+</script>
+
+</body>
+</html>
