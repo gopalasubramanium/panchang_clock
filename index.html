@@ -1,708 +1,1125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>High-Precision Vedic Panchangam</title>
-    <style>
-        /* --- ANTIQUE VEDIC THEME VARIABLES --- */
-        :root {
-            --bg-color: #0d1117;
-            --panel-bg: #161b22;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --text-accent: #d2a85e; 
-            --border-color: #30363d;
-            --clock-bg: radial-gradient(circle, #cca462 0%, #8c6b32 100%);
-            --clock-border: #211810; 
-            --clock-markings: #3d2b1f;
-            --hand-hour: #1a130d;
-            --hand-min: #2b1d14;
-            --hand-sec: #800000; 
-            --shadow: 0 12px 40px rgba(0,0,0,0.8);
-            --modal-bg: rgba(0,0,0,0.85);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vedic Panchangam — High-Precision Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #080b10;
+    --panel: #0f1318;
+    --panel2: #151a22;
+    --accent: #d4944c;
+    --accent2: #e8b86d;
+    --accent-dim: #6b4a26;
+    --text: #e2ddd5;
+    --text2: #8a8478;
+    --text3: #5a564e;
+    --border: #2a261f;
+    --red: #8b2020;
+    --green: #2a6b3a;
+    --shadow: 0 8px 32px rgba(0,0,0,0.6);
+    --clock-face: radial-gradient(circle, #b8863a 0%, #7a5520 60%, #3d2a10 100%);
+    --glow: 0 0 20px rgba(212,148,76,0.15);
+}
+[data-theme="light"] {
+    --bg: #f0e8d8;
+    --panel: #fff9f0;
+    --panel2: #f5edd8;
+    --accent: #9b6830;
+    --accent2: #c48a3c;
+    --accent-dim: #d4b88a;
+    --text: #2a1f14;
+    --text2: #6b5c48;
+    --text3: #a09580;
+    --border: #d5c8b0;
+    --red: #9b3030;
+    --green: #2a6b3a;
+    --shadow: 0 8px 32px rgba(100,70,30,0.12);
+    --clock-face: radial-gradient(circle, #f5e6c8 0%, #dfc28a 60%, #c4a060 100%);
+    --glow: none;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.4s, color 0.4s;
+}
+.app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px clamp(12px, 3vw, 40px);
+}
 
-        [data-theme="light"] {
-            --bg-color: #f4eedd; 
-            --panel-bg: #ffffff;
-            --text-primary: #211810;
-            --text-secondary: #5c4033;
-            --text-accent: #b87333; 
-            --border-color: #d1c5b4;
-            --clock-bg: radial-gradient(circle, #f9f1d8 0%, #dfb875 100%);
-            --clock-border: #4a3525;
-            --shadow: 0 10px 30px rgba(92, 64, 51, 0.15);
-            --modal-bg: rgba(244, 238, 221, 0.9);
-        }
+/* --- HEADER --- */
+.header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    padding-bottom: 20px; margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+.header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ctrl-btn, .ctrl-select {
+    font-family: 'Cinzel', serif;
+    font-size: 11px; font-weight: 700;
+    background: var(--panel2); color: var(--text2);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 7px 12px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 1px;
+    transition: all 0.2s;
+}
+.ctrl-btn:hover, .ctrl-select:hover { border-color: var(--accent); color: var(--accent); }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; transition: background-color 0.3s, color 0.3s; }
-        body { background: var(--bg-color); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; align-items: stretch; padding: 2vw; }
+/* --- DATE/LOCATION BAR --- */
+.selector-bar {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 28px;
+    padding: 16px 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    align-items: flex-end;
+}
+.sel-group { display: flex; flex-direction: column; gap: 4px; }
+.sel-group label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--text3);
+    font-weight: 700;
+}
+.sel-group input, .sel-group select {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; font-weight: 600;
+    background: var(--panel2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 7px 10px;
+}
+.sel-group input:focus, .sel-group select:focus { outline: none; border-color: var(--accent); }
+.apply-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 12px; font-weight: 700;
+    background: var(--accent); color: #0f0c08;
+    border: none; border-radius: 4px;
+    padding: 9px 18px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 1px;
+    transition: all 0.2s;
+}
+.apply-btn:hover { background: var(--accent2); }
 
-        .panchang-wrapper {
-            background: var(--panel-bg); width: 100%; max-width: 1200px; border-radius: 16px; padding: clamp(20px, 4vw, 40px);
-            box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; border: 1px solid var(--border-color);
-        }
+/* --- MAIN GRID --- */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+@media (min-width: 920px) {
+    .main-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .main-grid .clock-section { order: 0; grid-column: 2; }
+    .main-grid .left-panel { order: -1; }
+}
 
-        .top-controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 25px; width: 100%; }
-        button, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--text-accent); padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; font-family: inherit;}
-        button:hover, select:hover { background: var(--text-accent); color: var(--bg-color); }
+/* --- PANELS --- */
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: var(--shadow);
+}
 
-        h1 { color: var(--text-accent); text-align: center; font-size: clamp(26px, 4vw, 36px); margin-bottom: 35px; text-transform: uppercase; letter-spacing: 2px;}
+/* --- LEFT / RIGHT INFO --- */
+.info-card {
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+.info-card:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.info-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--text3);
+    margin-bottom: 6px; font-weight: 700;
+}
+.info-val {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(18px, 3vw, 26px);
+    color: var(--accent);
+    font-weight: 700;
+    line-height: 1.2;
+}
+.info-sub {
+    font-size: 13px; color: var(--text2);
+    margin-top: 4px; font-style: italic;
+}
+.info-detail {
+    font-size: 13px; color: var(--text2);
+    margin-top: 8px; line-height: 1.7;
+}
+.info-detail strong { color: var(--accent); font-weight: 600; font-style: normal; }
 
-        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 40px; flex-grow: 1; }
-        @media (min-width: 900px) { .grid-layout { grid-template-columns: 1fr 1.2fr 1fr; align-items: center; } }
+/* --- MOON PHASE --- */
+.moon-phase-container {
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 12px;
+}
+.moon-svg { flex-shrink: 0; }
+.moon-info { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.moon-info strong { color: var(--accent); }
 
-        .info-panel { display: flex; flex-direction: column; gap: 25px; }
-        .data-block { font-size: clamp(14px, 2vw, 16px); }
-        .data-block.left { text-align: left; border-left: 4px solid var(--text-accent); padding-left: 15px; }
-        .data-block.right { text-align: right; border-right: 4px solid var(--text-accent); padding-right: 15px; }
-        
-        .highlight-text { color: var(--text-accent); font-size: clamp(20px, 3vw, 28px); font-weight: bold; margin: 8px 0; }
-        .sub-text { font-size: 12px; margin-top:5px; color: var(--text-secondary); letter-spacing: 1px;}
-        
-        .astro-data { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; line-height: 1.8; font-weight: 600; word-break: break-word;}
-        .astro-data span { color: var(--text-accent); font-size: 15px;}
+/* --- CLOCK --- */
+.clock-section { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.clock-wrap {
+    width: clamp(220px, 32vw, 300px); aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--clock-face);
+    border: 8px solid #1a1008;
+    position: relative;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 12px 24px rgba(0,0,0,0.4), var(--glow);
+}
+[data-theme="light"] .clock-wrap { border-color: #5a4020; box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 8px 20px rgba(100,70,30,0.15); }
+.clock-ticks { position: absolute; inset: 0; border-radius: 50%; }
+.clock-num {
+    position: absolute; font-family: 'Cinzel', serif;
+    font-size: clamp(14px, 2vw, 20px); font-weight: 900;
+    color: #1a1008; text-shadow: 0 1px 1px rgba(255,255,255,0.2);
+}
+.hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: 4px 4px 0 0; z-index: 5; }
+.hand-h { width: 6px; height: 26%; background: #1a1008; margin-left: -3px; }
+.hand-m { width: 4px; height: 38%; background: #2a1e10; margin-left: -2px; }
+.hand-s { width: 2px; height: 44%; background: var(--red); margin-left: -1px; z-index: 6; }
+.clock-center {
+    position: absolute; top: 50%; left: 50%;
+    width: 14px; height: 14px;
+    background: #1a1008; border-radius: 50%;
+    transform: translate(-50%, -50%); z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.digital {
+    position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
+    font-family: 'Cinzel', serif; font-size: clamp(13px, 1.8vw, 16px);
+    font-weight: 900; color: #1a1008;
+    background: rgba(255,255,255,0.45);
+    padding: 2px 10px; border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.15);
+    z-index: 7; letter-spacing: 1px;
+}
+.sun-row {
+    display: flex; justify-content: space-between;
+    width: 100%; max-width: 340px;
+    font-family: 'Cinzel', serif; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text3);
+}
+.sun-row div { text-align: center; }
+.sun-row .sun-val { color: var(--accent); font-size: 15px; font-weight: 700; margin-top: 4px; display: block; }
 
-        .clock-container { display: flex; flex-direction: column; align-items: center; }
-        .clock { 
-            width: clamp(220px, 35vw, 320px); aspect-ratio: 1; border-radius: 50%; border: 10px solid var(--clock-border); 
-            background: var(--clock-bg); position: relative; box-shadow: inset 0 0 25px rgba(0,0,0,0.7), 0 15px 25px rgba(0,0,0,0.4);
-        }
-        [data-theme="light"] .clock { box-shadow: inset 0 0 20px rgba(92,64,51,0.4), 0 15px 25px rgba(92,64,51,0.2); }
-        .clock-markings { position: absolute; width: 100%; height: 100%; background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 28.5deg, var(--clock-markings) 28.5deg, var(--clock-markings) 30deg); opacity: 0.5; border-radius: 50%; }
-        
-        .digital-clock {
-            position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%);
-            font-family: monospace; font-size: clamp(14px, 2vw, 18px); font-weight: 900;
-            color: #211810; background: rgba(255, 255, 255, 0.5);
-            padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); z-index: 4; letter-spacing: 1px;
-        }
+/* --- TIMINGS GRID --- */
+.timings-section {
+    margin-top: 28px;
+    display: grid; grid-template-columns: 1fr;
+    gap: 20px;
+}
+@media (min-width: 700px) { .timings-section { grid-template-columns: 1fr 1fr; } }
 
-        .center-dot { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; background: var(--clock-border); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.6); }
-        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 5px 5px 0 0; z-index: 5;}
-        .hour-hand { width: 8px; height: 28%; background: var(--hand-hour); margin-left: -4px; }
-        .min-hand { width: 5px; height: 40%; background: var(--hand-min); margin-left: -2.5px; }
-        .sec-hand { width: 2px; height: 46%; background: var(--hand-sec); margin-left: -1px; z-index: 6; }
-        
-        .sun-times { display: flex; justify-content: space-between; width: 105%; margin-top: 25px; font-size: 12px; font-weight: bold; color: var(--text-secondary); text-align: center; }
-        .sun-times span { display: block; color: var(--text-accent); font-weight: bold; margin-top: 6px; font-size: 14px;}
+.timing-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+.timing-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--text); text-align: center;
+    padding-bottom: 14px; margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+.timing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 16px; text-align: center;
+}
+.tg-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text3); margin-bottom: 6px;
+}
+.tg-val {
+    font-family: 'Cinzel', serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent);
+}
+.tg-val.inauspicious { color: var(--red); }
+.tg-val.auspicious { color: var(--green); }
 
-        .timings-wrapper { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 45px; }
-        @media (min-width: 768px) { .timings-wrapper { grid-template-columns: 1fr 2fr; } }
-        .timing-box { background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
-        [data-theme="light"] .timing-box { background: rgba(0,0,0,0.03); }
-        .section-title { text-align: center; font-size: 15px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; color: var(--text-primary);}
-        .timings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; text-align: center; font-size: 13px; }
-        .timing-label { font-weight: bold; color: var(--text-secondary); margin-bottom: 8px; }
-        .timing-val { color: var(--text-accent); font-size: 15px; font-weight: bold;}
+/* --- FAQ MODAL --- */
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+    display: none; justify-content: center; align-items: center;
+    z-index: 1000; padding: 20px;
+}
+.modal-content {
+    background: var(--panel); border: 1px solid var(--accent-dim);
+    border-radius: 10px; padding: 32px;
+    max-width: 750px; width: 100%; max-height: 85vh; overflow-y: auto;
+    box-shadow: var(--shadow);
+}
+.modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 22px;
+}
+.modal-head h2 { font-family: 'Cinzel', serif; color: var(--accent); font-size: 20px; }
+.modal-close {
+    background: none; border: none; color: var(--accent);
+    font-size: 28px; cursor: pointer; line-height: 1;
+}
+.faq-q { font-family: 'Cinzel', serif; font-size: 16px; color: var(--accent); margin-bottom: 8px; font-weight: 700; }
+.faq-a { font-size: 14px; color: var(--text2); line-height: 1.8; margin-bottom: 24px; }
 
-        /* Modal FAQ */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;}
-        .modal-content { background: var(--panel-bg); width: 100%; max-width: 800px; max-height: 85vh; overflow-y: auto; border-radius: 8px; padding: 35px; box-shadow: var(--shadow); border: 1px solid var(--text-accent); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; position: sticky; top: -35px; background: var(--panel-bg); z-index: 10;}
-        .close-btn { background: none; border: none; font-size: 32px; color: var(--text-accent); cursor: pointer; padding: 0; line-height: 1;}
-        .faq-item { margin-bottom: 30px; }
-        .faq-q { color: var(--text-accent); font-weight: bold; font-size: 18px; margin-bottom: 10px; border-left: 3px solid var(--text-accent); padding-left: 12px;}
-        .faq-a { color: var(--text-secondary); font-size: 15px; line-height: 1.8; text-align: justify; padding-left: 15px;}
-        
-    </style>
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    .selector-bar { flex-direction: column; }
+    .sel-group { width: 100%; }
+    .sel-group input, .sel-group select { width: 100%; }
+}
+</style>
 </head>
 <body>
 
-<div class="panchang-wrapper">
-    <div class="top-controls">
-        <select id="lang-select" onchange="setLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="hi">हिन्दी (Hindi)</option>
-            <option value="bn">বাংলা (Bengali)</option>
-            <option value="mr">मराठी (Marathi)</option>
-            <option value="te">తెలుగు (Telugu)</option>
-            <option value="ta">தமிழ் (Tamil)</option>
-            <option value="gu">ગુજરાતી (Gujarati)</option>
-            <option value="ur">اردو (Urdu)</option>
-            <option value="kn">ಕನ್ನಡ (Kannada)</option>
-            <option value="or">ଓଡ଼ିଆ (Odia)</option>
-            <option value="ml">മലയാളം (Malayalam)</option>
-            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
-        </select>
-        <select id="theme-select" onchange="setTheme(this.value)">
-            <option value="system" data-i18n="themeAuto">Auto Theme</option>
-            <option value="dark" data-i18n="themeDark">Dark Theme</option>
-            <option value="light" data-i18n="themeLight">Light Theme</option>
-        </select>
-        <button onclick="toggleModal()" data-i18n="faqBtn">Scientific FAQ</button>
-    </div>
-
-    <h1 data-i18n="mainTitle">Panchangam Dashboard</h1>
-
-    <div class="grid-layout">
-        <div class="info-panel">
-            <div class="data-block left">
-                <div id="display-year">YYYY</div>
-                <div class="highlight-text" id="display-date">DD MMM</div>
-                <div id="display-day">Day</div>
-                <div class="sub-text" id="display-coords">LAT: 28.53° N | LON: 77.39° E</div>
-            </div>
-            <div class="astro-data left" id="dynamic-nakshatra">Computing...</div>
-        </div>
-
-        <div class="clock-container">
-            <div class="clock">
-                <div class="clock-markings"></div>
-                <div class="digital-clock" id="digital-clock">00:00:00</div>
-                <div class="center-dot"></div>
-                <div class="hand hour-hand" id="hour"></div>
-                <div class="hand min-hand" id="minute"></div>
-                <div class="hand sec-hand" id="second"></div>
-            </div>
-            <div class="sun-times">
-                <div><span data-i18n="lblSunrise" style="font-weight:normal; color:var(--text-secondary); font-size:12px;">SUNRISE</span> <span id="sunrise-time">--:--</span></div>
-                <div><span data-i18n="lblNoon" style="font-weight:normal; color:var(--text-secondary); font-size:12px;">LOCAL NOON</span> <span id="noon-time">--:--</span></div>
-                <div><span data-i18n="lblSunset" style="font-weight:normal; color:var(--text-secondary); font-size:12px;">SUNSET</span> <span id="sunset-time">--:--</span></div>
-            </div>
-        </div>
-
-        <div class="info-panel">
-            <div class="data-block right">
-                <div data-i18n="vikramSamvat">Vikram Samvat</div>
-                <div class="highlight-text" id="display-vs">2083</div>
-                <div data-i18n="hinduCal" class="sub-text" style="font-size: 14px;">Hindu Calendar</div>
-            </div>
-            <div class="astro-data right" id="dynamic-tithi" style="text-align: right;">Computing...</div>
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <h1 data-i18n="mainTitle">Panchangam Dashboard</h1>
+        <div class="controls">
+            <select class="ctrl-select" id="lang-select" onchange="setLang(this.value)">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="bn">বাংলা</option>
+                <option value="mr">मराठी</option>
+                <option value="te">తెలుగు</option>
+                <option value="ta">தமிழ்</option>
+                <option value="gu">ગુજરાતી</option>
+                <option value="kn">ಕನ್ನಡ</option>
+                <option value="ml">മലയാളം</option>
+                <option value="pa">ਪੰਜਾਬੀ</option>
+                <option value="or">ଓଡ଼ିଆ</option>
+                <option value="ur">اردو</option>
+            </select>
+            <select class="ctrl-select" id="theme-select" onchange="setTheme(this.value)">
+                <option value="system">Auto</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+            </select>
+            <button class="ctrl-btn" onclick="toggleFaq()">FAQ</button>
         </div>
     </div>
 
-    <div class="timings-wrapper">
-        <div class="timing-box">
-            <div class="section-title" data-i18n="secAuspicious">Auspicious Segments (Muhurta)</div>
-            <div class="timings-grid" style="grid-template-columns: 1fr;">
+    <!-- DATE / LOCATION SELECTOR -->
+    <div class="selector-bar">
+        <div class="sel-group">
+            <label>Date</label>
+            <input type="date" id="sel-date">
+        </div>
+        <div class="sel-group">
+            <label>Time</label>
+            <input type="time" id="sel-time" step="1">
+        </div>
+        <div class="sel-group">
+            <label>Location</label>
+            <select id="sel-location" onchange="onLocationPreset(this.value)">
+                <option value="28.5355,77.3910">Noida / NCR</option>
+                <option value="28.6139,77.2090">New Delhi</option>
+                <option value="19.0760,72.8777">Mumbai</option>
+                <option value="13.0827,80.2707">Chennai</option>
+                <option value="12.9716,77.5946">Bengaluru</option>
+                <option value="22.5726,88.3639">Kolkata</option>
+                <option value="17.3850,78.4867">Hyderabad</option>
+                <option value="23.0225,72.5714">Ahmedabad</option>
+                <option value="26.9124,75.7873">Jaipur</option>
+                <option value="21.1702,72.8311">Surat</option>
+                <option value="18.5204,73.8567">Pune</option>
+                <option value="26.8467,80.9462">Lucknow</option>
+                <option value="11.0168,76.9558">Coimbatore</option>
+                <option value="25.3176,82.9739">Varanasi</option>
+                <option value="30.7333,76.7794">Chandigarh</option>
+                <option value="9.9312,76.2673">Kochi</option>
+                <option value="15.3173,75.7139">Hubli-Dharwad</option>
+                <option value="custom">Custom Coordinates…</option>
+            </select>
+        </div>
+        <div class="sel-group" id="custom-lat-group" style="display:none;">
+            <label>Latitude</label>
+            <input type="number" id="sel-lat" step="0.0001" placeholder="28.5355">
+        </div>
+        <div class="sel-group" id="custom-lon-group" style="display:none;">
+            <label>Longitude</label>
+            <input type="number" id="sel-lon" step="0.0001" placeholder="77.3910">
+        </div>
+        <div class="sel-group">
+            <label>Timezone</label>
+            <select id="sel-tz">
+                <option value="5.5" selected>IST (+5:30)</option>
+                <option value="5.75">NPT (+5:45)</option>
+                <option value="6">BST (+6:00)</option>
+                <option value="0">UTC</option>
+                <option value="1">CET (+1)</option>
+                <option value="-5">EST (-5)</option>
+                <option value="-8">PST (-8)</option>
+            </select>
+        </div>
+        <button class="apply-btn" onclick="applySelections()">Apply</button>
+        <button class="ctrl-btn" onclick="resetToNow()" style="padding:9px 14px;">Now ↻</button>
+    </div>
+
+    <!-- MAIN 3-COLUMN -->
+    <div class="main-grid">
+        <!-- LEFT -->
+        <div class="panel left-panel">
+            <div class="info-card">
+                <div class="info-label" id="lbl-date">Date</div>
+                <div class="info-val" id="disp-date">—</div>
+                <div class="info-sub" id="disp-weekday">—</div>
+                <div class="info-sub" id="disp-coords" style="font-style:normal; font-size:11px; letter-spacing:1px; margin-top:8px;">—</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label" id="lbl-masa">Hindu Month (Māsa)</div>
+                <div class="info-val" id="disp-masa">—</div>
+                <div class="info-sub" id="disp-ritu">—</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label" id="lbl-nakshatra">Nakshatra</div>
+                <div class="info-val" id="disp-nakshatra">—</div>
+                <div class="info-detail" id="disp-nakshatra-detail">—</div>
+            </div>
+        </div>
+
+        <!-- CLOCK -->
+        <div class="panel clock-section">
+            <div class="clock-wrap" id="clock">
+                <div class="clock-ticks" id="clock-ticks"></div>
+                <div class="digital" id="digital-clock">--:--:--</div>
+                <div class="clock-center"></div>
+                <div class="hand hand-h" id="hand-h"></div>
+                <div class="hand hand-m" id="hand-m"></div>
+                <div class="hand hand-s" id="hand-s"></div>
+            </div>
+            <div class="sun-row">
+                <div><span id="lbl-sunrise">Sunrise</span><span class="sun-val" id="v-sunrise">--:--</span></div>
+                <div><span id="lbl-noon">Noon</span><span class="sun-val" id="v-noon">--:--</span></div>
+                <div><span id="lbl-sunset">Sunset</span><span class="sun-val" id="v-sunset">--:--</span></div>
+            </div>
+            <!-- Moon Phase -->
+            <div class="moon-phase-container">
+                <svg class="moon-svg" width="64" height="64" viewBox="0 0 64 64" id="moon-svg"></svg>
+                <div class="moon-info" id="moon-info">—</div>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="panel">
+            <div class="info-card">
+                <div class="info-label" id="lbl-samvat">Vikram Samvat</div>
+                <div class="info-val" id="disp-vs">—</div>
+                <div class="info-sub" id="disp-samvat-name">—</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label" id="lbl-tithi">Tithi</div>
+                <div class="info-val" id="disp-tithi">—</div>
+                <div class="info-detail" id="disp-tithi-detail">—</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label" id="lbl-paksha">Paksha</div>
+                <div class="info-val" id="disp-paksha">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMINGS -->
+    <div class="timings-section">
+        <div class="timing-panel">
+            <div class="timing-title" id="tt-auspicious">Auspicious Timings</div>
+            <div class="timing-grid">
                 <div>
-                    <div class="timing-label" data-i18n="lblAbijith">ABIJITH MUHURTH</div>
-                    <div class="timing-val" id="abijith-time">--:--</div>
+                    <div class="tg-label">Abhijit Muhurta</div>
+                    <div class="tg-val auspicious" id="v-abhijit">--:--</div>
+                </div>
+                <div>
+                    <div class="tg-label">Amrit Kaalam</div>
+                    <div class="tg-val auspicious" id="v-amrit">--:--</div>
                 </div>
             </div>
         </div>
-
-        <div class="timing-box">
-            <div class="section-title" data-i18n="secInauspicious">Inauspicious Segments (Choghadiya)</div>
-            <div class="timings-grid">
-                <div><div class="timing-label" data-i18n="lblRahu">RAHU KAALAM</div><div class="timing-val" id="rahu-time">--:--</div></div>
-                <div><div class="timing-label" data-i18n="lblYama">YEMAGANTAM</div><div class="timing-val" id="yama-time">--:--</div></div>
-                <div><div class="timing-label" data-i18n="lblGulika">GULIKA KAALAM</div><div class="timing-val" id="gulika-time">--:--</div></div>
+        <div class="timing-panel">
+            <div class="timing-title" id="tt-inauspicious">Inauspicious Timings</div>
+            <div class="timing-grid">
+                <div>
+                    <div class="tg-label">Rahu Kaalam</div>
+                    <div class="tg-val inauspicious" id="v-rahu">--:--</div>
+                </div>
+                <div>
+                    <div class="tg-label">Yemagantam</div>
+                    <div class="tg-val inauspicious" id="v-yama">--:--</div>
+                </div>
+                <div>
+                    <div class="tg-label">Gulika Kaalam</div>
+                    <div class="tg-val inauspicious" id="v-gulika">--:--</div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- FAQ MODAL -->
 <div class="modal-overlay" id="faq-modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2 style="color: var(--text-primary);" data-i18n="faqTitle">Vedic & Astrometric Computations</h2>
-            <button class="close-btn" onclick="toggleModal()">&times;</button>
+        <div class="modal-head">
+            <h2>Vedic & Astrometric Computations</h2>
+            <button class="modal-close" onclick="toggleFaq()">&times;</button>
         </div>
-        <div class="faq-item">
-            <div class="faq-q" data-i18n="faq1Q">1. Drik Siddhanta & Zero Dependencies</div>
-            <div class="faq-a" data-i18n="faq1A">This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using algorithms by Jean Meeus, with full Equation of Time terms and multi-term lunar perturbations. Lahiri Ayanamsa is applied for sidereal Nakshatra positions.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" data-i18n="faq2Q">2. Tithi & Nakshatra Mechanics</div>
-            <div class="faq-a" data-i18n="faq2A">A Tithi advances exactly when the angular distance between the Sun and Moon increases by 12 degrees. A Nakshatra changes as the sidereal Moon passes through 13°20' segments of the zodiac. The Moon's longitude includes perturbations for evection, variation, annual equation, and other major terms.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" data-i18n="faq3Q">3. Dinamana (Daylight) & Kaalams</div>
-            <div class="faq-a" data-i18n="faq3A">Daylight (Dinamana) is strictly the span between local Sunrise and Sunset. This span is divided into 8 mathematical segments to accurately map Rahu, Yama, and Gulika Kaalams based on the weekday.</div>
-        </div>
+        <div class="faq-q">1. Drik Siddhanta — Zero Dependencies</div>
+        <div class="faq-a">All calculations are performed entirely client-side using Jean Meeus algorithms with 22-term lunar perturbations and Lahiri Ayanamsa for sidereal positions. No external APIs are called.</div>
+        <div class="faq-q">2. Tithi & Nakshatra End Times</div>
+        <div class="faq-a">Tithi and Nakshatra end times are computed by iteratively scanning forward from the current moment to find when the relevant angular threshold is crossed. The Moon's longitude uses major perturbation terms including evection, variation, and annual equation.</div>
+        <div class="faq-q">3. Amrit Kaalam</div>
+        <div class="faq-a">Amrit Kaalam is computed from the Choghadiya system. Each day/night is divided into 8 equal segments, and the segment ruled by the Moon (Amrit) is identified based on the weekday.</div>
+        <div class="faq-q">4. Dinamana & Kaalams</div>
+        <div class="faq-a">Daylight (Dinamana) is the span between Sunrise and Sunset. This is divided into 8 segments for Rahu Kaalam, Yama Gantam, and Gulika Kaalam mapping by weekday.</div>
     </div>
 </div>
 
 <script>
-    // --- 1. UNIVERSAL NUMBER TRANSLATION ENGINE ---
-    const localDigits = {
-        en: ['0','1','2','3','4','5','6','7','8','9'],
-        hi: ['०','१','२','३','४','५','६','७','८','९'],
-        mr: ['०','१','२','३','४','५','६','७','८','९'],
-        bn: ['০','১','২','৩','৪','৫','৬','৭','৮','৯'],
-        gu: ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'],
-        ta: ['௦','௧','௨','௩','௪','௫','௬','௭','௮','௯'],
-        te: ['౦','౧','౨','౩','౪','౫','౬','౭','౮','౯'],
-        kn: ['೦','೧','೨','೩','೪','೫','೬','೭','೮','೯'],
-        or: ['୦','୧','୨','୩','୪','୫','୬','୭','୮','୯'],
-        ml: ['൦','൧','൨','൩','൪','൫','൬','൭','൮','൯'],
-        pa: ['੦','੧','੨','੩','੪','੫','੬','੭','੮','੯'],
-        ur: ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹']
-    };
+// ============================================================
+// CONSTANTS
+// ============================================================
+const RAD = Math.PI / 180, DEG = 180 / Math.PI;
+function norm(a) { a = a % 360; return a < 0 ? a + 360 : a; }
 
-    function tNum(str, lang) {
-        if (!str) return "";
-        if (!localDigits[lang] || lang === 'en') return str.toString();
-        return str.toString().replace(/[0-9]/g, match => localDigits[lang][match]);
-    }
+// ============================================================
+// STATE
+// ============================================================
+let S = {
+    lat: 28.5355, lon: 77.3910, tz: 5.5,
+    date: null, // Date object in local tz
+    lang: 'en',
+    liveMode: true
+};
+let D = {}; // computed data
 
-    // --- 2. FULL LOCALIZATION DICTIONARY (ALL 12 LANGUAGES) ---
-    const i18n = {
-        en: {
-            mainTitle: "Panchangam Dashboard", faqBtn: "Scientific FAQ", themeAuto: "Auto Theme", themeDark: "Dark Theme", themeLight: "Light Theme",
-            lblSunrise: "SUNRISE", lblSunset: "SUNSET", lblNoon: "LOCAL NOON", hinduCal: "Hindu Calendar", vikramSamvat: "Vikram Samvat",
-            secAuspicious: "Auspicious Segments (Muhurta)", secInauspicious: "Inauspicious Segments (Choghadiya)",
-            lblAbijith: "ABIJITH MUHURTH", lblRahu: "RAHU KAALAM", lblYama: "YEMAGANTAM", lblGulika: "GULIKA KAALAM",
-            curTithiLbl: "CURRENT TITHI", phaseLbl: "LUNAR PHASE", curNakshatraLbl: "CURRENT NAKSHATRA", algoLbl: "ALGORITHMIC STATE", approxAlgo: "MEEUS + LAHIRI AYANAMSA",
-            faqTitle: "Vedic & Astrometric Computations",
-            faq1Q: "1. Drik Siddhanta & Dependencies", faq1A: "This dashboard relies on zero external APIs. It calculates precise orbital mechanics entirely client-side using full Meeus algorithms with Lahiri Ayanamsa.",
-            faq2Q: "2. Tithi & Nakshatra Mechanics", faq2A: "A Tithi advances when the angular distance between Sun and Moon increases by 12 degrees. Nakshatras use sidereal Moon longitude with multi-term perturbations.",
-            faq3Q: "3. Dinamana & Kaalams", faq3A: "Daylight is strictly the span between local Sunrise and Sunset, divided into 8 mathematical segments.",
-            paksha: ["Shukla Paksha", "Krishna Paksha"],
-            tithis: ["Prathama", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Amavasya"],
-            nakshatras: ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"],
-            coordStr: "LAT: 28.53° N | LON: 77.39° E"
-        },
-        hi: {
-            mainTitle: "पंचांग डैशबोर्ड", faqBtn: "वैज्ञानिक प्रश्नोत्तर", themeAuto: "ऑटो थीम", themeDark: "डार्क थीम", themeLight: "लाइट थीम",
-            lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानीय दोपहर", hinduCal: "हिन्दू पंचांग", vikramSamvat: "विक्रम संवत",
-            secAuspicious: "शुभ समय (मुहूर्त)", secInauspicious: "अशुभ समय (चौघड़िया)",
-            lblAbijith: "अभिजीत मुहूर्त", lblRahu: "राहु काल", lblYama: "यमगंड", lblGulika: "गुलिक काल",
-            curTithiLbl: "वर्तमान तिथि", phaseLbl: "चन्द्र पक्ष", curNakshatraLbl: "वर्तमान नक्षत्र", algoLbl: "एल्गोरिथ्म स्थिति", approxAlgo: "मीयस + लाहिरी अयनांश",
-            faqTitle: "वैदिक एवं खगोलीय गणनाएँ", faq1Q: "१. दृक सिद्धान्त", faq1A: "यह टूल किसी भी बाहरी एपीआई पर निर्भर नहीं है।", faq2Q: "२. तिथि और नक्षत्र", faq2A: "तिथि तब बदलती है जब सूर्य और चंद्रमा के बीच की कोणीय दूरी १२ डिग्री बढ़ जाती है।", faq3Q: "३. दिनमान और काल", faq3A: "दिनमान को ८ समान गणितीय भागों में बांटा जाता है।",
-            paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
-            tithis: ["प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "अमावस्या"],
-            nakshatras: ["अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशिरा", "आर्द्रा", "पुनर्वसु", "पुष्य", "आश्लेषा", "मघा", "पूर्वा फाल्गुनी", "उत्तरा फाल्गुनी", "हस्त", "चित्रा", "स्वाती", "विशाखा", "अनुराधा", "ज्येष्ठा", "मूल", "पूर्वाषाढा", "उत्तराषाढा", "श्रवण", "धनिष्ठा", "शतभिषा", "पूर्वा भाद्रपद", "उत्तरा भाद्रपद", "रेवती"],
-            coordStr: "अक्षांश: 28.53° N | देशांतर: 77.39° E"
-        },
-        bn: {
-            mainTitle: "পঞ্চাঙ্গ ড্যাশবোর্ড", faqBtn: "বৈজ্ঞানিক FAQ", themeAuto: "অটো থিম", themeDark: "ডার্ক থিম", themeLight: "লাইট থিম",
-            lblSunrise: "সূর্যোদয়", lblSunset: "সূর্যাস্ত", lblNoon: "স্থানীয় মধ্যাহ্ন", hinduCal: "হিন্দু পঞ্জিকা", vikramSamvat: "বিক্রম সংবত",
-            secAuspicious: "শুভ সময় (মুহূর্ত)", secInauspicious: "অশুভ সময় (চৌঘড়িয়া)",
-            lblAbijith: "অভিজিৎ মুহূর্ত", lblRahu: "রাহু কাল", lblYama: "যমগণ্ড", lblGulika: "গুলিক কাল",
-            curTithiLbl: "বর্তমান তিথি", phaseLbl: "চন্দ্র পক্ষ", curNakshatraLbl: "বর্তমান নক্ষত্র", algoLbl: "অ্যালগরিদম স্থিতি", approxAlgo: "মীয়ুস + লাহিরী অয়নাংশ",
-            faqTitle: "বৈদিক এবং জ্যোতির্বিদ্যা গণনা", faq1Q: "১. দৃক সিদ্ধান্ত", faq1A: "এই ড্যাশবোর্ডটি কোনো বাহ্যিক API এর উপর নির্ভর করে না।", faq2Q: "২. তিথি ও নক্ষত্র", faq2A: "সূর্য এবং চন্দ্রের মধ্যে কৌণিক দূরত্ব ১২ ডিগ্রি বৃদ্ধি পেলে তিথি পরিবর্তিত হয়।", faq3Q: "৩. দিনমান ও কাল", faq3A: "দিনমানকে ৮টি গাণিতিক অংশে ভাগ করে রাহু কাল নির্ধারণ করা হয়।",
-            paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
-            tithis: ["প্রথমা", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "অমাবস্যা"],
-            nakshatras: ["অশ্বিনী", "ভরণী", "কৃত্তিকা", "রোহিণী", "মৃগশিরা", "আর্দ্রা", "পুনর্বসু", "পুষ্যা", "অশ্লেষা", "মঘা", "পূর্ব ফাল্গুনী", "উত্তর ফাল্গুনী", "হস্ত", "চিত্রা", "স্বাতী", "বিশাখা", "অনুরাধা", "জ্যেষ্ঠা", "মূলা", "পূর্বাষাঢ়া", "উত্তরাষাঢ়া", "শ্রবণা", "ধনিষ্ঠা", "শতভিষা", "পূর্ব ভাদ্রপদ", "উত্তর ভাদ্রপদ", "রেবতী"],
-            coordStr: "অক্ষাংশ: 28.53° N | দ্রাঘিমাংশ: 77.39° E"
-        },
-        mr: {
-            mainTitle: "पंचांग डॅशबोर्ड", faqBtn: "वैज्ञानिक FAQ", themeAuto: "ऑटो थीम", themeDark: "डार्क थीम", themeLight: "लाईट थीम",
-            lblSunrise: "सूर्योदय", lblSunset: "सूर्यास्त", lblNoon: "स्थानिक दुपार", hinduCal: "हिंदू दिनदर्शिका", vikramSamvat: "विक्रम संवत",
-            secAuspicious: "शुभ वेळ (मुहूर्त)", secInauspicious: "अशुभ वेळ (चौघडिया)",
-            lblAbijith: "अभिजित मुहूर्त", lblRahu: "राहु काळ", lblYama: "यमगंड", lblGulika: "गुलिक काळ",
-            curTithiLbl: "चालू तिथी", phaseLbl: "चंद्र पक्ष", curNakshatraLbl: "चालू नक्षत्र", algoLbl: "अल्गोरिदम स्थिती", approxAlgo: "मीयस + लाहिरी अयनांश",
-            faqTitle: "वैदिक आणि खगोलीय गणना", faq1Q: "१. दृक सिद्धान्त", faq1A: "हे डॅशबोर्ड कोणत्याही बाह्य API वर अवलंबून नाही.", faq2Q: "२. तिथी आणि नक्षत्र", faq2A: "सूर्य आणि चंद्रामधील कोनीय अंतर १२ अंश वाढल्यावर तिथी बदलते.", faq3Q: "३. दिनमान आणि काळ", faq3A: "दिनमानाला ८ गणितीय भागांमध्ये विभागून राहु काळ निश्चित केला जातो.",
-            paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
-            tithis: ["प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "अमावस्या"],
-            nakshatras: ["अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशीर्ष", "आर्द्रा", "पुनर्वसू", "पुष्य", "आश्लेषा", "मघा", "पूर्वा फाल्गुनी", "उत्तरा फाल्गुनी", "हस्त", "चित्रा", "स्वाती", "विशाखा", "अनुराधा", "ज्येष्ठा", "मूळ", "पूर्वाषाढा", "उत्तराषाढा", "श्रवण", "धनिष्ठा", "शततारका", "पूर्वा भाद्रपदा", "उत्तरा भाद्रपदा", "रेवती"],
-            coordStr: "अक्षांश: 28.53° N | रेखांश: 77.39° E"
-        },
-        te: {
-            mainTitle: "పంచాంగం డాష్‌బోర్డ్", faqBtn: "శాస్త్రీయ FAQ", themeAuto: "ఆటో థీమ్", themeDark: "డార్క్ థీమ్", themeLight: "లైట్ థీమ్",
-            lblSunrise: "సూర్యోదయం", lblSunset: "సూర్యాస్తమయం", lblNoon: "మధ్యాహ్నం", hinduCal: "హిందూ క్యాలెండర్", vikramSamvat: "విక్రమ సంవత్సరం",
-            secAuspicious: "శుభ సమయం", secInauspicious: "అశుభ సమయం",
-            lblAbijith: "అభిజిత్ ముహూర్తం", lblRahu: "రాహు కాలం", lblYama: "యమగండం", lblGulika: "గుళిక కాలం",
-            curTithiLbl: "ప్రస్తుత తిథి", phaseLbl: "చంద్ర దశ", curNakshatraLbl: "ప్రస్తుత నక్షత్రం", algoLbl: "అల్గారిథమ్ స్థితి", approxAlgo: "మీయస్ + లాహిరి అయనాంశ",
-            faqTitle: "వేద & ఖగోళ గణనలు", faq1Q: "1. దృక్ సిద్ధాంతం", faq1A: "ఈ డ్యాష్‌బోర్డ్ ఏ బాహ్య API పై ఆధారపడదు.", faq2Q: "2. తిథి & నక్షత్రం", faq2A: "సూర్యుడు మరియు చంద్రుని మధ్య కోణీయ దూరం 12 డిగ్రీలు పెరిగినప్పుడు తిథి మారుతుంది.", faq3Q: "3. దినమానం", faq3A: "దినమానం 8 సమాన భాగాలుగా విభజించబడుతుంది.",
-            paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
-            tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "అమావాస్య"],
-            nakshatras: ["అశ్విని", "భరణి", "కృత్తిక", "రోహిణి", "మృగశిర", "ఆరుద్ర", "పునర్వసు", "పుష్యమి", "ఆశ్లేష", "మఖ", "పుబ్బ", "ఉత్తర", "హస్త", "చిత్త", "స్వాతి", "విశాఖ", "అనూరాధ", "జ్యేష్ఠ", "మూల", "పూర్వాషాఢ", "ఉత్తరాషాఢ", "శ్రవణం", "ధనిష్ఠ", "శతభిషం", "పూర్వాభాద్ర", "ఉత్తరాభాద్ర", "రేవతి"],
-            coordStr: "అక్షాంశం: 28.53° N | రేఖాంశం: 77.39° E"
-        },
-        ta: {
-            mainTitle: "பஞ்சாங்கம் டாஷ்போர்டு", faqBtn: "அறிவியல் FAQ", themeAuto: "தானியங்கி", themeDark: "டார்க் தீம்", themeLight: "லைட் தீம்",
-            lblSunrise: "சூரியோதயம்", lblSunset: "அஸ்தமனம்", lblNoon: "நண்பகல்", hinduCal: "இந்து காலண்டர்", vikramSamvat: "விக்ரம் சம்வத்",
-            secAuspicious: "நல்ல நேரம் (முகூர்த்தம்)", secInauspicious: "கெட்ட நேரம்",
-            lblAbijith: "அபிஜித் முகூர்த்தம்", lblRahu: "ராகு காலம்", lblYama: "எமகண்டம்", lblGulika: "குளிகை காலம்",
-            curTithiLbl: "தற்போதைய திதி", phaseLbl: "சந்திர நிலை", curNakshatraLbl: "நட்சத்திரம்", algoLbl: "கணக்கீட்டு முறை", approxAlgo: "மீயஸ் + லாஹிரி அயனாம்சம்",
-            faqTitle: "வேத மற்றும் வானியல் கணக்கீடுகள்", faq1Q: "1. த்ரிக் சித்தாந்தம்", faq1A: "இந்த டாஷ்போர்டு வெளிப்புற API களை சார்ந்திராமல் கணக்கிடுகிறது.", faq2Q: "2. திதி மற்றும் நட்சத்திரம்", faq2A: "சரியாக 12 டிகிரி கோண தூரம் அதிகரிக்கும் போது திதி மாறும்.", faq3Q: "3. தினமானம் & காலங்கள்", faq3A: "தினமானம் 8 சமமான பகுதிகளாக பிரிக்கப்படுகிறது.",
-            paksha: ["சுக்ல பட்சம்", "கிருஷ்ண பட்சம்"],
-            tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "அமாவாசை"],
-            nakshatras: ["அஸ்வினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசீரிடம்", "திருவாதிரை", "புனர்பூசம்", "பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "அஸ்தம்", "சித்திரை", "சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்", "திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி"],
-            coordStr: "அட்சரேகை: 28.53° N | தீர்க்கரேகை: 77.39° E"
-        },
-        gu: {
-            mainTitle: "પંચાંગ ડેશબોર્ડ", faqBtn: "વૈજ્ઞાનિક FAQ", themeAuto: "ઓટો થીમ", themeDark: "ડાર્ક થીમ", themeLight: "લાઇટ થીમ",
-            lblSunrise: "સૂર્યોદય", lblSunset: "સૂર્યાસ્ત", lblNoon: "સ્થાનિક બપોર", hinduCal: "હિન્દુ પંચાંગ", vikramSamvat: "વિક્રમ સંવત",
-            secAuspicious: "શુભ સમય (મુહૂર્ત)", secInauspicious: "અશુભ સમય (ચોઘડિયા)",
-            lblAbijith: "અભિજીત મુહૂર્ત", lblRahu: "રાહુ કાળ", lblYama: "યમગંડ", lblGulika: "ગુલિક કાળ",
-            curTithiLbl: "વર્તમાન તિથિ", phaseLbl: "ચંદ્ર પક્ષ", curNakshatraLbl: "વર્તમાન નક્ષત્ર", algoLbl: "અલ્ગોરિધમ સ્થિતિ", approxAlgo: "મીયસ + લાહિરી અયનાંશ",
-            faqTitle: "વૈદિક અને ખગોળીય ગણતરીઓ", faq1Q: "૧. દ્રિક સિદ્ધાંત", faq1A: "આ ડેશબોર્ડ બાહ્ય API પર આધાર રાખતું નથી.", faq2Q: "૨. તિથિ અને નક્ષત્ર", faq2A: "કોણીય અંતર ૧૨ ડિગ્રી વધે ત્યારે તિથિ બદલાય છે.", faq3Q: "૩. દિનમાન", faq3A: "દિનમાનને ૮ સમાન ભાગોમાં વહેંચવામાં આવે છે.",
-            paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
-            tithis: ["પ્રથમા", "દ્વિતીયા", "તૃતીયા", "ચતુર્થી", "પંચમી", "ષષ્ઠી", "સપ્તમી", "અષ્ટમી", "નવમી", "દશમી", "એકાદશી", "દ્વાદશી", "ત્રયોદશી", "ચતુર્દશી", "પૂર્ણિમા", "અમાવસ્યા"],
-            nakshatras: ["અશ્વિની", "ભરણી", "કૃત્તિકા", "રોહિણી", "મૃગશીર્ષ", "આર્દ્રા", "પુનર્વસુ", "પુષ્ય", "આશ્લેષા", "મઘા", "પૂર્વા ફાલ્ગુની", "ઉત્તરા ફાલ્ગુની", "હસ્ત", "ચિત્રા", "સ્વાતિ", "વિશાખા", "અનુરાધા", "જ્યેષ્ઠા", "મૂળ", "પૂર્વાષાઢા", "ઉત્તરાષાઢા", "શ્રવણ", "ધનિષ્ઠા", "શતભિષા", "પૂર્વા ભાદ્રપદ", "ઉત્તરા ભાદ્રપદ", "રેવતી"],
-            coordStr: "અક્ષાંશ: 28.53° N | રેખાંશ: 77.39° E"
-        },
-        ur: {
-            mainTitle: "پنچانگ ڈیش بورڈ", faqBtn: "سائنسی سوالات", themeAuto: "آٹو تھیم", themeDark: "ڈارک تھیم", themeLight: "لائٹ تھیم",
-            lblSunrise: "طلوع آفتاب", lblSunset: "غروب آفتاب", lblNoon: "مقامی دوپہر", hinduCal: "ہندو کیلنڈر", vikramSamvat: "وکرم سموت",
-            secAuspicious: "مبارک وقت (مہورت)", secInauspicious: "منحوس وقت (چوگھڑیا)",
-            lblAbijith: "ابھیجیت مہورت", lblRahu: "راہو کال", lblYama: "یمگنڈم", lblGulika: "گلیک کال",
-            curTithiLbl: "موجودہ تتھی", phaseLbl: "قمری مرحلہ", curNakshatraLbl: "موجودہ نکشتر", algoLbl: "الگورتھم کی حالت", approxAlgo: "میئس + لاہری ایناماسا",
-            faqTitle: "ویدک اور فلکیاتی حسابات", faq1Q: "1. درک سدھانت", faq1A: "یہ ڈیش بورڈ کسی بیرونی API پر منحصر نہیں ہے۔", faq2Q: "2. تتھی اور نکشتر", faq2A: "تتھی تب بدلتی ہے جب کوणीय فاصلہ 12 ڈگری بڑھ جائے۔", faq3Q: "3. دنمان", faq3A: "دنمان کو 8 برابر حصوں میں تقسیم کیا جاتا ہے۔",
-            paksha: ["شکل پکش", "کرشن پکش"],
-            tithis: ["پرتھما", "دوتیا", "ترتیا", "چترتھی", "پنچمی", "ششٹھی", "سپتمی", "اشٹمی", "نومی", "دشمی", "ایکادشی", "دوادشی", "تریودشی", "چتردشی", "پورنیما", "اماوسیا"],
-            nakshatras: ["اشونی", "بھرنی", "کرتیکا", "روہنی", "مرگشیرا", "اردرا", "پنروسو", "پشیا", "اشلیشا", "مگھا", "پوروا پھالگنی", "اترا پھالگنی", "ہست", "چترا", "سواتی", "وشاکھا", "انورادھا", "جیشٹھا", "مولا", "پورواشاڑھا", "اتراشاڑھا", "شراون", "دھنشٹھا", "شتبھشا", "پوروا بھادرپد", "اترا بھادرپد", "ریوتی"],
-            coordStr: "عرض البلد: 28.53° N | طول البلد: 77.39° E"
-        },
-        kn: {
-            mainTitle: "ಪಂಚಾಂಗ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್", faqBtn: "ವೈಜ್ಞಾನಿಕ FAQ", themeAuto: "ಆಟೋ ಥೀಮ್", themeDark: "ಡಾರ್ಕ್ ಥೀಮ್", themeLight: "ಲೈಟ್ ಥೀಮ್",
-            lblSunrise: "ಸೂರ್ಯೋದಯ", lblSunset: "ಸೂರ್ಯಾಸ್ತ", lblNoon: "ಸ್ಥಳೀಯ ಮಧ್ಯಾಹ್ನ", hinduCal: "ಹಿಂದೂ ಪಂಚಾಂಗ", vikramSamvat: "ವಿಕ್ರಮ ಸಂವತ್",
-            secAuspicious: "ಶುಭ ಸಮಯ (ಮುಹೂರ್ತ)", secInauspicious: "ಅಶುಭ ಸಮಯ",
-            lblAbijith: "ಅಭಿಜಿತ್ ಮುಹೂರ್ತ", lblRahu: "ರಾಹು ಕಾಲ", lblYama: "ಯಮಗಂಡ", lblGulika: "ಗುಳಿಕ ಕಾಲ",
-            curTithiLbl: "ಪ್ರಸ್ತುತ ತಿಥಿ", phaseLbl: "ಚಂದ್ರ ಪಕ್ಷ", curNakshatraLbl: "ಪ್ರಸ್ತುತ ನಕ್ಷತ್ರ", algoLbl: "ಅಲ್ಗಾರಿದಮ್ ಸ್ಥಿತಿ", approxAlgo: "ಮೀಯಸ್ + ಲಾಹಿರಿ ಅಯನಾಂಶ",
-            faqTitle: "ವೈದಿಕ ಮತ್ತು ಖಗೋಳ ಲೆಕ್ಕಾಚಾರಗಳು", faq1Q: "1. ದೃಕ್ ಸಿದ್ಧಾಂತ", faq1A: "ಈ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಯಾವುದೇ ಬಾಹ್ಯ API ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿಲ್ಲ.", faq2Q: "2. ತಿಥಿ ಮತ್ತು ನಕ್ಷತ್ರ", faq2A: "ಕೋನೀಯ ಅಂತರವು 12 ಡಿಗ್ರಿಗಳಷ್ಟು ಹೆಚ್ಚಾದಾಗ ತಿಥಿ ಬದಲಾಗುತ್ತದೆ.", faq3Q: "3. ದಿನಮಾನ", faq3A: "ದಿನಮಾನವನ್ನು 8 ಸಮಾನ ಭಾಗಗಳಾಗಿ ವಿಂಗಡಿಸಲಾಗಿದೆ.",
-            paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
-            tithis: ["ಪಾಡ್ಯ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಅಮಾವಾಸ್ಯೆ"],
-            nakshatras: ["ಅಶ್ವಿನಿ", "ಭರಣಿ", "ಕೃತ್ತಿಕಾ", "ರೋಹಿಣಿ", "ಮೃಗಶಿರ", "ಆರ್ದ್ರಾ", "ಪುನರ್ವಸು", "ಪುಷ್ಯ", "ಆಶ್ಲೇಷಾ", "ಮಘಾ", "ಹುಬ್ಬಾ", "ಉತ್ತರ ಫಲ್ಗುಣಿ", "ಹಸ್ತ", "ಚಿತ್ತಾ", "ಸ್ವಾತಿ", "ವಿಶಾಖಾ", "ಅನುರಾಧಾ", "ಜ್ಯೇಷ್ಠಾ", "ಮೂಲಾ", "ಪೂರ್ವಾಷಾಢಾ", "ಉತ್ತರಾಷಾಢಾ", "ಶ್ರವಣ", "ಧನಿಷ್ಠಾ", "ಶತಭಿಷಾ", "ಪೂರ್ವಾಭಾದ್ರ", "ಉತ್ತರಾಭಾದ್ರ", "ರೇವತಿ"],
-            coordStr: "ಅಕ್ಷಾಂಶ: 28.53° N | ರೇಖಾಂಶ: 77.39° E"
-        },
-        or: {
-            mainTitle: "ପଞ୍ଚାଙ୍ଗ ଡ୍ୟାସବୋର୍ଡ", faqBtn: "ବୈଜ୍ଞାନିକ FAQ", themeAuto: "ଅଟୋ ଥିମ୍", themeDark: "ଡାର୍କ ଥିମ୍", themeLight: "ଲାଇଟ୍ ଥିମ୍",
-            lblSunrise: "ସୂର୍ଯ୍ୟୋଦୟ", lblSunset: "ସୂର୍ଯ୍ୟାସ୍ତ", lblNoon: "ସ୍ଥାନୀୟ ମଧ୍ୟାହ୍ନ", hinduCal: "ହିନ୍ଦୁ ପଞ୍ଜିକା", vikramSamvat: "ବିକ୍ରମ ସମ୍ବତ",
-            secAuspicious: "ଶୁଭ ସମୟ (ମୁହୂର୍ତ୍ତ)", secInauspicious: "ଅଶୁଭ ସମୟ",
-            lblAbijith: "ଅଭିଜିତ ମୁହୂର୍ତ୍ତ", lblRahu: "ରାହୁ କାଳ", lblYama: "ଯମଗଣ୍ଡ", lblGulika: "ଗୁଲିକ କାଳ",
-            curTithiLbl: "ବର୍ତ୍ତମାନ ତିଥି", phaseLbl: "ଚନ୍ଦ୍ର ପକ୍ଷ", curNakshatraLbl: "ବର୍ତ୍ତମାନ ନକ୍ଷତ୍ର", algoLbl: "ଆଲଗୋରିଦମ୍ ସ୍ଥିତି", approxAlgo: "ମୀୟସ + ଲାହିରୀ ଅୟନାଂଶ",
-            faqTitle: "ବୈଦିକ ଏବଂ ଜ୍ୟୋତିର୍ବିଜ୍ଞାନ ଗଣନା", faq1Q: "୧. ଦୃକ ସିଦ୍ଧାନ୍ତ", faq1A: "ଏହି ଡ୍ୟାସବୋର୍ଡ କୌଣସି ବାହ୍ୟ API ଉପରେ ନିର୍ଭର କରେ ନାହିଁ।", faq2Q: "୨. ତିଥି ଏବଂ ନକ୍ଷତ୍ର", faq2A: "କୋଣୀୟ ଦୂରତା ୧୨ ଡିଗ୍ରୀ ବୃଦ୍ଧି ପାଇଲେ ତିଥି ବଦଳିଥାଏ।", faq3Q: "୩. ଦିନମାନ", faq3A: "ଦିନମାନକୁ ୮ ସମାନ ଭାଗରେ ବିଭକ୍ତ କରାଯାଏ।",
-            paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
-            tithis: ["ପ୍ରତିପଦା", "ଦ୍ୱିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ୱାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦ୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ଅମାବାସ୍ୟା"],
-            nakshatras: ["ଅଶ୍ୱିନୀ", "ଭରଣୀ", "କୃତ୍ତିକା", "ରୋହିଣୀ", "ମୃଗଶିରା", "ଆର୍ଦ୍ରା", "ପୁନର୍ବସୁ", "ପୁଷ୍ୟା", "ଅଶ୍ଳେଷା", "ମଘା", "ପୂର୍ବ ଫାଲ୍ଗୁନୀ", "ଉତ୍ତର ଫାଲ୍ଗୁନୀ", "ହସ୍ତା", "ଚିତ୍ରା", "ସ୍ୱାତୀ", "ବିଶାଖା", "ଅନୁରାଧା", "ଜ୍ୟେଷ୍ଠା", "ମୂଳା", "ପୂର୍ବାଷାଢ଼ା", "ଉତ୍ତରାଷାଢ଼ା", "ଶ୍ରବଣା", "ଧନିଷ୍ଠା", "ଶତଭିଷା", "ପୂର୍ବ ଭାଦ୍ରପଦ", "ଉତ୍ତର ଭାଦ୍ରପଦ", "ରେବତୀ"],
-            coordStr: "ଅକ୍ଷାଂଶ: 28.53° N | ଦ୍ରାଘିମାଂଶ: 77.39° E"
-        },
-        ml: {
-            mainTitle: "പഞ്ചാംഗം ഡാഷ്ബോർഡ്", faqBtn: "ശാസ്ത്രീയ FAQ", themeAuto: "ഓട്ടോ തീം", themeDark: "ഡാർക്ക് തീം", themeLight: "ലൈറ്റ് തീം",
-            lblSunrise: "സൂര്യോദയം", lblSunset: "സൂര്യാസ്തമയം", lblNoon: "പ്രാദേശിക ഉച്ച", hinduCal: "ഹിന്ദു കലണ്ടർ", vikramSamvat: "വിക്രമ സംവത്",
-            secAuspicious: "ശുഭ സമയം (മുഹൂർത്തം)", secInauspicious: "അശുഭ സമയം",
-            lblAbijith: "അഭിജിത്ത് മുഹൂർത്തം", lblRahu: "രാഹു കാലം", lblYama: "യമകണ്ടം", lblGulika: "ഗുളിക കാലം",
-            curTithiLbl: "നിലവിലെ തിഥി", phaseLbl: "ചന്ദ്ര പക്ഷം", curNakshatraLbl: "നിലവിലെ നക്ഷത്രം", algoLbl: "അൽഗോരിതം അവസ്ഥ", approxAlgo: "മീയസ് + ലാഹിരി അയനാംശം",
-            faqTitle: "വേദ, ജ്യോതിശാസ്ത്ര കണക്കുകൂട്ടലുകൾ", faq1Q: "1. ദൃക് സിദ്ധാന്തം", faq1A: "ഈ ഡാഷ്ബോർഡ് ബാഹ്യ API-കളെ ആശ്രയിക്കുന്നില്ല.", faq2Q: "2. തിഥിയും നക്ഷത്രവും", faq2A: "കോണീയ അകലം 12 ഡിഗ്രി വർദ്ധിക്കുമ്പോൾ തിഥി മാറുന്നു.", faq3Q: "3. ദിനമാനം", faq3A: "ദിനമാനത്തെ 8 തുല്യ ഭാഗങ്ങളായി വിഭജിച്ചിരിക്കുന്നു.",
-            paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
-            tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദശി", "പൗർണ്ണമി", "അമാവാസി"],
-            nakshatras: ["അശ്വതി", "ഭരണി", "കാർത്തിക", "രോഹിണി", "മകയിരം", "തിരുവാതിര", "പുണർതം", "പൂയം", "ആയില്യം", "മകം", "പൂരം", "ഉത്രം", "അത്തം", "ചിത്തിര", "ചോതി", "വിശാഖം", "അനിഴം", "തൃക്കേട്ട", "മൂലം", "പൂരാടം", "ഉത്രാടം", "തിരുവോണം", "അവിട്ടം", "ചതയം", "പൂരുരുട്ടാതി", "ഉത്രട്ടാതി", "രേവതി"],
-            coordStr: "അക്ഷാംശം: 28.53° N | രേഖാംശം: 77.39° E"
-        },
-        pa: {
-            mainTitle: "ਪੰਚਾਂਗ ਡੈਸ਼ਬੋਰਡ", faqBtn: "ਵਿਗਿਆਨਕ FAQ", themeAuto: "ਆਟੋ ਥੀਮ", themeDark: "ਡਾਰਕ ਥੀਮ", themeLight: "ਲਾਈਟ ਥੀਮ",
-            lblSunrise: "ਸੂਰਜ ਚੜ੍ਹਨਾ", lblSunset: "ਸੂਰਜ ਡੁੱਬਣਾ", lblNoon: "ਸਥਾਨਕ ਦੁਪਹਿਰ", hinduCal: "ਹਿੰਦੂ ਕੈਲੰਡਰ", vikramSamvat: "ਵਿਕਰਮ ਸੰਵਤ",
-            secAuspicious: "ਸ਼ੁਭ ਸਮਾਂ (ਮੁਹੂਰਤ)", secInauspicious: "ਅਸ਼ੁਭ ਸਮਾਂ (ਚੌਘੜੀਆ)",
-            lblAbijith: "ਅਭਿਜੀਤ ਮੁਹੂਰਤ", lblRahu: "ਰਾਹੂ ਕਾਲ", lblYama: "ਯਮਗੰਡ", lblGulika: "ਗੁਲਿਕ ਕਾਲ",
-            curTithiLbl: "ਮੌਜੂਦਾ ਤਿਥੀ", phaseLbl: "ਚੰਦਰ ਪੱਖ", curNakshatraLbl: "ਮੌਜੂਦਾ ਨਕਸ਼ੱਤਰ", algoLbl: "ਐਲਗੋਰਿਦਮ ਸਥਿਤੀ", approxAlgo: "ਮੀਯਸ + ਲਾਹਿਰੀ ਅਯਨਾਂਸ਼",
-            faqTitle: "ਵੈਦਿਕ ਅਤੇ ਖਗੋਲੀ ਗਣਨਾ", faq1Q: "1. ਦ੍ਰਿਕ ਸਿਧਾਂਤ", faq1A: "ਇਹ ਡੈਸ਼ਬੋਰਡ ਬਾਹਰੀ API 'ਤੇ ਨਿਰਭਰ ਨਹੀਂ ਕਰਦਾ।", faq2Q: "2. ਤਿਥੀ ਅਤੇ ਨਕਸ਼ੱਤਰ", faq2A: "ਕੋਣੀ ਦੂਰੀ 12 ਡਿਗਰੀ ਵਧਣ 'ਤੇ ਤਿਥੀ ਬਦਲਦੀ ਹੈ।", faq3Q: "3. ਦਿਨਮਾਨ", faq3A: "ਦਿਨਮਾਨ ਨੂੰ 8 ਬਰਾਬਰ ਭਾਗਾਂ ਵਿੱਚ ਵੰਡਿਆ ਗਿਆ ਹੈ।",
-            paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
-            tithis: ["ਪ੍ਰਥਮਾ", "ਦ੍ਵਿਤੀਯਾ", "ਤ੍ਰਿਤੀਯਾ", "ਚਤੁਰਥੀ", "ਪੰਚਮੀ", "ਸ਼ਸ਼ਠੀ", "ਸਪਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨਵਮੀ", "ਦਸ਼ਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦ੍ਵਾਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਿਮਾ", "ਅਮਾਵਸਯਾ"],
-            nakshatras: ["ਅਸ਼ਵਿਨੀ", "ਭਰਣੀ", "ਕ੍ਰਿਤਿਕਾ", "ਰੋਹਿਣੀ", "ਮ੍ਰਿਗਸ਼ਿਰਾ", "ਆਰਦ੍ਰਾ", "ਪੁਨਰਵਸੁ", "ਪੁਸ਼ਯਾ", "ਅਸ਼ਲੇਸ਼ਾ", "ਮਘਾ", "ਪੂਰਵ ਫਾਲਗੁਨੀ", "ਉੱਤਰ ਫਾਲਗੁਨੀ", "ਹਸਤ", "ਚਿਤ੍ਰਾ", "ਸਵਾਤੀ", "ਵਿਸ਼ਾਖਾ", "ਅਨੁਰਾਧਾ", "ਜਯੇਸ਼ਠਾ", "ਮੂਲਾ", "ਪੂਰਵਾਸ਼ਾਢਾ", "ਉੱਤਰਾਸ਼ਾਢਾ", "ਸ਼੍ਰਵਣ", "ਧਨਿਸ਼ਠਾ", "ਸ਼ਤਭਿਸ਼ਾ", "ਪੂਰਵ ਭਾਦਰਪਦ", "ਉੱਤਰ ਭਾਦਰਪਦ", "ਰੇਵਤੀ"],
-            coordStr: "ਅਕਸ਼ਾਂਸ਼: 28.53° N | ਦੇਸ਼ਾਂਤਰ: 77.39° E"
+// ============================================================
+// LOCALIZED DIGITS
+// ============================================================
+const LD = {
+    en:['0','1','2','3','4','5','6','7','8','9'],
+    hi:['०','१','२','३','४','५','६','७','८','९'], mr:['०','१','२','३','४','५','६','७','८','९'],
+    bn:['০','১','২','৩','৪','৫','৬','৭','৮','৯'], gu:['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'],
+    ta:['௦','௧','௨','௩','௪','௫','௬','௭','௮','௯'], te:['౦','౧','౨','౩','౪','౫','౬','౭','౮','౯'],
+    kn:['೦','೧','೨','೩','೪','೫','೬','೭','೮','೯'], or:['୦','୧','୨','୩','୪','୫','୬','୭','୮','୯'],
+    ml:['൦','൧','൨','൩','൪','൫','൬','൭','൮','൯'], pa:['੦','੧','੨','੩','੪','੫','੬','੭','੮','੯'],
+    ur:['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹']
+};
+function tN(s) { const d=LD[S.lang]; if(!d||S.lang==='en') return ''+s; return (''+s).replace(/[0-9]/g,c=>d[c]); }
+
+// ============================================================
+// ASTRONOMICAL DATA NAMES
+// ============================================================
+const NAKSHATRAS_EN = ["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"];
+const TITHIS_EN = ["Prathama","Dwitiya","Tritiya","Chaturthi","Panchami","Shashthi","Saptami","Ashtami","Navami","Dashami","Ekadashi","Dwadashi","Trayodashi","Chaturdashi","Purnima","Amavasya"];
+const PAKSHA_EN = ["Shukla Paksha","Krishna Paksha"];
+const MASA_EN = ["Chaitra","Vaishakha","Jyeshtha","Ashadha","Shravana","Bhadrapada","Ashwina","Kartika","Margashirsha","Pausha","Magha","Phalguna"];
+const RITU_EN = ["Vasanta","Grishma","Varsha","Sharad","Hemanta","Shishira"];
+const SAMVAT_NAMES = ["Prabhava","Vibhava","Shukla","Pramoda","Prajapati","Angirasa","Shrimukha","Bhava","Yuva","Dhata","Ishvara","Bahudhanya","Pramathi","Vikrama","Vrisha","Chitrabhanu","Subhanu","Tarana","Parthiva","Vyaya","Sarvajit","Sarvadharin","Virodhi","Vikrita","Khara","Nandana","Vijaya","Jaya","Manmatha","Durmukha","Hemalamba","Vilamba","Vikarin","Sharvari","Plava","Shubhakrit","Shobhakrit","Krodhi","Vishvavasu","Parabhava","Plavanga","Kilaka","Saumya","Sadharana","Virodhikrit","Paritapin","Paridhavi","Pramadicha","Ananda","Rakshasa","Nala","Pingala","Kalayukta","Siddharthi","Raudra","Durmathi","Dundubhi","Rudhirodgari","Raktakshi","Krodhana"];
+
+// ============================================================
+// MEEUS ENGINE
+// ============================================================
+function toJD(year, month, day, utHours) {
+    let y = year, m = month;
+    if (m <= 2) { y--; m += 12; }
+    const A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + utHours / 24.0 + B - 1524.5;
+}
+
+function getT(jd) { return (jd - 2451545.0) / 36525.0; }
+
+function getLahiriAyanamsa(T) {
+    return 23.853 + 0.01397 * T * 100;
+}
+
+function getSunLong(T) {
+    let L0 = norm(280.46646 + T * (36000.76983 + T * 0.0003032));
+    let M = norm(357.52911 + T * (35999.05029 - 0.0001537 * T));
+    let e = 0.016708634 - T * (0.000042037 + T * 0.0000001267);
+    let C = Math.sin(M*RAD)*(1.914602-T*(0.004817+0.000014*T))
+          + Math.sin(2*M*RAD)*(0.019993-0.000101*T)
+          + Math.sin(3*M*RAD)*0.000289;
+    let omega = 125.04 - 1934.136 * T;
+    let sunApp = L0 + C - 0.00569 - 0.00478 * Math.sin(omega*RAD);
+    let obliq = 23+(26+(21.448-T*(46.815+T*(0.00059-T*0.001813)))/60)/60 + 0.00256*Math.cos(omega*RAD);
+    let decl = Math.asin(Math.sin(obliq*RAD)*Math.sin(sunApp*RAD))*DEG;
+    let y2 = Math.tan((obliq/2)*RAD); y2 *= y2;
+    let eot = y2*Math.sin(2*L0*RAD) - 2*e*Math.sin(M*RAD) + 4*e*y2*Math.sin(M*RAD)*Math.cos(2*L0*RAD) - 0.5*y2*y2*Math.sin(4*L0*RAD) - 1.25*e*e*Math.sin(2*M*RAD);
+    eot = 4 * eot * DEG; // minutes
+    return { sunApp: norm(sunApp), decl, eot, L0, M, e };
+}
+
+function getMoonLong(T) {
+    let Lp=norm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841);
+    let Dn=norm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868);
+    let M=norm(357.5291092+35999.0502909*T-0.0001536*T*T);
+    let Mp=norm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699);
+    let F=norm(93.2720950+483202.0175233*T-0.0036539*T*T);
+    let sl=6.288774*Math.sin(Mp*RAD)+1.274027*Math.sin((2*Dn-Mp)*RAD)+0.658314*Math.sin(2*Dn*RAD)
+        +0.213618*Math.sin(2*Mp*RAD)-0.185116*Math.sin(M*RAD)-0.114332*Math.sin(2*F*RAD)
+        +0.058793*Math.sin((2*Dn-2*Mp)*RAD)+0.057066*Math.sin((2*Dn-M-Mp)*RAD)
+        +0.053322*Math.sin((2*Dn+Mp)*RAD)+0.045758*Math.sin((2*Dn-M)*RAD)
+        -0.040923*Math.sin((M-Mp)*RAD)-0.034720*Math.sin(Dn*RAD)
+        -0.030383*Math.sin((M+Mp)*RAD)+0.015327*Math.sin((2*Dn-2*F)*RAD)
+        -0.012528*Math.sin((Mp+2*F)*RAD)+0.010980*Math.sin((Mp-2*F)*RAD)
+        +0.010675*Math.sin((4*Dn-Mp)*RAD)+0.010034*Math.sin(3*Mp*RAD)
+        +0.008548*Math.sin((4*Dn-2*Mp)*RAD)-0.007888*Math.sin((2*Dn+M-Mp)*RAD)
+        -0.006766*Math.sin((2*Dn+M)*RAD)+0.005751*Math.sin((M-2*Mp)*RAD);
+    return norm(Lp + sl);
+}
+
+function fmtH(h) {
+    if(isNaN(h)) return "--:--";
+    if(h<0) h+=24; if(h>=24) h-=24;
+    let hr=Math.floor(h), mn=Math.floor((h-hr)*60), sc=Math.floor(((h-hr)*60-mn)*60);
+    return `${(''+hr).padStart(2,'0')}:${(''+mn).padStart(2,'0')}:${(''+sc).padStart(2,'0')}`;
+}
+function fmtHM(h) {
+    if(isNaN(h)) return "--:--";
+    if(h<0) h+=24; if(h>=24) h-=24;
+    let hr=Math.floor(h), mn=Math.floor((h-hr)*60);
+    return `${(''+hr).padStart(2,'0')}:${(''+mn).padStart(2,'0')}`;
+}
+
+function getSunTimes(jdNoon, lat, lon, tz) {
+    const T = getT(jdNoon);
+    const sun = getSunLong(T);
+    let haArg = (Math.cos(90.833*RAD)/(Math.cos(lat*RAD)*Math.cos(sun.decl*RAD))) - Math.tan(lat*RAD)*Math.tan(sun.decl*RAD);
+    haArg = Math.max(-1, Math.min(1, haArg));
+    let ha = Math.acos(haArg)*DEG;
+    let noonUTC = (720 - 4*lon - sun.eot)/60;
+    let rise = noonUTC - ha*4/60 + tz;
+    let set = noonUTC + ha*4/60 + tz;
+    let noon = noonUTC + tz;
+    return {rise, set, noon, sunApp: sun.sunApp};
+}
+
+// ============================================================
+// TITHI/NAKSHATRA END TIME FINDER (iterative scan)
+// ============================================================
+function findTithiEnd(jdStart, currentTithiNum) {
+    // Scan forward in 10-min steps, then refine
+    const targetEnd = (currentTithiNum + 1) * 12; // next tithi boundary in degrees
+    let jd = jdStart;
+    for (let i = 0; i < 500; i++) { // up to ~3.5 days
+        let T = getT(jd);
+        let diff = norm(getMoonLong(T) - getSunLong(T).sunApp);
+        // Check if we crossed the boundary
+        let tithiHere = Math.floor(diff / 12);
+        if (tithiHere !== currentTithiNum) {
+            // Refine with bisection
+            let lo = jd - 10/1440, hi = jd;
+            for (let j = 0; j < 20; j++) {
+                let mid = (lo + hi) / 2;
+                let Tm = getT(mid);
+                let dm = norm(getMoonLong(Tm) - getSunLong(Tm).sunApp);
+                if (Math.floor(dm / 12) === currentTithiNum) lo = mid; else hi = mid;
+            }
+            return hi;
         }
-    };
+        jd += 10/1440; // 10 minutes
+    }
+    return jdStart + 1; // fallback
+}
 
-    // --- 3. STATE & CLOCK LOOP ---
-    let currentLangCode = 'en'; 
-    let calculatedData = {}; 
-    const LAT = 28.5355; const LON = 77.3910; const TZ_OFFSET = 5.5; 
+function findNakshatraEnd(jdStart, currentNakIdx) {
+    let jd = jdStart;
+    const segSize = 360/27;
+    for (let i = 0; i < 500; i++) {
+        let T = getT(jd);
+        let moonSid = norm(getMoonLong(T) - getLahiriAyanamsa(T));
+        let nakHere = Math.floor(moonSid / segSize);
+        if (nakHere !== currentNakIdx) {
+            let lo = jd - 10/1440, hi = jd;
+            for (let j = 0; j < 20; j++) {
+                let mid = (lo + hi) / 2;
+                let Tm = getT(mid);
+                let ms = norm(getMoonLong(Tm) - getLahiriAyanamsa(Tm));
+                if (Math.floor(ms / segSize) === currentNakIdx) lo = mid; else hi = mid;
+            }
+            return hi;
+        }
+        jd += 10/1440;
+    }
+    return jdStart + 1;
+}
 
-    // FIX #9: Use IST-based date instead of browser local time for all astro calculations
-    function getISTDate() {
-        const now = new Date();
-        const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-        return new Date(utcMs + TZ_OFFSET * 3600000);
+function jdToLocalTime(jd, tz) {
+    // Returns decimal hours in local time for the nearest day
+    let utH = (jd - Math.floor(jd) - 0.5) * 24 + tz;
+    return utH;
+}
+
+// ============================================================
+// AMRIT KAALAM (Choghadiya-based)
+// ============================================================
+function getAmritKaalam(rise, set, dayOfWeek) {
+    // Day Choghadiya sequence starting after sunrise (cyclic for each weekday)
+    // Order: Udv=1, Amr=2, Rog=3, Lab=4, Shu=5, Cha=6, Kal=7
+    // Starting Choghadiya for each day (Sun=0..Sat=6):
+    // Sun:Udv, Mon:Amr, Tue:Rog, Wed:Lab, Thu:Shu, Fri:Cha, Sat:Kal
+    const dayStart = [1, 2, 3, 4, 5, 6, 7];
+    const nightStart = [6, 7, 1, 2, 3, 4, 5]; // Night starts differently
+    const dayLen = set - rise;
+    const nightLen = 24 - dayLen;
+    const daySeg = dayLen / 8;
+    const nightSeg = nightLen / 8;
+
+    let results = [];
+
+    // Day segments
+    let dStart = dayStart[dayOfWeek];
+    for (let i = 0; i < 8; i++) {
+        let chog = ((dStart - 1 + i) % 7) + 1;
+        if (chog === 2) { // Amrit
+            results.push({ start: rise + i * daySeg, end: rise + (i + 1) * daySeg });
+        }
     }
 
-    const today = getISTDate();
-
-    function setLanguage(lang) {
-        currentLangCode = lang;
-        document.body.style.direction = lang === 'ur' ? 'rtl' : 'ltr';
-        renderUI();
+    // Night segments
+    let nStart = nightStart[dayOfWeek];
+    for (let i = 0; i < 8; i++) {
+        let chog = ((nStart - 1 + i) % 7) + 1;
+        if (chog === 2) { // Amrit
+            let s = set + i * nightSeg;
+            let e = set + (i + 1) * nightSeg;
+            results.push({ start: s, end: e });
+        }
     }
 
-    function setTheme(val) {
-        if(val==='system') val = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', val);
+    return results;
+}
+
+// ============================================================
+// HINDU MONTH (MASA) & RITU
+// ============================================================
+function getMasa(sunLongSidereal) {
+    // Solar month based on Sun's sidereal longitude
+    // Mesha (0-30) = Chaitra/Vaishakha boundary area
+    // Simplified: Sun enters each sign at 0°,30°,60°...
+    // Chaitra ≈ Sun in Meena (330-360), Vaishakha ≈ Sun in Mesha (0-30), etc.
+    // More standard mapping: masa index = floor(sunSid / 30)
+    // 0=Mesha→Vaishakha, 1=Vrishabha→Jyeshtha, ...
+    let idx = Math.floor(sunLongSidereal / 30);
+    // Mesha(0)=Vaishakha, Vrishabha(1)=Jyeshtha, Mithuna(2)=Ashadha, Karka(3)=Shravana,
+    // Simha(4)=Bhadrapada, Kanya(5)=Ashwina, Tula(6)=Kartika, Vrischika(7)=Margashirsha,
+    // Dhanus(8)=Pausha, Makara(9)=Magha, Kumbha(10)=Phalguna, Meena(11)=Chaitra
+    const masaMap = [1,2,3,4,5,6,7,8,9,10,11,0]; // maps rashi index to masa index
+    return masaMap[idx];
+}
+
+function getRitu(masaIdx) {
+    // Vasanta: Chaitra-Vaishakha (0,1)
+    // Grishma: Jyeshtha-Ashadha (2,3)
+    // Varsha: Shravana-Bhadrapada (4,5)
+    // Sharad: Ashwina-Kartika (6,7)
+    // Hemanta: Margashirsha-Pausha (8,9)
+    // Shishira: Magha-Phalguna (10,11)
+    return Math.floor(masaIdx / 2);
+}
+
+// ============================================================
+// VIKRAM SAMVAT
+// ============================================================
+function getVS(masaIdx, year) {
+    // VS year = Gregorian + 57, changes at Chaitra (masa 0)
+    // Before Chaitra in a given Gregorian year → VS = year + 56
+    // After/during Chaitra → VS = year + 57
+    if (masaIdx >= 1) return year + 57; // Vaishakha onward
+    // During Chaitra, it depends on whether we've passed the new year
+    // Simplify: if month is Jan-Mar and masa is Chaitra, it's still previous VS
+    return year + 57; // Chaitra itself starts the new VS year
+}
+
+// ============================================================
+// MOON PHASE SVG
+// ============================================================
+function drawMoonPhase(tithiNum) {
+    // tithiNum: 0-29 (0=Shukla Prathama, 14=Purnima, 15=Krishna Prathama, 29=Amavasya)
+    const svg = document.getElementById('moon-svg');
+    const phase = tithiNum / 29.5; // 0=new, 0.5=full, 1=new
+    let illum;
+    if (tithiNum <= 14) illum = tithiNum / 14; // waxing
+    else illum = 1 - (tithiNum - 14) / 15; // waning
+
+    const r = 28, cx = 32, cy = 32;
+    // Draw moon using two arcs
+    const sweep = tithiNum <= 14 ? 1 : 0; // waxing vs waning
+    const termX = r * (1 - 2 * illum); // terminator offset
+
+    let pathD;
+    if (illum < 0.01) {
+        // New moon - dark circle
+        pathD = `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx} ${cy+r} A ${r} ${r} 0 1 1 ${cx} ${cy-r}`;
+        svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a1a1a" stroke="#333" stroke-width="1"/>`;
+        return;
     }
+    if (illum > 0.99) {
+        // Full moon
+        svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#f0e8c8" stroke="#8a7a50" stroke-width="1"/>
+            <circle cx="${cx-6}" cy="${cy-8}" r="4" fill="#e0d8b0" opacity="0.5"/>
+            <circle cx="${cx+8}" cy="${cy+5}" r="3" fill="#d8d0a8" opacity="0.4"/>`;
+        return;
+    }
+
+    // Partial phase
+    const litColor = '#f0e8c8', darkColor = '#1a1a1a';
+    const bulge = Math.abs(2 * illum - 1) * r;
+    const bulgeDir = illum > 0.5 ? 1 : 0;
+
+    let lit, dark;
+    if (tithiNum <= 14) {
+        // Waxing: right side lit
+        lit = `M ${cx} ${cy-r} A ${r} ${r} 0 0 1 ${cx} ${cy+r} A ${bulge} ${r} 0 0 ${bulgeDir} ${cx} ${cy-r}`;
+        dark = `M ${cx} ${cy-r} A ${r} ${r} 0 0 0 ${cx} ${cy+r} A ${bulge} ${r} 0 0 ${1-bulgeDir} ${cx} ${cy-r}`;
+    } else {
+        // Waning: left side lit
+        lit = `M ${cx} ${cy-r} A ${r} ${r} 0 0 0 ${cx} ${cy+r} A ${bulge} ${r} 0 0 ${1-bulgeDir} ${cx} ${cy-r}`;
+        dark = `M ${cx} ${cy-r} A ${r} ${r} 0 0 1 ${cx} ${cy+r} A ${bulge} ${r} 0 0 ${bulgeDir} ${cx} ${cy-r}`;
+    }
+
+    svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${darkColor}" stroke="#333" stroke-width="1"/>
+        <path d="${lit}" fill="${litColor}"/>`;
+}
+
+// ============================================================
+// MASTER COMPUTE
+// ============================================================
+function compute() {
+    const dt = S.date;
+    const y = dt.getFullYear(), m = dt.getMonth()+1, d = dt.getDate();
+    const h = dt.getHours() + dt.getMinutes()/60 + dt.getSeconds()/3600;
+    const utH = h - S.tz;
+
+    const jd = toJD(y, m, d, utH);
+    const T = getT(jd);
+
+    // Sun
+    const sun = getSunLong(T);
+    const st = getSunTimes(jd, S.lat, S.lon, S.tz);
+    D.sunrise = st.rise; D.sunset = st.set; D.noon = st.noon;
+
+    // Moon
+    const moonTrop = getMoonLong(T);
+    const ayanamsa = getLahiriAyanamsa(T);
+    const moonSid = norm(moonTrop - ayanamsa);
+    const sunSid = norm(sun.sunApp - ayanamsa);
+
+    // Tithi (0-29)
+    let diff = norm(moonTrop - sun.sunApp);
+    let tithiNum = Math.floor(diff / 12);
+    if (tithiNum >= 30) tithiNum = 29;
+    D.tithiNum = tithiNum;
+
+    // Tithi end time
+    const tithiEndJD = findTithiEnd(jd, tithiNum);
+    D.tithiEndH = jdToLocalTime(tithiEndJD, S.tz);
+    // Normalize for display
+    let teDay = Math.floor(tithiEndJD) - Math.floor(jd);
+    D.tithiEndStr = fmtH(D.tithiEndH);
+    D.tithiEndTomorrow = (tithiEndJD - jd) > (24 - h + S.tz) / 24;
+
+    // Next tithi
+    D.nextTithiNum = (tithiNum + 1) % 30;
+
+    // Nakshatra (0-26)
+    const segSize = 360/27;
+    let nakIdx = Math.floor(moonSid / segSize);
+    if (nakIdx >= 27) nakIdx = 26;
+    D.nakIdx = nakIdx;
+
+    // Nakshatra end time
+    const nakEndJD = findNakshatraEnd(jd, nakIdx);
+    D.nakEndH = jdToLocalTime(nakEndJD, S.tz);
+    D.nakEndStr = fmtH(D.nakEndH);
+    D.nextNakIdx = (nakIdx + 1) % 27;
+
+    // Paksha
+    D.paksha = tithiNum < 15 ? 0 : 1;
+
+    // Masa & Ritu
+    D.masaIdx = getMasa(sunSid);
+    D.rituIdx = getRitu(D.masaIdx);
+
+    // Vikram Samvat
+    D.vs = getVS(D.masaIdx, y);
+    D.samvatNameIdx = (D.vs - 1) % 60;
+
+    // Day segments
+    const dayLen = D.sunset - D.sunrise;
+    const seg = dayLen / 8;
+    const dow = dt.getDay();
+
+    const rR=[8,2,7,5,6,4,3], yR=[5,4,3,2,1,7,6], gR=[7,6,5,4,3,2,1];
+    D.rahu = {s: D.sunrise+(rR[dow]-1)*seg, e: D.sunrise+rR[dow]*seg};
+    D.yama = {s: D.sunrise+(yR[dow]-1)*seg, e: D.sunrise+yR[dow]*seg};
+    D.gulika = {s: D.sunrise+(gR[dow]-1)*seg, e: D.sunrise+gR[dow]*seg};
+
+    // Abhijit Muhurta (8th of 15 from sunrise)
+    const muh = dayLen / 15;
+    D.abhijit = {s: D.sunrise+7*muh, e: D.sunrise+8*muh};
+
+    // Amrit Kaalam
+    D.amrit = getAmritKaalam(D.sunrise, D.sunset, dow);
+
+    // Day of week
+    D.dow = dow;
+    D.jd = jd;
+    D.T = T;
+    D.moonIllum = tithiNum <= 14 ? tithiNum/14 : 1-(tithiNum-14)/15;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function tithiDisplayName(num) {
+    if (num === 14) return TITHIS_EN[14]; // Purnima
+    if (num === 29) return TITHIS_EN[15]; // Amavasya
+    if (num < 15) return TITHIS_EN[num];
+    return TITHIS_EN[num - 15];
+}
+
+function render() {
+    const dt = S.date;
+    const y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
+
+    // Date
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    document.getElementById('disp-date').textContent = tN(`${d} ${months[m]} ${y}`);
+    document.getElementById('disp-weekday').textContent = days[dt.getDay()];
+    document.getElementById('disp-coords').textContent = tN(`LAT: ${S.lat.toFixed(4)}° | LON: ${S.lon.toFixed(4)}°`);
+
+    // Vikram Samvat
+    document.getElementById('disp-vs').textContent = tN(D.vs);
+    document.getElementById('disp-samvat-name').textContent = SAMVAT_NAMES[D.samvatNameIdx] + ' Samvatsara';
+
+    // Masa & Ritu
+    document.getElementById('disp-masa').textContent = MASA_EN[D.masaIdx];
+    document.getElementById('disp-ritu').textContent = RITU_EN[D.rituIdx] + ' Ritu';
+
+    // Tithi
+    const tName = tithiDisplayName(D.tithiNum);
+    document.getElementById('disp-tithi').textContent = tName;
+    let tDetail = `Upto ${tN(D.tithiEndStr)}`;
+    const nextTName = tithiDisplayName(D.nextTithiNum);
+    tDetail += `<br><strong>Next:</strong> ${nextTName}`;
+    document.getElementById('disp-tithi-detail').innerHTML = tDetail;
+
+    // Paksha
+    document.getElementById('disp-paksha').textContent = PAKSHA_EN[D.paksha];
+
+    // Nakshatra
+    document.getElementById('disp-nakshatra').textContent = NAKSHATRAS_EN[D.nakIdx];
+    let nDetail = `Upto ${tN(D.nakEndStr)}`;
+    nDetail += `<br><strong>Next:</strong> ${NAKSHATRAS_EN[D.nextNakIdx]}`;
+    document.getElementById('disp-nakshatra-detail').innerHTML = nDetail;
+
+    // Sun times
+    document.getElementById('v-sunrise').textContent = tN(fmtH(D.sunrise));
+    document.getElementById('v-noon').textContent = tN(fmtHM(D.noon));
+    document.getElementById('v-sunset').textContent = tN(fmtH(D.sunset));
+
+    // Timings
+    document.getElementById('v-rahu').textContent = tN(`${fmtH(D.rahu.s)} - ${fmtH(D.rahu.e)}`);
+    document.getElementById('v-yama').textContent = tN(`${fmtH(D.yama.s)} - ${fmtH(D.yama.e)}`);
+    document.getElementById('v-gulika').textContent = tN(`${fmtH(D.gulika.s)} - ${fmtH(D.gulika.e)}`);
+    document.getElementById('v-abhijit').textContent = tN(`${fmtH(D.abhijit.s)} - ${fmtH(D.abhijit.e)}`);
+
+    // Amrit Kaalam
+    if (D.amrit.length > 0) {
+        let amritStr = D.amrit.map(a => `${fmtH(a.start)} - ${fmtH(a.end)}`).join(', ');
+        document.getElementById('v-amrit').textContent = tN(amritStr);
+    } else {
+        document.getElementById('v-amrit').textContent = '—';
+    }
+
+    // Moon phase
+    drawMoonPhase(D.tithiNum);
+    const illumPct = Math.round(D.moonIllum * 100);
+    const phaseLabel = D.tithiNum <= 14 ? 'Waxing' : 'Waning';
+    document.getElementById('moon-info').innerHTML =
+        `<strong>${PAKSHA_EN[D.paksha]}</strong><br>${phaseLabel} · ${tN(illumPct)}% illuminated<br>Tithi ${tN(D.tithiNum < 15 ? D.tithiNum + 1 : D.tithiNum - 14)} of 15`;
+}
+
+// ============================================================
+// CLOCK
+// ============================================================
+function buildClockNums() {
+    const wrap = document.getElementById('clock');
+    const r = 42; // % from center
+    for (let i = 1; i <= 12; i++) {
+        const angle = (i * 30 - 90) * RAD;
+        const x = 50 + r * Math.cos(angle);
+        const y = 50 + r * Math.sin(angle);
+        const el = document.createElement('div');
+        el.className = 'clock-num';
+        el.textContent = i;
+        el.style.left = x + '%'; el.style.top = y + '%';
+        el.style.transform = 'translate(-50%,-50%)';
+        wrap.appendChild(el);
+    }
+}
+
+function tickClock() {
+    const now = new Date();
+    // Convert to target timezone
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    const localMs = utcMs + S.tz * 3600000;
+    const local = new Date(localMs);
+
+    const s = local.getSeconds() + local.getMilliseconds() / 1000;
+    const m = local.getMinutes() + s / 60;
+    const h = (local.getHours() % 12) + m / 60;
+
+    document.getElementById('hand-h').style.transform = `rotate(${h*30}deg)`;
+    document.getElementById('hand-m').style.transform = `rotate(${m*6}deg)`;
+    document.getElementById('hand-s').style.transform = `rotate(${s*6}deg)`;
+
+    const hStr = (''+local.getHours()).padStart(2,'0');
+    const mStr = (''+local.getMinutes()).padStart(2,'0');
+    const sStr = (''+local.getSeconds()).padStart(2,'0');
+    document.getElementById('digital-clock').textContent = tN(`${hStr}:${mStr}:${sStr}`);
+
+    if (S.liveMode) {
+        S.date = local;
+        // Recompute every minute
+        if (local.getSeconds() === 0) {
+            compute();
+            render();
+        }
+    }
+
+    requestAnimationFrame(tickClock);
+}
+
+// ============================================================
+// UI CONTROLS
+// ============================================================
+function setTheme(v) {
+    if (v==='system') v = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', v);
+}
+
+function setLang(v) {
+    S.lang = v;
+    document.body.style.direction = v === 'ur' ? 'rtl' : 'ltr';
+    render();
+}
+
+function toggleFaq() {
+    const m = document.getElementById('faq-modal');
+    m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function onLocationPreset(v) {
+    const cLat = document.getElementById('custom-lat-group');
+    const cLon = document.getElementById('custom-lon-group');
+    if (v === 'custom') {
+        cLat.style.display = ''; cLon.style.display = '';
+    } else {
+        cLat.style.display = 'none'; cLon.style.display = 'none';
+    }
+}
+
+function applySelections() {
+    // Date & time
+    const dateVal = document.getElementById('sel-date').value;
+    const timeVal = document.getElementById('sel-time').value || '12:00:00';
+    if (dateVal) {
+        const [yr, mo, dy] = dateVal.split('-').map(Number);
+        const [hh, mm, ss] = (timeVal + ':00').split(':').map(Number);
+        S.date = new Date(yr, mo - 1, dy, hh, mm, ss || 0);
+        S.liveMode = false;
+    }
+
+    // Location
+    const locVal = document.getElementById('sel-location').value;
+    if (locVal === 'custom') {
+        const lat = parseFloat(document.getElementById('sel-lat').value);
+        const lon = parseFloat(document.getElementById('sel-lon').value);
+        if (!isNaN(lat) && !isNaN(lon)) { S.lat = lat; S.lon = lon; }
+    } else {
+        const [lat, lon] = locVal.split(',').map(Number);
+        S.lat = lat; S.lon = lon;
+    }
+
+    // Timezone
+    S.tz = parseFloat(document.getElementById('sel-tz').value);
+
+    compute();
+    render();
+}
+
+function resetToNow() {
+    S.liveMode = true;
+    const now = new Date();
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    S.date = new Date(utcMs + S.tz * 3600000);
+
+    // Reset form
+    const ist = S.date;
+    document.getElementById('sel-date').value =
+        `${ist.getFullYear()}-${(''+( ist.getMonth()+1)).padStart(2,'0')}-${(''+ist.getDate()).padStart(2,'0')}`;
+    document.getElementById('sel-time').value =
+        `${(''+ist.getHours()).padStart(2,'0')}:${(''+ist.getMinutes()).padStart(2,'0')}`;
+
+    compute();
+    render();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
     setTheme('system');
+    buildClockNums();
 
-    function toggleModal() {
-        const modal = document.getElementById('faq-modal');
-        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-    }
+    // Set initial date/time in IST
+    const now = new Date();
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    S.date = new Date(utcMs + S.tz * 3600000);
 
-    function updateClock() {
-        // Clock always shows local browser time (real-time clock)
-        const d = new Date();
-        const s = d.getSeconds() + d.getMilliseconds() / 1000;
-        const m = d.getMinutes() + s / 60;
-        const h = (d.getHours() % 12) + m / 60;
+    const ist = S.date;
+    document.getElementById('sel-date').value =
+        `${ist.getFullYear()}-${(''+(ist.getMonth()+1)).padStart(2,'0')}-${(''+ist.getDate()).padStart(2,'0')}`;
+    document.getElementById('sel-time').value =
+        `${(''+ist.getHours()).padStart(2,'0')}:${(''+ist.getMinutes()).padStart(2,'0')}`;
 
-        document.getElementById('hour').style.transform = `rotate(${h * 30}deg)`;
-        document.getElementById('minute').style.transform = `rotate(${m * 6}deg)`;
-        document.getElementById('second').style.transform = `rotate(${s * 6}deg)`;
-        
-        // But digital clock shows IST
-        const ist = getISTDate();
-        const hStr = ist.getHours().toString().padStart(2, '0');
-        const mStr = ist.getMinutes().toString().padStart(2, '0');
-        const sStr = ist.getSeconds().toString().padStart(2, '0');
-        document.getElementById('digital-clock').innerText = tNum(`${hStr}:${mStr}:${sStr}`, currentLangCode);
+    compute();
+    render();
+    requestAnimationFrame(tickClock);
+}
 
-        requestAnimationFrame(updateClock);
-    }
-    requestAnimationFrame(updateClock);
-
-    // --- 4. MATH ENGINE (Full Meeus Formulas) ---
-    const RAD = Math.PI / 180;
-    const DEG = 180 / Math.PI;
-
-    function normalize(angle) {
-        let a = angle % 360;
-        if (a < 0) a += 360;
-        return a;
-    }
-
-    function formatHours(decimalHours) {
-        if (isNaN(decimalHours)) return "--:--";
-        let hrs = Math.floor(decimalHours);
-        let mins = Math.floor((decimalHours - hrs) * 60);
-        if (hrs >= 24) hrs -= 24; if (hrs < 0) hrs += 24;
-        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-    }
-
-    // FIX #7: Lahiri Ayanamsa calculation
-    function getLahiriAyanamsa(T) {
-        // Lahiri ayanamsa: based on the precession of equinoxes
-        // Reference: Ayanamsa on 1 Jan 2000 (J2000) ≈ 23.853 degrees (Lahiri)
-        // Precession rate ≈ 50.2888"/year = 0.01397°/year
-        const ayanJ2000 = 23.853;
-        const yearsSinceJ2000 = T * 100;
-        return ayanJ2000 + 0.01397 * yearsSinceJ2000;
-    }
-
-    // FIX #6: Full obliquity with T-dependent terms
-    function getMeanObliquity(T) {
-        return 23.0 + (26.0 + (21.448 - T * (46.8150 + T * (0.00059 - T * 0.001813))) / 60.0) / 60.0;
-    }
-
-    // FIX #1: Full Equation of Time (Meeus Ch.28)
-    function getSolarData(T) {
-        let L0 = normalize(280.46646 + T * (36000.76983 + T * 0.0003032));
-        let M = normalize(357.52911 + T * (35999.05029 - 0.0001537 * T));
-        let e = 0.016708634 - T * (0.000042037 + T * 0.0000001267);
-
-        let C = Math.sin(M * RAD) * (1.914602 - T * (0.004817 + 0.000014 * T))
-              + Math.sin(2 * M * RAD) * (0.019993 - 0.000101 * T)
-              + Math.sin(3 * M * RAD) * 0.000289;
-
-        let sunTrueLong = L0 + C;
-        let omega = 125.04 - 1934.136 * T;
-        let sunAppLong = sunTrueLong - 0.00569 - 0.00478 * Math.sin(omega * RAD);
-
-        let obliq = getMeanObliquity(T);
-        // Nutation correction to obliquity
-        let obliqCorr = obliq + 0.00256 * Math.cos(omega * RAD);
-
-        let sunDeclin = Math.asin(Math.sin(obliqCorr * RAD) * Math.sin(sunAppLong * RAD)) * DEG;
-
-        // Full Equation of Time (all 6 terms from Meeus)
-        let y = Math.tan((obliqCorr / 2) * RAD);
-        y = y * y;
-        let eot = y * Math.sin(2 * L0 * RAD)
-                 - 2 * e * Math.sin(M * RAD)
-                 + 4 * e * y * Math.sin(M * RAD) * Math.cos(2 * L0 * RAD)
-                 - 0.5 * y * y * Math.sin(4 * L0 * RAD)
-                 - 1.25 * e * e * Math.sin(2 * M * RAD);
-        let eqOfTime = 4 * eot * DEG; // in minutes
-
-        return { sunAppLong, sunDeclin, eqOfTime, L0, M, e, obliqCorr };
-    }
-
-    // FIX #2: Multi-term Moon longitude (Meeus Ch.47, major terms)
-    function getMoonLongitude(T) {
-        // Fundamental arguments
-        let Lp = normalize(218.3164477 + 481267.88123421 * T
-                          - 0.0015786 * T * T + T * T * T / 538841.0);
-        let D  = normalize(297.8501921 + 445267.1114034 * T
-                          - 0.0018819 * T * T + T * T * T / 545868.0);
-        let M  = normalize(357.5291092 + 35999.0502909 * T
-                          - 0.0001536 * T * T);
-        let Mp = normalize(134.9633964 + 477198.8675055 * T
-                          + 0.0087414 * T * T + T * T * T / 69699.0);
-        let F  = normalize(93.2720950 + 483202.0175233 * T
-                          - 0.0036539 * T * T);
-
-        // Major perturbation terms for longitude (in degrees)
-        let sumL = 6.288774  * Math.sin(Mp * RAD)
-                 + 1.274027  * Math.sin((2*D - Mp) * RAD)      // evection
-                 + 0.658314  * Math.sin(2*D * RAD)              // variation
-                 + 0.213618  * Math.sin(2*Mp * RAD)
-                 - 0.185116  * Math.sin(M * RAD)                // annual equation
-                 - 0.114332  * Math.sin(2*F * RAD)
-                 + 0.058793  * Math.sin((2*D - 2*Mp) * RAD)
-                 + 0.057066  * Math.sin((2*D - M - Mp) * RAD)
-                 + 0.053322  * Math.sin((2*D + Mp) * RAD)
-                 + 0.045758  * Math.sin((2*D - M) * RAD)
-                 - 0.040923  * Math.sin((M - Mp) * RAD)
-                 - 0.034720  * Math.sin(D * RAD)
-                 - 0.030383  * Math.sin((M + Mp) * RAD)
-                 + 0.015327  * Math.sin((2*D - 2*F) * RAD)
-                 - 0.012528  * Math.sin((Mp + 2*F) * RAD)
-                 + 0.010980  * Math.sin((Mp - 2*F) * RAD)
-                 + 0.010675  * Math.sin((4*D - Mp) * RAD)
-                 + 0.010034  * Math.sin(3*Mp * RAD)
-                 + 0.008548  * Math.sin((4*D - 2*Mp) * RAD)
-                 - 0.007888  * Math.sin((2*D + M - Mp) * RAD)
-                 - 0.006766  * Math.sin((2*D + M) * RAD)
-                 + 0.005751  * Math.sin((M - 2*Mp) * RAD); // ~22 terms (Meeus abridged)
-
-        let moonLong = normalize(Lp + sumL);
-        return moonLong;
-    }
-
-    // FIX #5: Compute Vikram Samvat dynamically
-    function getVikramSamvat(istDate) {
-        const year = istDate.getFullYear();
-        const month = istDate.getMonth(); // 0-indexed
-        // VS year changes at Chaitra Shukla Pratipada (~March/April)
-        // Approximate: before April → previous VS year, after April → current VS year
-        // More precisely this should use the actual tithi, but month-based is a reasonable approx
-        if (month < 3) { // Jan, Feb, Mar
-            return year + 56;
-        }
-        return year + 57;
-    }
-
-    function generateAstronomicalData() {
-        // JD for the IST date at local midnight
-        const y = today.getFullYear();
-        const m = today.getMonth() + 1;
-        const d = today.getDate();
-        const h = today.getHours() + today.getMinutes() / 60 + today.getSeconds() / 3600;
-
-        // Julian Day for the current IST time, converting to UT
-        const utHours = h - TZ_OFFSET;
-        let jdYear = y, jdMonth = m;
-        if (m <= 2) { jdYear -= 1; jdMonth += 12; }
-        const A = Math.floor(jdYear / 100);
-        const B = 2 - A + Math.floor(A / 4);
-        const jd = Math.floor(365.25 * (jdYear + 4716)) + Math.floor(30.6001 * (jdMonth + 1)) + d + utHours / 24.0 + B - 1524.5;
-
-        const T = (jd - 2451545.0) / 36525.0;
-
-        // --- Sun ---
-        const solar = getSolarData(T);
-
-        // --- Sunrise/Sunset ---
-        let haArg = (Math.cos(90.833 * RAD) / (Math.cos(LAT * RAD) * Math.cos(solar.sunDeclin * RAD)))
-                   - Math.tan(LAT * RAD) * Math.tan(solar.sunDeclin * RAD);
-        haArg = Math.max(-1, Math.min(1, haArg)); // clamp for polar regions
-        let haSunrise = Math.acos(haArg) * DEG;
-
-        let solarNoonUTC = (720 - 4 * LON - solar.eqOfTime) / 60;
-
-        calculatedData.sunrise = formatHours(solarNoonUTC - (haSunrise * 4 / 60) + TZ_OFFSET);
-        calculatedData.sunset  = formatHours(solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET);
-        calculatedData.noon    = formatHours(solarNoonUTC + TZ_OFFSET);
-
-        const sRise = solarNoonUTC - (haSunrise * 4 / 60) + TZ_OFFSET;
-        const sSet  = solarNoonUTC + (haSunrise * 4 / 60) + TZ_OFFSET;
-        const dayLength = sSet - sRise;
-        const segment = dayLength / 8;
-
-        // FIX #9: Use IST day-of-week
-        const dayIndex = today.getDay();
-
-        // Rahu/Yama/Gulika segment rules (1-indexed segment from sunrise)
-        // Standard South Indian tradition:
-        // Rahu: Sun=8, Mon=2, Tue=7, Wed=5, Thu=6, Fri=4, Sat=3
-        const rRules = [8, 2, 7, 5, 6, 4, 3];
-        // Yama: Sun=5, Mon=4, Tue=3, Wed=2, Thu=1, Fri=7, Sat=6
-        const yRules = [5, 4, 3, 2, 1, 7, 6];
-        // Gulika: Sun=7, Mon=6, Tue=5, Wed=4, Thu=3, Fri=2, Sat=1
-        const gRules = [7, 6, 5, 4, 3, 2, 1];
-
-        calculatedData.rahu   = `${formatHours(sRise + (rRules[dayIndex]-1)*segment)} - ${formatHours(sRise + rRules[dayIndex]*segment)}`;
-        calculatedData.yama   = `${formatHours(sRise + (yRules[dayIndex]-1)*segment)} - ${formatHours(sRise + yRules[dayIndex]*segment)}`;
-        calculatedData.gulika = `${formatHours(sRise + (gRules[dayIndex]-1)*segment)} - ${formatHours(sRise + gRules[dayIndex]*segment)}`;
-
-        // Abhijit Muhurta: 8th of 15 muhurtas from sunrise (centered on local noon)
-        const muhurta = dayLength / 15;
-        const abhijitStart = sRise + 7 * muhurta; // 8th muhurta starts after 7 muhurtas
-        calculatedData.abijith = `${formatHours(abhijitStart)} - ${formatHours(abhijitStart + muhurta)}`;
-
-        // --- Moon (FIX #2) ---
-        const moonLongTropical = getMoonLongitude(T);
-
-        // --- Ayanamsa (FIX #7) ---
-        const ayanamsa = getLahiriAyanamsa(T);
-        const moonLongSidereal = normalize(moonLongTropical - ayanamsa);
-
-        // --- Tithi (FIX #4) ---
-        // Tithi uses tropical difference (ayanamsa cancels out)
-        let diff = normalize(moonLongTropical - solar.sunAppLong);
-        let tithiNum = Math.floor(diff / 12); // 0-29
-        if (tithiNum >= 30) tithiNum = 29; // edge case clamp
-        calculatedData.tithiIndex = tithiNum; // 0-based now
-
-        // --- Nakshatra (FIX #3, #7) ---
-        // Uses SIDEREAL Moon longitude
-        calculatedData.nakshatraIndex = Math.floor(moonLongSidereal / (360 / 27)); // 13.333... degrees each
-
-        // --- Vikram Samvat (FIX #5) ---
-        calculatedData.vikramSamvat = getVikramSamvat(today);
-    }
-
-    // --- 5. RENDER ENGINE ---
-    function renderUI() {
-        const dict = i18n[currentLangCode];
-
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            el.innerText = dict[el.getAttribute('data-i18n')];
-        });
-
-        document.getElementById('display-coords').innerText = tNum(dict.coordStr, currentLangCode);
-        document.getElementById('display-year').innerText = tNum(today.getFullYear(), currentLangCode);
-        document.getElementById('display-vs').innerText = tNum(calculatedData.vikramSamvat, currentLangCode);
-        
-        const intlMap = { 'en': 'en-IN', 'hi': 'hi-IN', 'bn': 'bn-IN', 'mr': 'mr-IN', 'te': 'te-IN', 'ta': 'ta-IN', 'gu': 'gu-IN', 'ur': 'ur-IN', 'kn': 'kn-IN', 'or': 'or-IN', 'ml': 'ml-IN', 'pa': 'pa-IN' };
-        const localCode = intlMap[currentLangCode];
-        
-        const rawDate = today.toLocaleDateString(localCode, {month: 'long', day: 'numeric'});
-        document.getElementById('display-date').innerText = tNum(rawDate, currentLangCode); 
-        document.getElementById('display-day').innerText = today.toLocaleDateString(localCode, {weekday: 'long'});
-
-        document.getElementById('sunrise-time').innerText = tNum(calculatedData.sunrise, currentLangCode);
-        document.getElementById('noon-time').innerText   = tNum(calculatedData.noon, currentLangCode);
-        document.getElementById('sunset-time').innerText  = tNum(calculatedData.sunset, currentLangCode);
-
-        document.getElementById('rahu-time').innerText    = tNum(calculatedData.rahu, currentLangCode);
-        document.getElementById('yama-time').innerText    = tNum(calculatedData.yama, currentLangCode);
-        document.getElementById('gulika-time').innerText  = tNum(calculatedData.gulika, currentLangCode);
-        document.getElementById('abijith-time').innerText = tNum(calculatedData.abijith, currentLangCode);
-
-        // FIX #4: Tithi display with 0-based index
-        const ti = calculatedData.tithiIndex; // 0-29
-        let tName, pakshaName;
-        if (ti === 14) {
-            tName = dict.tithis[14]; // Purnima
-            pakshaName = dict.paksha[0];
-        } else if (ti === 29) {
-            tName = dict.tithis[15]; // Amavasya
-            pakshaName = dict.paksha[1];
-        } else if (ti < 15) {
-            tName = dict.tithis[ti]; // Shukla 0-13
-            pakshaName = dict.paksha[0];
-        } else {
-            tName = dict.tithis[ti - 15]; // Krishna 15-28 → index 0-13
-            pakshaName = dict.paksha[1];
-        }
-        
-        document.getElementById('dynamic-tithi').innerHTML = `
-            ${dict.curTithiLbl}: <br><span>${tName.toUpperCase()}</span><br><br>
-            ${dict.phaseLbl}: <br><span>${pakshaName.toUpperCase()}</span>
-        `;
-
-        const nIdx = calculatedData.nakshatraIndex;
-        document.getElementById('dynamic-nakshatra').innerHTML = `
-            ${dict.curNakshatraLbl}: <br><span>${dict.nakshatras[nIdx].toUpperCase()}</span><br><br>
-            ${dict.algoLbl}: <br><span>${dict.approxAlgo.toUpperCase()}</span>
-        `;
-    }
-
-    generateAstronomicalData();
-    renderUI();
+init();
 </script>
 </body>
 </html>
