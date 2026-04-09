@@ -43,7 +43,17 @@
             box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; overflow: hidden;
         }
 
+        /*
         .top-controls { position: absolute; top: 20px; right: 20px; z-index: 100; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;}
+        */
+        .top-controls { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            justify-content: flex-end; 
+            margin-bottom: 15px; 
+            width: 100%;
+        }
         
         button, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--text-muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;}
         button:hover { border-color: var(--text-accent); color: var(--text-accent); }
