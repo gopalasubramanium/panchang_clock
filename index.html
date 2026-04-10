@@ -1,872 +1,515 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" itemscope itemtype="https://schema.org/WebApplication">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vedic Panchangam — High-Precision Dashboard</title>
+<title>Vedic Panchangam — Hindu Calendar, Tithi, Nakshatra, Muhurta Dashboard</title>
+<meta name="description" content="Free high-precision Vedic Panchangam with all five angas (Tithi, Nakshatra, Yoga, Karana, Vaara), muhurta timings, Rahu Kaal, planetary hours. Zero-dependency client-side astronomical calculations using Meeus algorithms and Lahiri Ayanamsa. Works for 40+ global cities.">
+<meta name="keywords" content="panchangam, panchang, hindu calendar, tithi, nakshatra, muhurta, rahu kaal, vedic astrology, vikram samvat, yoga karana, sunrise sunset, amrit kaal, abhijit muhurta">
+<meta name="author" content="Vedic Panchangam Project">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<link rel="canonical" href="https://date.eksaar.com/">
+<meta property="og:title" content="Vedic Panchangam — Comprehensive Hindu Calendar Dashboard">
+<meta property="og:description" content="Free, accurate Panchangam with Tithi, Nakshatra, Yoga, Karana, Muhurta, Rahu Kaal, and planetary hours for 40+ cities worldwide. No API dependencies.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://date.eksaar.com/">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vedic Panchangam Dashboard">
+<meta name="twitter:description" content="High-precision Hindu calendar with all 5 angas, muhurta timings, and planetary hours.">
+<meta itemprop="name" content="Vedic Panchangam Dashboard">
+<meta itemprop="description" content="Comprehensive Hindu calendar with astronomical calculations for Tithi, Nakshatra, Yoga, Karana, Muhurta timings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Vedic Panchangam Dashboard","description":"High-precision Vedic Panchangam with all five angas, muhurta timings, and planetary hours.","url":"https://date.eksaar.com/","applicationCategory":"ReferenceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"author":{"@type":"Organization","name":"Eksaar"}}</script>
 <style>
-:root {
-    --bg: #080b10;
-    --panel: #0f1318;
-    --panel2: #151a22;
-    --accent: #d4944c;
-    --accent2: #e8b86d;
-    --accent-dim: #6b4a26;
-    --text: #e2ddd5;
-    --text2: #8a8478;
-    --text3: #5a564e;
-    --border: #2a261f;
-    --red: #8b2020;
-    --green: #2a6b3a;
-    --shadow: 0 8px 32px rgba(0,0,0,0.6);
-    --clock-face: radial-gradient(circle, #b8863a 0%, #7a5520 60%, #3d2a10 100%);
-    --glow: 0 0 20px rgba(212,148,76,0.15);
-}
-[data-theme="light"] {
-    --bg: #f0e8d8;
-    --panel: #fff9f0;
-    --panel2: #f5edd8;
-    --accent: #9b6830;
-    --accent2: #c48a3c;
-    --accent-dim: #d4b88a;
-    --text: #2a1f14;
-    --text2: #6b5c48;
-    --text3: #a09580;
-    --border: #d5c8b0;
-    --red: #9b3030;
-    --green: #2a6b3a;
-    --shadow: 0 8px 32px rgba(100,70,30,0.12);
-    --clock-face: radial-gradient(circle, #f5e6c8 0%, #dfc28a 60%, #c4a060 100%);
-    --glow: none;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background 0.4s, color 0.4s;
-}
-.app {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 20px clamp(12px, 3vw, 40px);
-}
-.header {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 12px;
-    padding-bottom: 20px; margin-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-}
-.header h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(22px, 4vw, 34px);
-    color: var(--accent);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    font-weight: 700;
-}
-.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.ctrl-btn, .ctrl-select {
-    font-family: 'Cinzel', serif;
-    font-size: 11px; font-weight: 700;
-    background: var(--panel2); color: var(--text2);
-    border: 1px solid var(--border); border-radius: 4px;
-    padding: 7px 12px; cursor: pointer;
-    text-transform: uppercase; letter-spacing: 1px;
-    transition: all 0.2s;
-}
-.ctrl-btn:hover, .ctrl-select:hover { border-color: var(--accent); color: var(--accent); }
-.selector-bar {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    margin-bottom: 28px;
-    padding: 16px 20px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    align-items: flex-end;
-}
-.sel-group { display: flex; flex-direction: column; gap: 4px; }
-.sel-group label {
-    font-family: 'Cinzel', serif;
-    font-size: 10px; text-transform: uppercase;
-    letter-spacing: 2px; color: var(--text3);
-    font-weight: 700;
-}
-.sel-group input, .sel-group select {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px; font-weight: 600;
-    background: var(--panel2); color: var(--text);
-    border: 1px solid var(--border); border-radius: 4px;
-    padding: 7px 10px;
-}
-.sel-group input:focus, .sel-group select:focus { outline: none; border-color: var(--accent); }
-.apply-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 12px; font-weight: 700;
-    background: var(--accent); color: #0f0c08;
-    border: none; border-radius: 4px;
-    padding: 9px 18px; cursor: pointer;
-    text-transform: uppercase; letter-spacing: 1px;
-    transition: all 0.2s;
-}
-.apply-btn:hover { background: var(--accent2); }
-.main-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-}
-@media (min-width: 920px) {
-    .main-grid { grid-template-columns: 1fr 1fr 1fr; }
-    .main-grid .clock-section { order: 0; grid-column: 2; }
-    .main-grid .left-panel { order: -1; }
-}
-.panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: clamp(16px, 3vw, 28px);
-    box-shadow: var(--shadow);
-}
-.info-card {
-    margin-bottom: 20px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-}
-.info-card:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.info-label {
-    font-family: 'Cinzel', serif;
-    font-size: 10px; text-transform: uppercase;
-    letter-spacing: 2px; color: var(--text3);
-    margin-bottom: 6px; font-weight: 700;
-}
-.info-val {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(18px, 3vw, 26px);
-    color: var(--accent);
-    font-weight: 700;
-    line-height: 1.2;
-}
-.info-sub {
-    font-size: 13px; color: var(--text2);
-    margin-top: 4px; font-style: italic;
-}
-.info-detail {
-    font-size: 13px; color: var(--text2);
-    margin-top: 8px; line-height: 1.7;
-}
-.info-detail strong { color: var(--accent); font-weight: 600; font-style: normal; }
-.moon-phase-container {
-    display: flex; align-items: center; gap: 16px;
-    margin-top: 12px;
-}
-.moon-svg { flex-shrink: 0; }
-.moon-info { font-size: 13px; color: var(--text2); line-height: 1.6; }
-.moon-info strong { color: var(--accent); }
-.clock-section { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-.clock-wrap {
-    width: clamp(220px, 32vw, 300px); aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--clock-face);
-    border: 8px solid #1a1008;
-    position: relative;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 12px 24px rgba(0,0,0,0.4), var(--glow);
-}
-[data-theme="light"] .clock-wrap { border-color: #5a4020; box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 8px 20px rgba(100,70,30,0.15); }
-.clock-num {
-    position: absolute; font-family: 'Cinzel', serif;
-    font-size: clamp(14px, 2vw, 20px); font-weight: 900;
-    color: #1a1008; text-shadow: 0 1px 1px rgba(255,255,255,0.2);
-}
-.hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: 4px 4px 0 0; z-index: 5; }
-.hand-h { width: 6px; height: 26%; background: #1a1008; margin-left: -3px; }
-.hand-m { width: 4px; height: 38%; background: #2a1e10; margin-left: -2px; }
-.hand-s { width: 2px; height: 44%; background: var(--red); margin-left: -1px; z-index: 6; }
-.clock-center {
-    position: absolute; top: 50%; left: 50%;
-    width: 14px; height: 14px;
-    background: #1a1008; border-radius: 50%;
-    transform: translate(-50%, -50%); z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-.digital {
-    position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
-    font-family: 'Cinzel', serif; font-size: clamp(13px, 1.8vw, 16px);
-    font-weight: 900; color: #1a1008;
-    background: rgba(255,255,255,0.45);
-    padding: 2px 10px; border-radius: 3px;
-    border: 1px solid rgba(0,0,0,0.15);
-    z-index: 7; letter-spacing: 1px;
-}
-.sun-row {
-    display: flex; justify-content: space-between;
-    width: 100%; max-width: 340px;
-    font-family: 'Cinzel', serif; font-size: 11px;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: var(--text3);
-}
-.sun-row div { text-align: center; }
-.sun-row .sun-val { color: var(--accent); font-size: 15px; font-weight: 700; margin-top: 4px; display: block; }
-.timings-section {
-    margin-top: 28px;
-    display: grid; grid-template-columns: 1fr;
-    gap: 20px;
-}
-@media (min-width: 700px) { .timings-section { grid-template-columns: 1fr 1fr; } }
-.timing-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-}
-.timing-title {
-    font-family: 'Cinzel', serif;
-    font-size: 13px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 2px;
-    color: var(--text); text-align: center;
-    padding-bottom: 14px; margin-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-}
-.timing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 16px; text-align: center;
-}
-.tg-label {
-    font-family: 'Cinzel', serif;
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: var(--text3); margin-bottom: 6px;
-}
-.tg-val {
-    font-family: 'Cinzel', serif;
-    font-size: 14px; font-weight: 700;
-    color: var(--accent);
-}
-.tg-val.inauspicious { color: var(--red); }
-.tg-val.auspicious { color: var(--green); }
-.modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
-    display: none; justify-content: center; align-items: center;
-    z-index: 1000; padding: 20px;
-}
-.modal-content {
-    background: var(--panel); border: 1px solid var(--accent-dim);
-    border-radius: 10px; padding: 32px;
-    max-width: 750px; width: 100%; max-height: 85vh; overflow-y: auto;
-    box-shadow: var(--shadow);
-}
-.modal-head {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 22px;
-}
-.modal-head h2 { font-family: 'Cinzel', serif; color: var(--accent); font-size: 20px; }
-.modal-close {
-    background: none; border: none; color: var(--accent);
-    font-size: 28px; cursor: pointer; line-height: 1;
-}
-.faq-q { font-family: 'Cinzel', serif; font-size: 16px; color: var(--accent); margin-bottom: 8px; font-weight: 700; }
-.faq-a { font-size: 14px; color: var(--text2); line-height: 1.8; margin-bottom: 24px; }
-@media (max-width: 600px) {
-    .selector-bar { flex-direction: column; }
-    .sel-group { width: 100%; }
-    .sel-group input, .sel-group select { width: 100%; }
-}
+:root{--bg:#080b10;--panel:#0f1318;--panel2:#151a22;--accent:#d4944c;--accent2:#e8b86d;--accent-dim:#6b4a26;--text:#e2ddd5;--text2:#8a8478;--text3:#5a564e;--border:#2a261f;--red:#8b2020;--green:#2a6b3a;--shadow:0 8px 32px rgba(0,0,0,.6);--clock-face:radial-gradient(circle,#b8863a 0%,#7a5520 60%,#3d2a10 100%);--glow:0 0 20px rgba(212,148,76,.15)}
+[data-theme="light"]{--bg:#f0e8d8;--panel:#fff9f0;--panel2:#f5edd8;--accent:#9b6830;--accent2:#c48a3c;--accent-dim:#d4b88a;--text:#2a1f14;--text2:#6b5c48;--text3:#a09580;--border:#d5c8b0;--red:#9b3030;--green:#2a6b3a;--shadow:0 8px 32px rgba(100,70,30,.12);--clock-face:radial-gradient(circle,#f5e6c8 0%,#dfc28a 60%,#c4a060 100%);--glow:none}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .4s,color .4s;padding-top:52px;padding-bottom:40px}
+#api-output{display:none;white-space:pre-wrap;font-family:monospace;font-size:14px;padding:20px;background:#111;color:#0f0}
+.fixed-header{position:fixed;top:0;left:0;right:0;z-index:500;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:10px clamp(12px,3vw,40px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.fixed-header h1{font-family:'Cinzel',serif;font-size:clamp(14px,2.5vw,22px);color:var(--accent);letter-spacing:2px;text-transform:uppercase;font-weight:700;white-space:nowrap}
+.hdr-controls{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fixed-footer{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--bg);border-top:1px solid var(--border);padding:8px clamp(12px,3vw,40px);font-size:11px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;backdrop-filter:blur(10px)}
+.fixed-footer a{color:var(--accent);text-decoration:none}
+.fixed-footer a:hover{text-decoration:underline}
+.app{max-width:1320px;margin:0 auto;padding:20px clamp(12px,3vw,40px)}
+.ctrl-btn,.ctrl-select{font-family:'Cinzel',serif;font-size:11px;font-weight:700;background:var(--panel2);color:var(--text2);border:1px solid var(--border);border-radius:4px;padding:6px 10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all .2s}
+.ctrl-btn:hover,.ctrl-select:hover{border-color:var(--accent);color:var(--accent)}
+.selector-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--panel);border:1px solid var(--border);border-radius:8px;align-items:flex-end}
+.sel-group{display:flex;flex-direction:column;gap:4px}.sel-group label{font-family:'Cinzel',serif;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);font-weight:700}
+.sel-group input,.sel-group select{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:6px 8px}
+.sel-group input:focus,.sel-group select:focus{outline:none;border-color:var(--accent)}
+.apply-btn{font-family:'Cinzel',serif;font-size:11px;font-weight:700;background:var(--accent);color:#0f0c08;border:none;border-radius:4px;padding:8px 16px;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.apply-btn:hover{background:var(--accent2)}
+/* Summary bar */
+.summary-bar{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:24px;font-size:14px;line-height:1.8;color:var(--text2)}
+.summary-bar strong{color:var(--accent)}
+/* Main grid */
+.main-grid{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:920px){.main-grid{grid-template-columns:1fr 1fr 1fr}.main-grid .clock-section{order:0;grid-column:2}.main-grid .left-panel{order:-1}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:clamp(14px,3vw,24px);box-shadow:var(--shadow)}
+.info-card{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}.info-card:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.info-label{font-family:'Cinzel',serif;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);margin-bottom:4px;font-weight:700}
+.info-val{font-family:'Cinzel',serif;font-size:clamp(16px,2.5vw,24px);color:var(--accent);font-weight:700;line-height:1.2}
+.info-sub{font-size:12px;color:var(--text2);margin-top:3px;font-style:italic}
+.info-detail{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.6}.info-detail strong{color:var(--accent);font-weight:600;font-style:normal}
+.moon-phase-container{display:flex;align-items:center;gap:14px;margin-top:10px}.moon-info{font-size:12px;color:var(--text2);line-height:1.5}.moon-info strong{color:var(--accent)}
+.clock-section{display:flex;flex-direction:column;align-items:center;gap:16px}
+.clock-wrap{width:clamp(200px,30vw,280px);aspect-ratio:1;border-radius:50%;background:var(--clock-face);border:7px solid #1a1008;position:relative;box-shadow:inset 0 0 25px rgba(0,0,0,.6),0 10px 20px rgba(0,0,0,.4),var(--glow)}
+[data-theme="light"] .clock-wrap{border-color:#5a4020}
+.clock-num{position:absolute;font-family:'Cinzel',serif;font-size:clamp(13px,1.8vw,18px);font-weight:900;color:#1a1008}
+.hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom center;border-radius:4px 4px 0 0;z-index:5}
+.hand-h{width:5px;height:26%;background:#1a1008;margin-left:-2.5px}.hand-m{width:3px;height:38%;background:#2a1e10;margin-left:-1.5px}.hand-s{width:2px;height:44%;background:var(--red);margin-left:-1px;z-index:6}
+.clock-center{position:absolute;top:50%;left:50%;width:12px;height:12px;background:#1a1008;border-radius:50%;transform:translate(-50%,-50%);z-index:10}
+.digital{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:clamp(12px,1.6vw,15px);font-weight:900;color:#1a1008;background:rgba(255,255,255,.45);padding:2px 8px;border-radius:3px;z-index:7;letter-spacing:1px}
+.sun-row{display:flex;justify-content:space-between;width:100%;max-width:320px;font-family:'Cinzel',serif;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+.sun-row div{text-align:center}.sun-row .sun-val{color:var(--accent);font-size:14px;font-weight:700;margin-top:3px;display:block}
+.timings-section{margin-top:24px;display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:700px){.timings-section{grid-template-columns:1fr 1fr}}
+.timing-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--shadow)}
+.timing-title{font-family:'Cinzel',serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text);text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--border)}
+.timing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;text-align:center}
+.tg-label{font-family:'Cinzel',serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px}
+.tg-val{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--accent)}.tg-val.inauspicious{color:var(--red)}.tg-val.auspicious{color:var(--green)}.tg-val.neutral{color:var(--accent)}
+.angas-section{margin-top:24px}
+.angas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.anga-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.anga-num{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.anga-name{font-family:'Cinzel',serif;font-size:18px;color:var(--accent);font-weight:700;margin-bottom:4px}
+.anga-detail{font-size:11px;color:var(--text2);line-height:1.5}
+.hora-section{margin-top:24px;display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:700px){.hora-section{grid-template-columns:1fr 1fr}}
+.hora-table{width:100%;border-collapse:collapse;font-size:12px}.hora-table th{font-family:'Cinzel',serif;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:6px;border-bottom:1px solid var(--border);text-align:left}
+.hora-table td{padding:6px;border-bottom:1px solid var(--border);color:var(--text2)}.hora-table tr.current-hora{background:rgba(212,148,76,.1)}.hora-table tr.current-hora td{color:var(--accent);font-weight:600}
+/* API docs */
+.api-docs{margin-top:24px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+.api-docs summary{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.api-docs pre{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-top:12px;font-size:12px;overflow-x:auto;color:var(--text2);line-height:1.6}
+.api-docs code{color:var(--accent)}
+.api-docs p{font-size:13px;color:var(--text2);line-height:1.7;margin-top:8px}
+/* Modals */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);display:none;justify-content:center;align-items:flex-start;z-index:1000;padding:20px;overflow-y:auto}
+.modal-content{background:var(--panel);border:1px solid var(--accent-dim);border-radius:10px;padding:clamp(20px,4vw,36px);max-width:880px;width:100%;margin:40px auto;box-shadow:var(--shadow)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:20px}
+.modal-head h2{font-family:'Cinzel',serif;color:var(--accent);font-size:18px}
+.modal-close{background:none;border:none;color:var(--accent);font-size:28px;cursor:pointer;line-height:1}
+.kb-dynamic{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:24px;font-size:13px;line-height:1.8;color:var(--text)}.kb-dynamic strong{color:var(--accent)}
+.kb-section{margin-bottom:28px}.kb-section h3{font-family:'Cinzel',serif;font-size:16px;color:var(--accent);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.kb-section p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:10px}.kb-section em{color:var(--accent);font-style:normal}
+/* Consent */
+.consent-banner{position:fixed;bottom:44px;left:0;right:0;z-index:600;background:var(--panel);border-top:1px solid var(--border);padding:12px clamp(12px,3vw,40px);display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text2)}
+.consent-banner a{color:var(--accent)}.consent-btn{font-family:'Cinzel',serif;font-size:11px;font-weight:700;background:var(--accent);color:#0f0c08;border:none;border-radius:4px;padding:7px 16px;cursor:pointer;text-transform:uppercase}
+/* Collapsible sections */
+.collapsible{margin-top:24px}
+.collapsible>summary{font-family:'Cinzel',serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;transition:all .2s;user-select:none}
+.collapsible>summary::-webkit-details-marker{display:none}
+.collapsible>summary::after{content:'▸';font-size:14px;color:var(--accent);transition:transform .2s}
+.collapsible[open]>summary::after{transform:rotate(90deg)}
+.collapsible>summary:hover{border-color:var(--accent);color:var(--accent)}
+.collapsible>.section-body{padding-top:16px}
+/* Kundli chart */
+.kundli-wrap{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:16px 0}
+.kundli-chart{position:relative;width:min(380px,90vw);height:min(380px,90vw)}
+.kundli-chart svg{width:100%;height:100%}
+.kundli-chart text{font-family:'Cinzel',serif;font-weight:700;fill:var(--accent)}
+.kundli-chart .house-line{stroke:var(--border);stroke-width:1.5}
+.kundli-chart .planet-text{font-size:11px;fill:var(--text)}
+.kundli-chart .rashi-num{font-size:9px;fill:var(--text3)}
+.kundli-table{font-size:13px;color:var(--text2);line-height:1.8}
+.kundli-table td{padding:4px 12px;border-bottom:1px solid var(--border)}
+.kundli-table .planet-name{color:var(--accent);font-weight:600;font-family:'Cinzel',serif;font-size:12px}
+@media(max-width:600px){.selector-bar{flex-direction:column}.sel-group{width:100%}.sel-group input,.sel-group select{width:100%}.fixed-header h1{font-size:12px;letter-spacing:1px}}
 </style>
 </head>
 <body>
-<div class="app">
-    <div class="header">
-        <h1 id="ui-mainTitle">Panchangam Dashboard</h1>
-        <div class="controls">
-            <select class="ctrl-select" id="lang-select" onchange="setLang(this.value)">
-                <option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option>
-                <option value="mr">मराठी</option><option value="te">తెలుగు</option><option value="ta">தமிழ்</option>
-                <option value="gu">ગુજરાતી</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option>
-                <option value="pa">ਪੰਜਾਬੀ</option><option value="or">ଓଡ଼ିଆ</option><option value="ur">اردو</option>
-            </select>
-            <select class="ctrl-select" id="theme-select" onchange="setTheme(this.value)">
-                <option value="system" id="ui-themeAuto">Auto</option>
-                <option value="dark" id="ui-themeDark">Dark</option>
-                <option value="light" id="ui-themeLight">Light</option>
-            </select>
-            <button class="ctrl-btn" onclick="toggleFaq()" id="ui-faqBtn">FAQ</button>
-        </div>
+<!-- FIXED HEADER -->
+<header class="fixed-header">
+    <h1 id="ui-mainTitle">Panchangam</h1>
+    <div class="hdr-controls">
+        <select class="ctrl-select" id="lang-select" onchange="setLang(this.value)"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="mr">मराठी</option><option value="te">తెలుగు</option><option value="ta">தமிழ்</option><option value="gu">ગુજરાતી</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option><option value="pa">ਪੰਜਾਬੀ</option><option value="or">ଓଡ଼ିଆ</option><option value="ur">اردو</option></select>
+        <select class="ctrl-select" id="theme-select" onchange="setTheme(this.value)"><option value="system" id="ui-themeAuto">Auto</option><option value="dark" id="ui-themeDark">Dark</option><option value="light" id="ui-themeLight">Light</option></select>
+        <button class="ctrl-btn" onclick="toggleKB()" id="ui-kbBtn">Knowledge Base</button>
     </div>
+</header>
+<!-- CONSENT BANNER -->
+<div class="consent-banner" id="consent-banner">
+    <span>This site uses no cookies or tracking. All computations run locally in your browser. No personal data is collected or transmitted. By using this site you acknowledge our <a href="#" onclick="return false">privacy-first approach</a> compliant with GDPR, DPDP, and PDPA.</span>
+    <button class="consent-btn" onclick="acceptConsent()">Understood</button>
+</div>
+<!-- API OUTPUT -->
+<pre id="api-output"></pre>
+<div class="app" id="app-root">
+    <!-- SELECTORS -->
     <div class="selector-bar">
         <div class="sel-group"><label id="ui-lblDate">Date</label><input type="date" id="sel-date"></div>
         <div class="sel-group"><label id="ui-lblTime">Time</label><input type="time" id="sel-time" step="1"></div>
         <div class="sel-group"><label id="ui-lblLocation">Location</label>
-            <select id="sel-location" onchange="onLocationPreset(this.value)">
-                <option value="28.5355,77.3910">Noida / NCR</option><option value="28.6139,77.2090">New Delhi</option>
-                <option value="19.0760,72.8777">Mumbai</option><option value="13.0827,80.2707">Chennai</option>
-                <option value="12.9716,77.5946">Bengaluru</option><option value="22.5726,88.3639">Kolkata</option>
-                <option value="17.3850,78.4867">Hyderabad</option><option value="23.0225,72.5714">Ahmedabad</option>
-                <option value="26.9124,75.7873">Jaipur</option><option value="21.1702,72.8311">Surat</option>
-                <option value="18.5204,73.8567">Pune</option><option value="26.8467,80.9462">Lucknow</option>
-                <option value="11.0168,76.9558">Coimbatore</option><option value="25.3176,82.9739">Varanasi</option>
-                <option value="30.7333,76.7794">Chandigarh</option><option value="9.9312,76.2673">Kochi</option>
-                <option value="15.3173,75.7139">Hubli-Dharwad</option>
-                <option value="custom" id="ui-customCoords">Custom Coordinates…</option>
+            <select id="sel-location" onchange="onLocPreset(this.value)">
+                <optgroup label="India"><option value="28.6139,77.2090,5.5">New Delhi</option><option value="28.5355,77.3910,5.5">Noida / NCR</option><option value="19.0760,72.8777,5.5">Mumbai</option><option value="13.0827,80.2707,5.5">Chennai</option><option value="12.9716,77.5946,5.5">Bengaluru</option><option value="22.5726,88.3639,5.5">Kolkata</option><option value="17.3850,78.4867,5.5">Hyderabad</option><option value="23.0225,72.5714,5.5">Ahmedabad</option><option value="18.5204,73.8567,5.5">Pune</option><option value="26.9124,75.7873,5.5">Jaipur</option><option value="25.3176,82.9739,5.5">Varanasi</option><option value="26.8467,80.9462,5.5">Lucknow</option><option value="9.9312,76.2673,5.5">Kochi</option><option value="11.0168,76.9558,5.5">Coimbatore</option><option value="30.7333,76.7794,5.5">Chandigarh</option><option value="25.6093,85.1376,5.5">Patna</option><option value="20.2961,85.8245,5.5">Bhubaneswar</option><option value="26.1445,91.7362,5.5">Guwahati</option><option value="23.1765,75.7885,5.5">Ujjain</option><option value="13.6288,79.4192,5.5">Tirupati</option></optgroup>
+                <optgroup label="Nepal & Sri Lanka"><option value="27.7172,85.3240,5.75">Kathmandu</option><option value="26.7271,85.9407,5.75">Janakpur</option><option value="6.9271,79.8612,5.5">Colombo</option><option value="9.6615,80.0255,5.5">Jaffna</option></optgroup>
+                <optgroup label="Southeast Asia"><option value="1.3521,103.8198,8">Singapore</option><option value="3.1390,101.6869,8">Kuala Lumpur</option><option value="-8.3405,115.0920,8">Bali</option></optgroup>
+                <optgroup label="Middle East"><option value="25.2048,55.2708,4">Dubai</option><option value="23.5880,58.3829,4">Muscat</option><option value="25.2854,51.5310,3">Doha</option><option value="26.0667,50.5577,3">Bahrain</option></optgroup>
+                <optgroup label="United Kingdom"><option value="51.5074,-0.1278,0">London</option><option value="52.6369,-1.1398,0">Leicester</option><option value="52.4862,-1.8904,0">Birmingham</option></optgroup>
+                <optgroup label="United States"><option value="40.7128,-74.0060,-5">New York</option><option value="40.5187,-74.4121,-5">Edison NJ</option><option value="41.8781,-87.6298,-6">Chicago</option><option value="29.7604,-95.3698,-6">Houston</option><option value="37.3382,-121.8863,-8">San Jose CA</option><option value="33.7490,-84.3880,-5">Atlanta</option></optgroup>
+                <optgroup label="Canada"><option value="43.6532,-79.3832,-5">Toronto</option><option value="49.2827,-123.1207,-8">Vancouver</option><option value="43.7315,-79.7624,-5">Brampton</option></optgroup>
+                <optgroup label="Australia & Pacific"><option value="-33.8688,151.2093,10">Sydney</option><option value="-37.8136,144.9631,10">Melbourne</option><option value="-18.1416,178.4419,12">Suva (Fiji)</option></optgroup>
+                <optgroup label="Africa & Caribbean"><option value="-20.1609,57.5012,4">Port Louis</option><option value="10.6918,-61.2225,-4">Port of Spain</option><option value="-29.8587,31.0218,2">Durban</option></optgroup>
+                <option value="custom" id="ui-customCoords">Custom…</option>
             </select>
         </div>
-        <div class="sel-group" id="custom-lat-group" style="display:none;"><label id="ui-lblLat">Latitude</label><input type="number" id="sel-lat" step="0.0001" placeholder="28.5355"></div>
-        <div class="sel-group" id="custom-lon-group" style="display:none;"><label id="ui-lblLon">Longitude</label><input type="number" id="sel-lon" step="0.0001" placeholder="77.3910"></div>
-        <div class="sel-group"><label id="ui-lblTz">Timezone</label>
-            <select id="sel-tz"><option value="5.5" selected>IST (+5:30)</option><option value="5.75">NPT (+5:45)</option><option value="6">BST (+6:00)</option><option value="0">UTC</option><option value="1">CET (+1)</option><option value="-5">EST (-5)</option><option value="-8">PST (-8)</option></select>
-        </div>
+        <div class="sel-group" id="custom-lat-group" style="display:none"><label id="ui-lblLat">Lat</label><input type="number" id="sel-lat" step="0.0001" placeholder="28.53"></div>
+        <div class="sel-group" id="custom-lon-group" style="display:none"><label id="ui-lblLon">Lon</label><input type="number" id="sel-lon" step="0.0001" placeholder="77.39"></div>
+        <div class="sel-group" id="custom-tz-group" style="display:none"><label id="ui-lblTz">UTC±</label><input type="number" id="sel-tz-custom" step="0.5" placeholder="5.5"></div>
         <button class="apply-btn" onclick="applySelections()" id="ui-applyBtn">Apply</button>
-        <button class="ctrl-btn" onclick="resetToNow()" style="padding:9px 14px;" id="ui-nowBtn">Now ↻</button>
+        <button class="ctrl-btn" onclick="resetToNow()" id="ui-nowBtn">Now ↻</button>
     </div>
+    <!-- TODAY'S SUMMARY -->
+    <div class="summary-bar" id="main-summary"></div>
+    <!-- MAIN GRID -->
     <div class="main-grid">
         <div class="panel left-panel">
-            <div class="info-card">
-                <div class="info-label" id="lbl-date">Date</div>
-                <div class="info-val" id="disp-date">—</div>
-                <div class="info-sub" id="disp-weekday">—</div>
-                <div class="info-sub" id="disp-coords" style="font-style:normal; font-size:11px; letter-spacing:1px; margin-top:8px;">—</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label" id="lbl-masa">Hindu Month (Māsa)</div>
-                <div class="info-val" id="disp-masa">—</div>
-                <div class="info-sub" id="disp-ritu">—</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label" id="lbl-nakshatra">Nakshatra</div>
-                <div class="info-val" id="disp-nakshatra">—</div>
-                <div class="info-detail" id="disp-nakshatra-detail">—</div>
-            </div>
+            <div class="info-card"><div class="info-label" id="lbl-date">Date</div><div class="info-val" id="disp-date">—</div><div class="info-sub" id="disp-weekday">—</div><div class="info-sub" id="disp-coords" style="font-style:normal;font-size:10px;letter-spacing:1px;margin-top:6px">—</div></div>
+            <div class="info-card"><div class="info-label" id="lbl-masa">Hindu Month</div><div class="info-val" id="disp-masa">—</div><div class="info-sub" id="disp-ritu">—</div></div>
+            <div class="info-card"><div class="info-label" id="lbl-nakshatra">Nakshatra</div><div class="info-val" id="disp-nakshatra">—</div><div class="info-detail" id="disp-nakshatra-detail">—</div></div>
         </div>
         <div class="panel clock-section">
-            <div class="clock-wrap" id="clock">
-                <div class="digital" id="digital-clock">--:--:--</div>
-                <div class="clock-center"></div>
-                <div class="hand hand-h" id="hand-h"></div>
-                <div class="hand hand-m" id="hand-m"></div>
-                <div class="hand hand-s" id="hand-s"></div>
-            </div>
-            <div class="sun-row">
-                <div><span id="lbl-sunrise">Sunrise</span><span class="sun-val" id="v-sunrise">--:--</span></div>
-                <div><span id="lbl-noon">Noon</span><span class="sun-val" id="v-noon">--:--</span></div>
-                <div><span id="lbl-sunset">Sunset</span><span class="sun-val" id="v-sunset">--:--</span></div>
-            </div>
-            <div class="moon-phase-container">
-                <svg class="moon-svg" width="64" height="64" viewBox="0 0 64 64" id="moon-svg"></svg>
-                <div class="moon-info" id="moon-info">—</div>
-            </div>
+            <div class="clock-wrap" id="clock"><div class="digital" id="digital-clock">--:--:--</div><div class="clock-center"></div><div class="hand hand-h" id="hand-h"></div><div class="hand hand-m" id="hand-m"></div><div class="hand hand-s" id="hand-s"></div></div>
+            <div class="sun-row"><div><span id="lbl-sunrise">Sunrise</span><span class="sun-val" id="v-sunrise">--:--</span></div><div><span id="lbl-noon">Noon</span><span class="sun-val" id="v-noon">--:--</span></div><div><span id="lbl-sunset">Sunset</span><span class="sun-val" id="v-sunset">--:--</span></div></div>
+            <div class="moon-phase-container"><svg width="56" height="56" viewBox="0 0 64 64" id="moon-svg"></svg><div class="moon-info" id="moon-info">—</div></div>
         </div>
         <div class="panel">
-            <div class="info-card">
-                <div class="info-label" id="lbl-samvat">Vikram Samvat</div>
-                <div class="info-val" id="disp-vs">—</div>
-                <div class="info-sub" id="disp-samvat-name">—</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label" id="lbl-tithi">Tithi</div>
-                <div class="info-val" id="disp-tithi">—</div>
-                <div class="info-detail" id="disp-tithi-detail">—</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label" id="lbl-paksha">Paksha</div>
-                <div class="info-val" id="disp-paksha">—</div>
-            </div>
+            <div class="info-card"><div class="info-label" id="lbl-samvat">Vikram Samvat</div><div class="info-val" id="disp-vs">—</div><div class="info-sub" id="disp-samvat-name">—</div></div>
+            <div class="info-card"><div class="info-label" id="lbl-tithi">Tithi</div><div class="info-val" id="disp-tithi">—</div><div class="info-detail" id="disp-tithi-detail">—</div></div>
+            <div class="info-card"><div class="info-label" id="lbl-paksha">Paksha</div><div class="info-val" id="disp-paksha">—</div></div>
         </div>
     </div>
-    <div class="timings-section">
-        <div class="timing-panel">
-            <div class="timing-title" id="tt-auspicious">Auspicious Timings</div>
-            <div class="timing-grid">
-                <div><div class="tg-label" id="tl-abhijit">Abhijit Muhurta</div><div class="tg-val auspicious" id="v-abhijit">--:--</div></div>
-                <div><div class="tg-label" id="tl-amrit">Amrit Kaalam</div><div class="tg-val auspicious" id="v-amrit">--:--</div></div>
-            </div>
+    <details class="collapsible" open><summary id="tt-pancha">Pancha Anga — Five Limbs</summary><div class="section-body"><div class="angas-grid" id="angas-grid"></div></div></details>
+    <details class="collapsible" open><summary id="tt-timings-wrap">Muhurta & Kaalam Timings</summary><div class="section-body"><div class="timings-section" style="margin-top:0">
+        <div class="timing-panel"><div class="timing-title" id="tt-auspicious">Auspicious</div><div class="timing-grid"><div><div class="tg-label" id="tl-abhijit">Abhijit Muhurta</div><div class="tg-val auspicious" id="v-abhijit">--</div></div><div><div class="tg-label" id="tl-amrit">Amrit Kaalam</div><div class="tg-val auspicious" id="v-amrit">--</div></div><div><div class="tg-label" id="tl-brahma">Brahma Muhurta</div><div class="tg-val auspicious" id="v-brahma">--</div></div><div><div class="tg-label" id="tl-godhuli">Godhuli</div><div class="tg-val auspicious" id="v-godhuli">--</div></div></div></div>
+        <div class="timing-panel"><div class="timing-title" id="tt-inauspicious">Inauspicious</div><div class="timing-grid"><div><div class="tg-label" id="tl-rahu">Rahu Kaalam</div><div class="tg-val inauspicious" id="v-rahu">--</div></div><div><div class="tg-label" id="tl-yama">Yemagantam</div><div class="tg-val inauspicious" id="v-yama">--</div></div><div><div class="tg-label" id="tl-gulika">Gulika</div><div class="tg-val inauspicious" id="v-gulika">--</div></div><div><div class="tg-label" id="tl-disha">Disha Shool</div><div class="tg-val inauspicious" id="v-disha">—</div></div></div></div>
+    </div></div></details>
+    <details class="collapsible"><summary id="tt-hora-wrap">Graha Hora & Sandhya</summary><div class="section-body"><div class="hora-section" style="margin-top:0">
+        <div class="timing-panel"><div class="timing-title" id="tt-hora">Graha Hora</div><div style="overflow-x:auto;max-height:360px;overflow-y:auto"><table class="hora-table"><thead><tr><th id="th-hora-num">#</th><th id="th-hora-time">Time</th><th id="th-hora-planet">Planet</th></tr></thead><tbody id="hora-body"></tbody></table></div></div>
+        <div class="timing-panel"><div class="timing-title" id="tt-sandhya">Sandhya & Duration</div><div class="timing-grid" style="grid-template-columns:1fr"><div><div class="tg-label" id="tl-pratah">Prātaḥ Sandhyā</div><div class="tg-val neutral" id="v-pratah">--</div></div><div><div class="tg-label" id="tl-sayam">Sāyam Sandhyā</div><div class="tg-val neutral" id="v-sayam">--</div></div><div><div class="tg-label" id="tl-dinmaan">Dinamana</div><div class="tg-val neutral" id="v-dinmaan">--</div></div><div><div class="tg-label" id="tl-ratrimaan">Ratrimana</div><div class="tg-val neutral" id="v-ratrimaan">--</div></div></div></div>
+    </div></div></details>
+    <details class="collapsible"><summary>Graha Sthiti — Planetary Positions (Kundli)</summary><div class="section-body">
+        <div class="kundli-wrap">
+            <div class="kundli-chart"><svg id="kundli-svg" viewBox="0 0 400 400"></svg></div>
+            <div><table class="kundli-table" id="kundli-table"></table></div>
         </div>
-        <div class="timing-panel">
-            <div class="timing-title" id="tt-inauspicious">Inauspicious Timings</div>
-            <div class="timing-grid">
-                <div><div class="tg-label" id="tl-rahu">Rahu Kaalam</div><div class="tg-val inauspicious" id="v-rahu">--:--</div></div>
-                <div><div class="tg-label" id="tl-yama">Yemagantam</div><div class="tg-val inauspicious" id="v-yama">--:--</div></div>
-                <div><div class="tg-label" id="tl-gulika">Gulika Kaalam</div><div class="tg-val inauspicious" id="v-gulika">--:--</div></div>
-            </div>
-        </div>
-    </div>
+    </div></details>
+    <!-- API DOCS -->
+    <details class="collapsible"><summary>API Documentation — Programmatic Access</summary><div class="section-body api-docs" style="margin-top:0">
+    <p>This dashboard exposes a JSON API. Append query parameters to the page URL:</p>
+    <pre><code>https://date.eksaar.com/?api=true&date=10042026&time=06:00:00&lat=28.6139&lon=77.209&tz=5.5</code></pre>
+    <p><strong>Parameters:</strong></p>
+    <pre>api=true        Required. Enables JSON output.
+date=DDMMYYYY   Date in day-month-year format (or YYYY-MM-DD).
+time=HH:MM:SS   Time in 24-hour format. Default: 12:00:00.
+lat=28.6139     Latitude in decimal degrees.
+lon=77.209      Longitude in decimal degrees.
+tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
+    <p><strong>Response:</strong> JSON object containing date info, all five pancha angas (vaara, tithi, nakshatra, yoga, karana) with end times, sun/moon data, auspicious timings (abhijit, brahma, godhuli, amrit kaal), and inauspicious timings (rahu, yama, gulika, disha shool).</p>
+    <p><strong>Example:</strong></p>
+    <pre><code>curl "https://date.eksaar.com/?api=true&date=10042026&tz=5.5"</code></pre>
+    <p>No API key required. No rate limits. All computation is client-side. For server-side integration, use a headless browser to fetch the JSON output.</p>
+    </div></details>
 </div>
-<div class="modal-overlay" id="faq-modal">
-    <div class="modal-content">
-        <div class="modal-head"><h2 id="ui-faqTitle">Vedic & Astrometric Computations</h2><button class="modal-close" onclick="toggleFaq()">&times;</button></div>
-        <div class="faq-q" id="ui-faq1Q">1. Drik Siddhanta — Zero Dependencies</div>
-        <div class="faq-a" id="ui-faq1A">All calculations are performed entirely client-side using Jean Meeus algorithms with 22-term lunar perturbations and Lahiri Ayanamsa for sidereal positions.</div>
-        <div class="faq-q" id="ui-faq2Q">2. Tithi & Nakshatra End Times</div>
-        <div class="faq-a" id="ui-faq2A">End times are computed by iteratively scanning forward to find angular threshold crossings, with bisection refinement.</div>
-        <div class="faq-q" id="ui-faq3Q">3. Amrit Kaalam</div>
-        <div class="faq-a" id="ui-faq3A">Amrit Kaalam is from the Choghadiya system. Day/night divided into 8 segments, Moon-ruled segment identified by weekday.</div>
-        <div class="faq-q" id="ui-faq4Q">4. Dinamana & Kaalams</div>
-        <div class="faq-a" id="ui-faq4A">Daylight span divided into 8 segments for Rahu, Yama, Gulika mapping by weekday.</div>
-    </div>
-</div>
+<!-- FIXED FOOTER -->
+<footer class="fixed-footer">
+    <span>© <span id="footer-year">2026</span> <a href="https://eksaar.com" target="_blank" rel="noopener">Eksaar</a> — Vedic Panchangam. Open source. Drik Ganita · Meeus · Lahiri.</span>
+    <span style="font-size:10px">No cookies · No tracking · <a href="#" onclick="toggleKB();return false">Knowledge Base</a></span>
+</footer>
+<!-- KB MODAL -->
+<div class="modal-overlay" id="kb-modal"><div class="modal-content"><div class="modal-head"><h2 id="ui-kbTitle">Encyclopaedia of Vedic Timekeeping</h2><button class="modal-close" onclick="toggleKB()">&times;</button></div><div class="kb-dynamic" id="kb-dynamic"></div><div id="kb-content"></div></div></div>
 
 <script>
-const RAD=Math.PI/180, DEG=180/Math.PI;
-function norm(a){a=a%360;return a<0?a+360:a;}
+/*! Vedic Panchangam Dashboard | © 2024-2026 Eksaar | Open Source | https://date.eksaar.com | Drik Ganita · Meeus Algorithms · Lahiri Ayanamsa */
+"use strict";
+const RAD=Math.PI/180,DEG=180/Math.PI;function norm(a){a%=360;return a<0?a+360:a;}
+let S={lat:28.6139,lon:77.209,tz:5.5,date:null,lang:'en',liveMode:true},D={};
+const LD={en:'0123456789',hi:'०१२३४५६७८९',mr:'०१२३४५६७८९',bn:'০১২৩৪৫৬৭৮৯',gu:'૦૧૨૩૪૫૬૭૮૯',ta:'௦௧௨௩௪௫௬௭௮௯',te:'౦౧౨౩౪౫౬౭౮౯',kn:'೦೧೨೩೪೫೬೭೮೯',or:'୦୧୨୩୪୫୬୭୮୯',ml:'൦൧൨൩൪൫൬൭൮൯',pa:'੦੧੨੩੪੫੬੭੮੯',ur:'۰۱۲۳۴۵۶۷۸۹'};
+function tN(s){const d=LD[S.lang];if(!d||S.lang==='en')return''+s;return(''+s).replace(/[0-9]/g,c=>d[c]);}
 
-let S={lat:28.5355,lon:77.3910,tz:5.5,date:null,lang:'en',liveMode:true};
-let D={};
+// =================== COMPLETE i18n DICTIONARIES ===================
+// KEY: every language MUST have ALL keys. Verified by validation script.
+const L={
+en:{mainTitle:"Panchangam",kbBtn:"Knowledge Base",themeAuto:"Auto",themeDark:"Dark",themeLight:"Light",lblDate:"Date",lblTime:"Time",lblLocation:"Location",lblLat:"Lat",lblLon:"Lon",lblTz:"UTC±",applyBtn:"Apply",nowBtn:"Now ↻",customCoords:"Custom…",lblSunrise:"Sunrise",lblNoon:"Noon",lblSunset:"Sunset",lblMasa:"Hindu Month (Māsa)",lblNakshatra:"Nakshatra",lblSamvat:"Vikram Samvat",lblTithi:"Tithi",lblPaksha:"Paksha",ttPancha:"Pancha Anga — Five Limbs",ttAuspicious:"Auspicious Timings",ttInauspicious:"Inauspicious Timings",ttHora:"Graha Hora",ttSandhya:"Sandhya & Duration",tlAbhijit:"Abhijit Muhurta",tlAmrit:"Amrit Kaalam",tlBrahma:"Brahma Muhurta",tlGodhuli:"Godhuli Muhurta",tlRahu:"Rahu Kaalam",tlYama:"Yemagantam",tlGulika:"Gulika Kaalam",tlDisha:"Disha Shool",tlPratah:"Prātaḥ Sandhyā",tlSayam:"Sāyam Sandhyā",tlDinmaan:"Dinamana (Day)",tlRatrimaan:"Ratrimana (Night)",thNum:"#",thTime:"Time",thPlanet:"Planet",upto:"Upto",next:"Next",ritu:"Ritu",samvatsara:"Samvatsara",waxing:"Waxing",waning:"Waning",illuminated:"illuminated",ofLabel:"of",angaVaara:"Vaara",angaTithi:"Tithi",angaNakshatra:"Nakshatra",angaYoga:"Yoga",angaKarana:"Karana",kbTitle:"Encyclopaedia of Vedic Timekeeping",disha:{0:"East ↗",1:"North ↑",2:"South ↓",3:"North ↑",4:"West ←",5:"West ←",6:"East ↗"},paksha:["Shukla Paksha","Krishna Paksha"],tithis:["Prathama","Dwitiya","Tritiya","Chaturthi","Panchami","Shashthi","Saptami","Ashtami","Navami","Dashami","Ekadashi","Dwadashi","Trayodashi","Chaturdashi","Purnima","Amavasya"],nakshatras:["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"],masa:["Chaitra","Vaishakha","Jyeshtha","Ashadha","Shravana","Bhadrapada","Ashwina","Kartika","Margashirsha","Pausha","Magha","Phalguna"],rituNames:["Vasanta","Grishma","Varsha","Sharad","Hemanta","Shishira"],weekdays:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],months:["January","February","March","April","May","June","July","August","September","October","November","December"],planets:["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]},
 
-// ===== LOCALIZED DIGITS =====
-const LD={
-    en:['0','1','2','3','4','5','6','7','8','9'],
-    hi:['०','१','२','३','४','५','६','७','८','९'],mr:['०','१','२','३','४','५','६','७','८','९'],
-    bn:['০','১','২','৩','৪','৫','৬','৭','৮','৯'],gu:['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'],
-    ta:['௦','௧','௨','௩','௪','௫','௬','௭','௮','௯'],te:['౦','౧','౨','౩','౪','౫','౬','౭','౮','౯'],
-    kn:['೦','೧','೨','೩','೪','೫','೬','೭','೮','೯'],or:['୦','୧','୨','୩','୪','୫','୬','୭','୮','୯'],
-    ml:['൦','൧','൨','൩','൪','൫','൬','൭','൮','൯'],pa:['੦','੧','੨','੩','੪','੫','੬','੭','੮','੯'],
-    ur:['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹']
-};
-function tN(s){const d=LD[S.lang];if(!d||S.lang==='en')return ''+s;return(''+s).replace(/[0-9]/g,c=>d[c]);}
+hi:{mainTitle:"पंचांग",kbBtn:"ज्ञान कोष",themeAuto:"ऑटो",themeDark:"डार्क",themeLight:"लाइट",lblDate:"तारीख़",lblTime:"समय",lblLocation:"स्थान",lblLat:"अक्षांश",lblLon:"देशांतर",lblTz:"UTC±",applyBtn:"लागू करें",nowBtn:"अभी ↻",customCoords:"कस्टम…",lblSunrise:"सूर्योदय",lblNoon:"दोपहर",lblSunset:"सूर्यास्त",lblMasa:"हिन्दू मास",lblNakshatra:"नक्षत्र",lblSamvat:"विक्रम संवत",lblTithi:"तिथि",lblPaksha:"पक्ष",ttPancha:"पंचांग — पाँच अंग",ttAuspicious:"शुभ समय",ttInauspicious:"अशुभ समय",ttHora:"ग्रह होरा",ttSandhya:"संध्या एवं अवधि",tlAbhijit:"अभिजीत मुहूर्त",tlAmrit:"अमृत काल",tlBrahma:"ब्रह्म मुहूर्त",tlGodhuli:"गोधूलि मुहूर्त",tlRahu:"राहु काल",tlYama:"यमगंड",tlGulika:"गुलिक काल",tlDisha:"दिशा शूल",tlPratah:"प्रातः संध्या",tlSayam:"सायं संध्या",tlDinmaan:"दिनमान",tlRatrimaan:"रात्रिमान",thNum:"#",thTime:"समय",thPlanet:"ग्रह",upto:"तक",next:"अगला",ritu:"ऋतु",samvatsara:"संवत्सर",waxing:"बढ़ता",waning:"घटता",illuminated:"प्रकाशित",ofLabel:"का",angaVaara:"वार",angaTithi:"तिथि",angaNakshatra:"नक्षत्र",angaYoga:"योग",angaKarana:"करण",kbTitle:"वैदिक कालगणना ज्ञानकोश",disha:{0:"पूर्व ↗",1:"उत्तर ↑",2:"दक्षिण ↓",3:"उत्तर ↑",4:"पश्चिम ←",5:"पश्चिम ←",6:"पूर्व ↗"},paksha:["शुक्ल पक्ष","कृष्ण पक्ष"],tithis:["प्रथमा","द्वितीया","तृतीया","चतुर्थी","पंचमी","षष्ठी","सप्तमी","अष्टमी","नवमी","दशमी","एकादशी","द्वादशी","त्रयोदशी","चतुर्दशी","पूर्णिमा","अमावस्या"],nakshatras:["अश्विनी","भरणी","कृत्तिका","रोहिणी","मृगशिरा","आर्द्रा","पुनर्वसु","पुष्य","आश्लेषा","मघा","पूर्वा फाल्गुनी","उत्तरा फाल्गुनी","हस्त","चित्रा","स्वाती","विशाखा","अनुराधा","ज्येष्ठा","मूल","पूर्वाषाढा","उत्तराषाढा","श्रवण","धनिष्ठा","शतभिषा","पूर्वा भाद्रपद","उत्तरा भाद्रपद","रेवती"],masa:["चैत्र","वैशाख","ज्येष्ठ","आषाढ़","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन"],rituNames:["वसन्त","ग्रीष्म","वर्षा","शरद","हेमन्त","शिशिर"],weekdays:["रविवार","सोमवार","मंगलवार","बुधवार","गुरुवार","शुक्रवार","शनिवार"],months:["जनवरी","फरवरी","मार्च","अप्रैल","मई","जून","जुलाई","अगस्त","सितंबर","अक्टूबर","नवंबर","दिसंबर"],planets:["सूर्य","चन्द्र","मंगल","बुध","गुरु","शुक्र","शनि"]},
 
-// ===== FULL i18n DICTIONARY =====
-const L = {
-en: {
-    mainTitle:"Panchangam Dashboard",faqBtn:"FAQ",themeAuto:"Auto",themeDark:"Dark",themeLight:"Light",
-    lblDate:"Date",lblTime:"Time",lblLocation:"Location",lblLat:"Latitude",lblLon:"Longitude",lblTz:"Timezone",
-    applyBtn:"Apply",nowBtn:"Now ↻",customCoords:"Custom Coordinates…",
-    lblSunrise:"Sunrise",lblNoon:"Noon",lblSunset:"Sunset",
-    lblMasa:"Hindu Month (Māsa)",lblNakshatra:"Nakshatra",lblSamvat:"Vikram Samvat",lblTithi:"Tithi",lblPaksha:"Paksha",
-    ttAuspicious:"Auspicious Timings",ttInauspicious:"Inauspicious Timings",
-    tlAbhijit:"Abhijit Muhurta",tlAmrit:"Amrit Kaalam",tlRahu:"Rahu Kaalam",tlYama:"Yemagantam",tlGulika:"Gulika Kaalam",
-    upto:"Upto",next:"Next",ritu:"Ritu",samvatsara:"Samvatsara",waxing:"Waxing",waning:"Waning",illuminated:"illuminated",ofLabel:"of",
-    faqTitle:"Vedic & Astrometric Computations",
-    faq1Q:"1. Drik Siddhanta — Zero Dependencies",faq1A:"All calculations are client-side using Meeus algorithms with Lahiri Ayanamsa.",
-    faq2Q:"2. Tithi & Nakshatra End Times",faq2A:"End times computed by iterative angular threshold scanning with bisection.",
-    faq3Q:"3. Amrit Kaalam",faq3A:"From Choghadiya system: day/night in 8 segments, Moon-ruled segment by weekday.",
-    faq4Q:"4. Dinamana & Kaalams",faq4A:"Daylight span in 8 segments for Rahu, Yama, Gulika by weekday.",
-    paksha:["Shukla Paksha","Krishna Paksha"],
-    tithis:["Prathama","Dwitiya","Tritiya","Chaturthi","Panchami","Shashthi","Saptami","Ashtami","Navami","Dashami","Ekadashi","Dwadashi","Trayodashi","Chaturdashi","Purnima","Amavasya"],
-    nakshatras:["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"],
-    masa:["Chaitra","Vaishakha","Jyeshtha","Ashadha","Shravana","Bhadrapada","Ashwina","Kartika","Margashirsha","Pausha","Magha","Phalguna"],
-    rituNames:["Vasanta","Grishma","Varsha","Sharad","Hemanta","Shishira"],
-    weekdays:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-    months:["January","February","March","April","May","June","July","August","September","October","November","December"]
-},
-hi: {
-    mainTitle:"पंचांग डैशबोर्ड",faqBtn:"FAQ",themeAuto:"ऑटो",themeDark:"डार्क",themeLight:"लाइट",
-    lblDate:"तारीख़",lblTime:"समय",lblLocation:"स्थान",lblLat:"अक्षांश",lblLon:"देशांतर",lblTz:"समय क्षेत्र",
-    applyBtn:"लागू करें",nowBtn:"अभी ↻",customCoords:"कस्टम निर्देशांक…",
-    lblSunrise:"सूर्योदय",lblNoon:"दोपहर",lblSunset:"सूर्यास्त",
-    lblMasa:"हिन्दू मास",lblNakshatra:"नक्षत्र",lblSamvat:"विक्रम संवत",lblTithi:"तिथि",lblPaksha:"पक्ष",
-    ttAuspicious:"शुभ समय (मुहूर्त)",ttInauspicious:"अशुभ समय (चौघड़िया)",
-    tlAbhijit:"अभिजीत मुहूर्त",tlAmrit:"अमृत काल",tlRahu:"राहु काल",tlYama:"यमगंड",tlGulika:"गुलिक काल",
-    upto:"तक",next:"अगला",ritu:"ऋतु",samvatsara:"संवत्सर",waxing:"बढ़ता",waning:"घटता",illuminated:"प्रकाशित",ofLabel:"का",
-    faqTitle:"वैदिक एवं खगोलीय गणनाएँ",faq1Q:"१. दृक सिद्धान्त",faq1A:"बिना बाहरी API, मीयस एल्गोरिथ्म व लाहिरी अयनांश।",faq2Q:"२. तिथि व नक्षत्र",faq2A:"पुनरावृत्ति द्वारा कोणीय सीमा खोजकर समाप्ति समय।",faq3Q:"३. अमृत काल",faq3A:"चौघड़िया: दिन/रात को ८ भागों में बाँटकर चन्द्र भाग।",faq4Q:"४. दिनमान व काल",faq4A:"दिनमान को ८ भागों में विभाजित कर राहु, यम, गुलिक काल।",
-    paksha:["शुक्ल पक्ष","कृष्ण पक्ष"],
-    tithis:["प्रथमा","द्वितीया","तृतीया","चतुर्थी","पंचमी","षष्ठी","सप्तमी","अष्टमी","नवमी","दशमी","एकादशी","द्वादशी","त्रयोदशी","चतुर्दशी","पूर्णिमा","अमावस्या"],
-    nakshatras:["अश्विनी","भरणी","कृत्तिका","रोहिणी","मृगशिरा","आर्द्रा","पुनर्वसु","पुष्य","आश्लेषा","मघा","पूर्वा फाल्गुनी","उत्तरा फाल्गुनी","हस्त","चित्रा","स्वाती","विशाखा","अनुराधा","ज्येष्ठा","मूल","पूर्वाषाढा","उत्तराषाढा","श्रवण","धनिष्ठा","शतभिषा","पूर्वा भाद्रपद","उत्तरा भाद्रपद","रेवती"],
-    masa:["चैत्र","वैशाख","ज्येष्ठ","आषाढ़","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन"],
-    rituNames:["वसन्त","ग्रीष्म","वर्षा","शरद","हेमन्त","शिशिर"],
-    weekdays:["रविवार","सोमवार","मंगलवार","बुधवार","गुरुवार","शुक्रवार","शनिवार"],
-    months:["जनवरी","फरवरी","मार्च","अप्रैल","मई","जून","जुलाई","अगस्त","सितंबर","अक्टूबर","नवंबर","दिसंबर"]
-},
-bn: {
-    mainTitle:"পঞ্চাঙ্গ ড্যাশবোর্ড",faqBtn:"FAQ",themeAuto:"অটো",themeDark:"ডার্ক",themeLight:"লাইট",
-    lblDate:"তারিখ",lblTime:"সময়",lblLocation:"অবস্থান",lblLat:"অক্ষাংশ",lblLon:"দ্রাঘিমাংশ",lblTz:"সময় অঞ্চল",
-    applyBtn:"প্রয়োগ",nowBtn:"এখন ↻",customCoords:"কাস্টম স্থানাঙ্ক…",
-    lblSunrise:"সূর্যোদয়",lblNoon:"মধ্যাহ্ন",lblSunset:"সূর্যাস্ত",
-    lblMasa:"হিন্দু মাস",lblNakshatra:"নক্ষত্র",lblSamvat:"বিক্রম সংবত",lblTithi:"তিথি",lblPaksha:"পক্ষ",
-    ttAuspicious:"শুভ সময়",ttInauspicious:"অশুভ সময়",
-    tlAbhijit:"অভিজিৎ মুহূর্ত",tlAmrit:"অমৃত কাল",tlRahu:"রাহু কাল",tlYama:"যমগণ্ড",tlGulika:"গুলিক কাল",
-    upto:"পর্যন্ত",next:"পরবর্তী",ritu:"ঋতু",samvatsara:"সংবৎসর",waxing:"শুক্ল",waning:"কৃষ্ণ",illuminated:"আলোকিত",ofLabel:"এর",
-    faqTitle:"বৈদিক ও জ্যোতির্বিদ্যা গণনা",faq1Q:"১. দৃক সিদ্ধান্ত",faq1A:"সম্পূর্ণ ক্লায়েন্ট-সাইড গণনা।",faq2Q:"২. তিথি ও নক্ষত্র",faq2A:"পুনরাবৃত্তি দ্বারা সমাপ্তি সময় গণনা।",faq3Q:"৩. অমৃত কাল",faq3A:"চৌঘড়িয়া পদ্ধতি থেকে।",faq4Q:"৪. দিনমান ও কাল",faq4A:"দিনমানকে ৮ ভাগে ভাগ করা হয়।",
-    paksha:["শুক্ল পক্ষ","কৃষ্ণ পক্ষ"],
-    tithis:["প্রথমা","দ্বিতীয়া","তৃতীয়া","চতুর্থী","পঞ্চমী","ষষ্ঠী","সপ্তমী","অষ্টমী","নবমী","দশমী","একাদশী","দ্বাদশী","ত্রয়োদশী","চতুর্দশী","পূর্ণিমা","অমাবস্যা"],
-    nakshatras:["অশ্বিনী","ভরণী","কৃত্তিকা","রোহিণী","মৃগশিরা","আর্দ্রা","পুনর্বসু","পুষ্যা","অশ্লেষা","মঘা","পূর্ব ফাল্গুনী","উত্তর ফাল্গুনী","হস্ত","চিত্রা","স্বাতী","বিশাখা","অনুরাধা","জ্যেষ্ঠা","মূলা","পূর্বাষাঢ়া","উত্তরাষাঢ়া","শ্রবণা","ধনিষ্ঠা","শতভিষা","পূর্ব ভাদ্রপদ","উত্তর ভাদ্রপদ","রেবতী"],
-    masa:["চৈত্র","বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন"],
-    rituNames:["বসন্ত","গ্রীষ্ম","বর্ষা","শরৎ","হেমন্ত","শীত"],
-    weekdays:["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"],
-    months:["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"]
-},
-mr: {
-    mainTitle:"पंचांग डॅशबोर्ड",faqBtn:"FAQ",themeAuto:"ऑटो",themeDark:"डार्क",themeLight:"लाईट",
-    lblDate:"तारीख",lblTime:"वेळ",lblLocation:"स्थान",lblLat:"अक्षांश",lblLon:"रेखांश",lblTz:"वेळ क्षेत्र",
-    applyBtn:"लागू करा",nowBtn:"आता ↻",customCoords:"सानुकूल निर्देशांक…",
-    lblSunrise:"सूर्योदय",lblNoon:"दुपार",lblSunset:"सूर्यास्त",
-    lblMasa:"हिंदू महिना (मास)",lblNakshatra:"नक्षत्र",lblSamvat:"विक्रम संवत",lblTithi:"तिथी",lblPaksha:"पक्ष",
-    ttAuspicious:"शुभ वेळ (मुहूर्त)",ttInauspicious:"अशुभ वेळ (चौघडिया)",
-    tlAbhijit:"अभिजित मुहूर्त",tlAmrit:"अमृत काळ",tlRahu:"राहु काळ",tlYama:"यमगंड",tlGulika:"गुलिक काळ",
-    upto:"पर्यंत",next:"पुढील",ritu:"ऋतू",samvatsara:"संवत्सर",waxing:"शुक्ल",waning:"कृष्ण",illuminated:"प्रकाशित",ofLabel:"पैकी",
-    faqTitle:"वैदिक आणि खगोलीय गणना",faq1Q:"१. दृक सिद्धान्त",faq1A:"बाह्य API शिवाय पूर्ण गणना.",faq2Q:"२. तिथी आणि नक्षत्र",faq2A:"कोनीय सीमा शोधून समाप्ती वेळ.",faq3Q:"३. अमृत काळ",faq3A:"चौघडिया पद्धतीवरून.",faq4Q:"४. दिनमान आणि काळ",faq4A:"दिनमानाला ८ भागांमध्ये विभागले.",
-    paksha:["शुक्ल पक्ष","कृष्ण पक्ष"],
-    tithis:["प्रथमा","द्वितीया","तृतीया","चतुर्थी","पंचमी","षष्ठी","सप्तमी","अष्टमी","नवमी","दशमी","एकादशी","द्वादशी","त्रयोदशी","चतुर्दशी","पौर्णिमा","अमावस्या"],
-    nakshatras:["अश्विनी","भरणी","कृत्तिका","रोहिणी","मृगशीर्ष","आर्द्रा","पुनर्वसू","पुष्य","आश्लेषा","मघा","पूर्वा फाल्गुनी","उत्तरा फाल्गुनी","हस्त","चित्रा","स्वाती","विशाखा","अनुराधा","ज्येष्ठा","मूळ","पूर्वाषाढा","उत्तराषाढा","श्रवण","धनिष्ठा","शततारका","पूर्वा भाद्रपदा","उत्तरा भाद्रपदा","रेवती"],
-    masa:["चैत्र","वैशाख","ज्येष्ठ","आषाढ","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन"],
-    rituNames:["वसंत","ग्रीष्म","वर्षा","शरद","हेमंत","शिशिर"],
-    weekdays:["रविवार","सोमवार","मंगळवार","बुधवार","गुरुवार","शुक्रवार","शनिवार"],
-    months:["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"]
-},
-te: {
-    mainTitle:"పంచాంగం డాష్‌బోర్డ్",faqBtn:"FAQ",themeAuto:"ఆటో",themeDark:"డార్క్",themeLight:"లైట్",
-    lblDate:"తేదీ",lblTime:"సమయం",lblLocation:"స్థానం",lblLat:"అక్షాంశం",lblLon:"రేఖాంశం",lblTz:"సమయ మండలం",
-    applyBtn:"వర్తింపజేయి",nowBtn:"ఇప్పుడు ↻",customCoords:"అనుకూల నిర్దేశాంకాలు…",
-    lblSunrise:"సూర్యోదయం",lblNoon:"మధ్యాహ్నం",lblSunset:"సూర్యాస్తమయం",
-    lblMasa:"హిందూ నెల (మాసం)",lblNakshatra:"నక్షత్రం",lblSamvat:"విక్రమ సంవత్సరం",lblTithi:"తిథి",lblPaksha:"పక్షం",
-    ttAuspicious:"శుభ సమయం",ttInauspicious:"అశుభ సమయం",
-    tlAbhijit:"అభిజిత్ ముహూర్తం",tlAmrit:"అమృత కాలం",tlRahu:"రాహు కాలం",tlYama:"యమగండం",tlGulika:"గుళిక కాలం",
-    upto:"వరకు",next:"తదుపరి",ritu:"ఋతువు",samvatsara:"సంవత్సరం",waxing:"శుక్ల",waning:"కృష్ణ",illuminated:"ప్రకాశితం",ofLabel:"లో",
-    faqTitle:"వేద & ఖగోళ గణనలు",faq1Q:"1. దృక్ సిద్ధాంతం",faq1A:"బాహ్య API లేకుండా పూర్తి గణన.",faq2Q:"2. తిథి & నక్షత్రం",faq2A:"కోణీయ సరిహద్దులను కనుగొని ముగింపు సమయం.",faq3Q:"3. అమృత కాలం",faq3A:"చోఘడియా పద్ధతి నుండి.",faq4Q:"4. దినమానం",faq4A:"దినమానం 8 భాగాలుగా విభజించబడుతుంది.",
-    paksha:["శుక్ల పక్షం","కృష్ణ పక్షం"],
-    tithis:["పాడ్యమి","విదియ","తదియ","చవితి","పంచమి","షష్ఠి","సప్తమి","అష్టమి","నవమి","దశమి","ఏకాదశి","ద్వాదశి","త్రయోదశి","చతుర్దశి","పౌర్ణమి","అమావాస్య"],
-    nakshatras:["అశ్విని","భరణి","కృత్తిక","రోహిణి","మృగశిర","ఆరుద్ర","పునర్వసు","పుష్యమి","ఆశ్లేష","మఖ","పుబ్బ","ఉత్తర","హస్త","చిత్త","స్వాతి","విశాఖ","అనూరాధ","జ్యేష్ఠ","మూల","పూర్వాషాఢ","ఉత్తరాషాఢ","శ్రవణం","ధనిష్ఠ","శతభిషం","పూర్వాభాద్ర","ఉత్తరాభాద్ర","రేవతి"],
-    masa:["చైత్రం","వైశాఖం","జ్యేష్ఠం","ఆషాఢం","శ్రావణం","భాద్రపదం","ఆశ్వయుజం","కార్తీకం","మార్గశిరం","పుష్యం","మాఘం","ఫాల్గుణం"],
-    rituNames:["వసంతం","గ్రీష్మం","వర్షం","శరత్తు","హేమంతం","శిశిరం"],
-    weekdays:["ఆదివారం","సోమవారం","మంగళవారం","బుధవారం","గురువారం","శుక్రవారం","శనివారం"],
-    months:["జనవరి","ఫిబ్రవరి","మార్చి","ఏప్రిల్","మే","జూన్","జులై","ఆగస్టు","సెప్టెంబర్","అక్టోబర్","నవంబర్","డిసెంబర్"]
-},
-ta: {
-    mainTitle:"பஞ்சாங்கம் டாஷ்போர்டு",faqBtn:"FAQ",themeAuto:"தானியங்கி",themeDark:"டார்க்",themeLight:"லைட்",
-    lblDate:"தேதி",lblTime:"நேரம்",lblLocation:"இடம்",lblLat:"அட்சரேகை",lblLon:"தீர்க்கரேகை",lblTz:"நேர மண்டலம்",
-    applyBtn:"பயன்படுத்து",nowBtn:"இப்போது ↻",customCoords:"தனிப்பயன் ஆயத்தொகை…",
-    lblSunrise:"சூரியோதயம்",lblNoon:"நண்பகல்",lblSunset:"அஸ்தமனம்",
-    lblMasa:"இந்து மாதம்",lblNakshatra:"நட்சத்திரம்",lblSamvat:"விக்ரம் சம்வத்",lblTithi:"திதி",lblPaksha:"பட்சம்",
-    ttAuspicious:"நல்ல நேரம்",ttInauspicious:"கெட்ட நேரம்",
-    tlAbhijit:"அபிஜித் முகூர்த்தம்",tlAmrit:"அமிர்த காலம்",tlRahu:"ராகு காலம்",tlYama:"எமகண்டம்",tlGulika:"குளிகை காலம்",
-    upto:"வரை",next:"அடுத்து",ritu:"ருது",samvatsara:"சம்வத்சரம்",waxing:"வளர்பிறை",waning:"தேய்பிறை",illuminated:"ஒளிரும்",ofLabel:"இல்",
-    faqTitle:"வேத வானியல் கணக்கீடுகள்",faq1Q:"1. த்ரிக் சித்தாந்தம்",faq1A:"வெளிப்புற API இல்லாமல் கணக்கிடுகிறது.",faq2Q:"2. திதி & நட்சத்திரம்",faq2A:"கோண வரம்பைக் கண்டறிந்து முடிவு நேரம்.",faq3Q:"3. அமிர்த காலம்",faq3A:"சோகடியா முறையிலிருந்து.",faq4Q:"4. தினமானம்",faq4A:"தினமானம் 8 பகுதிகளாக.",
-    paksha:["சுக்ல பட்சம்","கிருஷ்ண பட்சம்"],
-    tithis:["பிரதமை","துவிதியை","திருதியை","சதுர்த்தி","பஞ்சமி","சஷ்டி","சப்தமி","அஷ்டமி","நவமி","தசமி","ஏகாதசி","துவாதசி","திரயோதசி","சதுர்த்தசி","பௌர்ணமி","அமாவாசை"],
-    nakshatras:["அஸ்வினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசீரிடம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","அஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி"],
-    masa:["சித்திரை","வைகாசி","ஆனி","ஆடி","ஆவணி","புரட்டாசி","ஐப்பசி","கார்த்திகை","மார்கழி","தை","மாசி","பங்குனி"],
-    rituNames:["வசந்தம்","கிரீஷ்மம்","வர்ஷம்","சரத்","ஹேமந்தம்","சிசிரம்"],
-    weekdays:["ஞாயிறு","திங்கள்","செவ்வாய்","புதன்","வியாழன்","வெள்ளி","சனி"],
-    months:["ஜனவரி","பிப்ரவரி","மார்ச்","ஏப்ரல்","மே","ஜூன்","ஜூலை","ஆகஸ்ட்","செப்டம்பர்","அக்டோபர்","நவம்பர்","டிசம்பர்"]
-},
-gu: {
-    mainTitle:"પંચાંગ ડેશબોર્ડ",faqBtn:"FAQ",themeAuto:"ઓટો",themeDark:"ડાર્ક",themeLight:"લાઇટ",
-    lblDate:"તારીખ",lblTime:"સમય",lblLocation:"સ્થાન",lblLat:"અક્ષાંશ",lblLon:"રેખાંશ",lblTz:"સમય ક્ષેત્ર",
-    applyBtn:"લાગુ કરો",nowBtn:"હવે ↻",customCoords:"કસ્ટમ સંકલન…",
-    lblSunrise:"સૂર્યોદય",lblNoon:"બપોર",lblSunset:"સૂર્યાસ્ત",
-    lblMasa:"હિન્દુ માસ",lblNakshatra:"નક્ષત્ર",lblSamvat:"વિક્રમ સંવત",lblTithi:"તિથિ",lblPaksha:"પક્ષ",
-    ttAuspicious:"શુભ સમય (મુહૂર્ત)",ttInauspicious:"અશુભ સમય (ચોઘડિયા)",
-    tlAbhijit:"અભિજીત મુહૂર્ત",tlAmrit:"અમૃત કાળ",tlRahu:"રાહુ કાળ",tlYama:"યમગંડ",tlGulika:"ગુલિક કાળ",
-    upto:"સુધી",next:"આગળ",ritu:"ઋતુ",samvatsara:"સંવત્સર",waxing:"શુક્લ",waning:"કૃષ્ણ",illuminated:"પ્રકાશિત",ofLabel:"માંથી",
-    faqTitle:"વૈદિક ખગોળીય ગણતરીઓ",faq1Q:"૧. દ્રિક સિદ્ધાંત",faq1A:"બાહ્ય API વિના ગણતરી.",faq2Q:"૨. તિથિ અને નક્ષત્ર",faq2A:"કોણીય સીમા શોધી અંત સમય.",faq3Q:"૩. અમૃત કાળ",faq3A:"ચોઘડિયા પદ્ધતિ.",faq4Q:"૪. દિનમાન",faq4A:"દિનમાન ૮ ભાગ.",
-    paksha:["શુક્લ પક્ષ","કૃષ્ણ પક્ષ"],
-    tithis:["પ્રથમા","દ્વિતીયા","તૃતીયા","ચતુર્થી","પંચમી","ષષ્ઠી","સપ્તમી","અષ્ટમી","નવમી","દશમી","એકાદશી","દ્વાદશી","ત્રયોદશી","ચતુર્દશી","પૂર્ણિમા","અમાવસ્યા"],
-    nakshatras:["અશ્વિની","ભરણી","કૃત્તિકા","રોહિણી","મૃગશીર્ષ","આર્દ્રા","પુનર્વસુ","પુષ્ય","આશ્લેષા","મઘા","પૂર્વા ફાલ્ગુની","ઉત્તરા ફાલ્ગુની","હસ્ત","ચિત્રા","સ્વાતિ","વિશાખા","અનુરાધા","જ્યેષ્ઠા","મૂળ","પૂર્વાષાઢા","ઉત્તરાષાઢા","શ્રવણ","ધનિષ્ઠા","શતભિષા","પૂર્વા ભાદ્રપદ","ઉત્તરા ભાદ્રપદ","રેવતી"],
-    masa:["ચૈત્ર","વૈશાખ","જ્યેષ્ઠ","અષાઢ","શ્રાવણ","ભાદ્રપદ","આશ્વિન","કાર્તિક","માર્ગશીર્ષ","પૌષ","માઘ","ફાલ્ગુન"],
-    rituNames:["વસંત","ગ્રીષ્મ","વર્ષા","શરદ","હેમંત","શિશિર"],
-    weekdays:["રવિવાર","સોમવાર","મંગળવાર","બુધવાર","ગુરુવાર","શુક્રવાર","શનિવાર"],
-    months:["જાન્યુઆરી","ફેબ્રુઆરી","માર્ચ","એપ્રિલ","મે","જૂન","જુલાઈ","ઓગસ્ટ","સપ્ટેમ્બર","ઓક્ટોબર","નવેમ્બર","ડિસેમ્બર"]
-},
-kn: {
-    mainTitle:"ಪಂಚಾಂಗ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",faqBtn:"FAQ",themeAuto:"ಆಟೋ",themeDark:"ಡಾರ್ಕ್",themeLight:"ಲೈಟ್",
-    lblDate:"ದಿನಾಂಕ",lblTime:"ಸಮಯ",lblLocation:"ಸ್ಥಳ",lblLat:"ಅಕ್ಷಾಂಶ",lblLon:"ರೇಖಾಂಶ",lblTz:"ಸಮಯ ವಲಯ",
-    applyBtn:"ಅನ್ವಯಿಸಿ",nowBtn:"ಈಗ ↻",customCoords:"ಕಸ್ಟಮ್ ನಿರ್ದೇಶಾಂಕ…",
-    lblSunrise:"ಸೂರ್ಯೋದಯ",lblNoon:"ಮಧ್ಯಾಹ್ನ",lblSunset:"ಸೂರ್ಯಾಸ್ತ",
-    lblMasa:"ಹಿಂದೂ ಮಾಸ",lblNakshatra:"ನಕ್ಷತ್ರ",lblSamvat:"ವಿಕ್ರಮ ಸಂವತ್",lblTithi:"ತಿಥಿ",lblPaksha:"ಪಕ್ಷ",
-    ttAuspicious:"ಶುಭ ಸಮಯ",ttInauspicious:"ಅಶುಭ ಸಮಯ",
-    tlAbhijit:"ಅಭಿಜಿತ್ ಮುಹೂರ್ತ",tlAmrit:"ಅಮೃತ ಕಾಲ",tlRahu:"ರಾಹು ಕಾಲ",tlYama:"ಯಮಗಂಡ",tlGulika:"ಗುಳಿಕ ಕಾಲ",
-    upto:"ವರೆಗೆ",next:"ಮುಂದಿನ",ritu:"ಋತು",samvatsara:"ಸಂವತ್ಸರ",waxing:"ಶುಕ್ಲ",waning:"ಕೃಷ್ಣ",illuminated:"ಬೆಳಕು",ofLabel:"ರಲ್ಲಿ",
-    faqTitle:"ವೈದಿಕ ಖಗೋಳ ಲೆಕ್ಕಾಚಾರ",faq1Q:"1. ದೃಕ್ ಸಿದ್ಧಾಂತ",faq1A:"ಬಾಹ್ಯ API ಇಲ್ಲದೆ ಲೆಕ್ಕಾಚಾರ.",faq2Q:"2. ತಿಥಿ ಮತ್ತು ನಕ್ಷತ್ರ",faq2A:"ಕೋನೀಯ ಮಿತಿ ಹುಡುಕಿ ಅಂತ್ಯ ಸಮಯ.",faq3Q:"3. ಅಮೃತ ಕಾಲ",faq3A:"ಚೋಘಡಿಯಾ ಪದ್ಧತಿ.",faq4Q:"4. ದಿನಮಾನ",faq4A:"ದಿನಮಾನ 8 ಭಾಗ.",
-    paksha:["ಶುಕ್ಲ ಪಕ್ಷ","ಕೃಷ್ಣ ಪಕ್ಷ"],
-    tithis:["ಪಾಡ್ಯ","ಬಿದಿಗೆ","ತದಿಗೆ","ಚೌತಿ","ಪಂಚಮಿ","ಷಷ್ಠಿ","ಸಪ್ತಮಿ","ಅಷ್ಟಮಿ","ನವಮಿ","ದಶಮಿ","ಏಕಾದಶಿ","ದ್ವಾದಶಿ","ತ್ರಯೋದಶಿ","ಚತುರ್ದಶಿ","ಹುಣ್ಣಿಮೆ","ಅಮಾವಾಸ್ಯೆ"],
-    nakshatras:["ಅಶ್ವಿನಿ","ಭರಣಿ","ಕೃತ್ತಿಕಾ","ರೋಹಿಣಿ","ಮೃಗಶಿರ","ಆರ್ದ್ರಾ","ಪುನರ್ವಸು","ಪುಷ್ಯ","ಆಶ್ಲೇಷಾ","ಮಘಾ","ಹುಬ್ಬಾ","ಉತ್ತರ ಫಲ್ಗುಣಿ","ಹಸ್ತ","ಚಿತ್ತಾ","ಸ್ವಾತಿ","ವಿಶಾಖಾ","ಅನುರಾಧಾ","ಜ್ಯೇಷ್ಠಾ","ಮೂಲಾ","ಪೂರ್ವಾಷಾಢಾ","ಉತ್ತರಾಷಾಢಾ","ಶ್ರವಣ","ಧನಿಷ್ಠಾ","ಶತಭಿಷಾ","ಪೂರ್ವಾಭಾದ್ರ","ಉತ್ತರಾಭಾದ್ರ","ರೇವತಿ"],
-    masa:["ಚೈತ್ರ","ವೈಶಾಖ","ಜ್ಯೇಷ್ಠ","ಆಷಾಢ","ಶ್ರಾವಣ","ಭಾದ್ರಪದ","ಆಶ್ವಯುಜ","ಕಾರ್ತೀಕ","ಮಾರ್ಗಶಿರ","ಪುಷ್ಯ","ಮಾಘ","ಫಾಲ್ಗುಣ"],
-    rituNames:["ವಸಂತ","ಗ್ರೀಷ್ಮ","ವರ್ಷಾ","ಶರದ","ಹೇಮಂತ","ಶಿಶಿರ"],
-    weekdays:["ಭಾನುವಾರ","ಸೋಮವಾರ","ಮಂಗಳವಾರ","ಬುಧವಾರ","ಗುರುವಾರ","ಶುಕ್ರವಾರ","ಶನಿವಾರ"],
-    months:["ಜನವರಿ","ಫೆಬ್ರವರಿ","ಮಾರ್ಚ್","ಏಪ್ರಿಲ್","ಮೇ","ಜೂನ್","ಜುಲೈ","ಆಗಸ್ಟ್","ಸೆಪ್ಟೆಂಬರ್","ಅಕ್ಟೋಬರ್","ನವೆಂಬರ್","ಡಿಸೆಂಬರ್"]
-},
-ml: {
-    mainTitle:"പഞ്ചാംഗം ഡാഷ്ബോർഡ്",faqBtn:"FAQ",themeAuto:"ഓട്ടോ",themeDark:"ഡാർക്ക്",themeLight:"ലൈറ്റ്",
-    lblDate:"തീയതി",lblTime:"സമയം",lblLocation:"സ്ഥലം",lblLat:"അക്ഷാംശം",lblLon:"രേഖാംശം",lblTz:"സമയ മേഖല",
-    applyBtn:"പ്രയോഗിക്കുക",nowBtn:"ഇപ്പോൾ ↻",customCoords:"ഇഷ്ടാനുസൃത നിർദ്ദേശാങ്കങ്ങൾ…",
-    lblSunrise:"സൂര്യോദയം",lblNoon:"ഉച്ച",lblSunset:"സൂര്യാസ്തമയം",
-    lblMasa:"ഹിന്ദു മാസം",lblNakshatra:"നക്ഷത്രം",lblSamvat:"വിക്രമ സംവത്",lblTithi:"തിഥി",lblPaksha:"പക്ഷം",
-    ttAuspicious:"ശുഭ സമയം",ttInauspicious:"അശുഭ സമയം",
-    tlAbhijit:"അഭിജിത്ത് മുഹൂർത്തം",tlAmrit:"അമൃത കാലം",tlRahu:"രാഹു കാലം",tlYama:"യമകണ്ടം",tlGulika:"ഗുളിക കാലം",
-    upto:"വരെ",next:"അടുത്ത",ritu:"ഋതു",samvatsara:"സംവത്സരം",waxing:"ശുക്ല",waning:"കൃഷ്ണ",illuminated:"പ്രകാശിതം",ofLabel:"ൽ",
-    faqTitle:"വേദ ജ്യോതിശാസ്ത്ര കണക്കുകൾ",faq1Q:"1. ദൃക് സിദ്ധാന്തം",faq1A:"ബാഹ്യ API ഇല്ലാതെ ഗണന.",faq2Q:"2. തിഥി, നക്ഷത്രം",faq2A:"കോണീയ പരിധി കണ്ടെത്തി അവസാന സമയം.",faq3Q:"3. അമൃത കാലം",faq3A:"ചോഘഡിയ രീതിയിൽ.",faq4Q:"4. ദിനമാനം",faq4A:"ദിനമാനം 8 ഭാഗങ്ങൾ.",
-    paksha:["ശുക്ല പക്ഷം","കൃഷ്ണ പക്ഷം"],
-    tithis:["പ്രഥമ","ദ്വിതീയ","തൃതീയ","ചതുർത്ഥി","പഞ്ചമി","ഷഷ്ഠി","സപ്തമി","അഷ്ടമി","നവമി","ദശമി","ഏകാദശി","ദ്വാദശി","ത്രയോദശി","ചതുർദശി","പൗർണ്ണമി","അമാവാസി"],
-    nakshatras:["അശ്വതി","ഭരണി","കാർത്തിക","രോഹിണി","മകയിരം","തിരുവാതിര","പുണർതം","പൂയം","ആയില്യം","മകം","പൂരം","ഉത്രം","അത്തം","ചിത്തിര","ചോതി","വിശാഖം","അനിഴം","തൃക്കേട്ട","മൂലം","പൂരാടം","ഉത്രാടം","തിരുവോണം","അവിട്ടം","ചതയം","പൂരുരുട്ടാതി","ഉത്രട്ടാതി","രേവതി"],
-    masa:["ചൈത്രം","വൈശാഖം","ജ്യേഷ്ഠം","ആഷാഢം","ശ്രാവണം","ഭാദ്രപദം","ആശ്വിനം","കാർത്തികം","മാർഗശീർഷം","പൗഷം","മാഘം","ഫാൽഗുണം"],
-    rituNames:["വസന്തം","ഗ്രീഷ്മം","വർഷം","ശരത്ത്","ഹേമന്തം","ശിശിരം"],
-    weekdays:["ഞായർ","തിങ്കൾ","ചൊവ്വ","ബുധൻ","വ്യാഴം","വെള്ളി","ശനി"],
-    months:["ജനുവരി","ഫെബ്രുവരി","മാർച്ച്","ഏപ്രിൽ","മേയ്","ജൂൺ","ജൂലൈ","ഓഗസ്റ്റ്","സെപ്റ്റംബർ","ഒക്ടോബർ","നവംബർ","ഡിസംബർ"]
-},
-pa: {
-    mainTitle:"ਪੰਚਾਂਗ ਡੈਸ਼ਬੋਰਡ",faqBtn:"FAQ",themeAuto:"ਆਟੋ",themeDark:"ਡਾਰਕ",themeLight:"ਲਾਈਟ",
-    lblDate:"ਤਾਰੀਖ਼",lblTime:"ਸਮਾਂ",lblLocation:"ਸਥਾਨ",lblLat:"ਅਕਸ਼ਾਂਸ਼",lblLon:"ਦੇਸ਼ਾਂਤਰ",lblTz:"ਸਮਾਂ ਖੇਤਰ",
-    applyBtn:"ਲਾਗੂ ਕਰੋ",nowBtn:"ਹੁਣ ↻",customCoords:"ਕਸਟਮ ਨਿਰਦੇਸ਼ਾਂਕ…",
-    lblSunrise:"ਸੂਰਜ ਚੜ੍ਹਨਾ",lblNoon:"ਦੁਪਹਿਰ",lblSunset:"ਸੂਰਜ ਡੁੱਬਣਾ",
-    lblMasa:"ਹਿੰਦੂ ਮਹੀਨਾ",lblNakshatra:"ਨਕਸ਼ੱਤਰ",lblSamvat:"ਵਿਕਰਮ ਸੰਵਤ",lblTithi:"ਤਿਥੀ",lblPaksha:"ਪੱਖ",
-    ttAuspicious:"ਸ਼ੁਭ ਸਮਾਂ",ttInauspicious:"ਅਸ਼ੁਭ ਸਮਾਂ",
-    tlAbhijit:"ਅਭਿਜੀਤ ਮੁਹੂਰਤ",tlAmrit:"ਅਮ੍ਰਿਤ ਕਾਲ",tlRahu:"ਰਾਹੂ ਕਾਲ",tlYama:"ਯਮਗੰਡ",tlGulika:"ਗੁਲਿਕ ਕਾਲ",
-    upto:"ਤੱਕ",next:"ਅਗਲਾ",ritu:"ਰੁੱਤ",samvatsara:"ਸੰਵਤਸਰ",waxing:"ਸ਼ੁਕਲ",waning:"ਕ੍ਰਿਸ਼ਨ",illuminated:"ਪ੍ਰਕਾਸ਼ਿਤ",ofLabel:"ਵਿੱਚੋਂ",
-    faqTitle:"ਵੈਦਿਕ ਖਗੋਲੀ ਗਣਨਾ",faq1Q:"1. ਦ੍ਰਿਕ ਸਿਧਾਂਤ",faq1A:"ਬਾਹਰੀ API ਤੋਂ ਬਿਨਾਂ ਗਣਨਾ.",faq2Q:"2. ਤਿਥੀ ਤੇ ਨਕਸ਼ੱਤਰ",faq2A:"ਕੋਣੀ ਸੀਮਾ ਲੱਭ ਕੇ ਅੰਤ ਸਮਾਂ.",faq3Q:"3. ਅਮ੍ਰਿਤ ਕਾਲ",faq3A:"ਚੌਘੜੀਆ ਪੱਧਤੀ.",faq4Q:"4. ਦਿਨਮਾਨ",faq4A:"ਦਿਨਮਾਨ 8 ਭਾਗ.",
-    paksha:["ਸ਼ੁਕਲ ਪੱਖ","ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
-    tithis:["ਪ੍ਰਥਮਾ","ਦ੍ਵਿਤੀਯਾ","ਤ੍ਰਿਤੀਯਾ","ਚਤੁਰਥੀ","ਪੰਚਮੀ","ਸ਼ਸ਼ਠੀ","ਸਪਤਮੀ","ਅਸ਼ਟਮੀ","ਨਵਮੀ","ਦਸ਼ਮੀ","ਏਕਾਦਸ਼ੀ","ਦ੍ਵਾਦਸ਼ੀ","ਤ੍ਰਯੋਦਸ਼ੀ","ਚਤੁਰਦਸ਼ੀ","ਪੂਰਨਿਮਾ","ਅਮਾਵਸਯਾ"],
-    nakshatras:["ਅਸ਼ਵਿਨੀ","ਭਰਣੀ","ਕ੍ਰਿਤਿਕਾ","ਰੋਹਿਣੀ","ਮ੍ਰਿਗਸ਼ਿਰਾ","ਆਰਦ੍ਰਾ","ਪੁਨਰਵਸੁ","ਪੁਸ਼ਯਾ","ਅਸ਼ਲੇਸ਼ਾ","ਮਘਾ","ਪੂਰਵ ਫਾਲਗੁਨੀ","ਉੱਤਰ ਫਾਲਗੁਨੀ","ਹਸਤ","ਚਿਤ੍ਰਾ","ਸਵਾਤੀ","ਵਿਸ਼ਾਖਾ","ਅਨੁਰਾਧਾ","ਜਯੇਸ਼ਠਾ","ਮੂਲਾ","ਪੂਰਵਾਸ਼ਾਢਾ","ਉੱਤਰਾਸ਼ਾਢਾ","ਸ਼੍ਰਵਣ","ਧਨਿਸ਼ਠਾ","ਸ਼ਤਭਿਸ਼ਾ","ਪੂਰਵ ਭਾਦਰਪਦ","ਉੱਤਰ ਭਾਦਰਪਦ","ਰੇਵਤੀ"],
-    masa:["ਚੈਤ੍ਰ","ਵੈਸ਼ਾਖ","ਜੇਠ","ਹਾੜ","ਸਾਵਣ","ਭਾਦੋਂ","ਅੱਸੂ","ਕੱਤਕ","ਮੱਘਰ","ਪੋਹ","ਮਾਘ","ਫੱਗਣ"],
-    rituNames:["ਬਸੰਤ","ਗ੍ਰੀਖਮ","ਬਰਸਾਤ","ਸ਼ਰਦ","ਹੇਮੰਤ","ਸ਼ਿਸ਼ਿਰ"],
-    weekdays:["ਐਤਵਾਰ","ਸੋਮਵਾਰ","ਮੰਗਲਵਾਰ","ਬੁੱਧਵਾਰ","ਵੀਰਵਾਰ","ਸ਼ੁੱਕਰਵਾਰ","ਸ਼ਨਿੱਚਰਵਾਰ"],
-    months:["ਜਨਵਰੀ","ਫਰਵਰੀ","ਮਾਰਚ","ਅਪ੍ਰੈਲ","ਮਈ","ਜੂਨ","ਜੁਲਾਈ","ਅਗਸਤ","ਸਤੰਬਰ","ਅਕਤੂਬਰ","ਨਵੰਬਰ","ਦਸੰਬਰ"]
-},
-or: {
-    mainTitle:"ପଞ୍ଚାଙ୍ଗ ଡ୍ୟାସବୋର୍ଡ",faqBtn:"FAQ",themeAuto:"ଅଟୋ",themeDark:"ଡାର୍କ",themeLight:"ଲାଇଟ୍",
-    lblDate:"ତାରିଖ",lblTime:"ସମୟ",lblLocation:"ସ୍ଥାନ",lblLat:"ଅକ୍ଷାଂଶ",lblLon:"ଦ୍ରାଘିମାଂଶ",lblTz:"ସମୟ ଅଞ୍ଚଳ",
-    applyBtn:"ପ୍ରୟୋଗ",nowBtn:"ଏବେ ↻",customCoords:"କଷ୍ଟମ ନିର୍ଦେଶାଂକ…",
-    lblSunrise:"ସୂର୍ଯ୍ୟୋଦୟ",lblNoon:"ମଧ୍ୟାହ୍ନ",lblSunset:"ସୂର୍ଯ୍ୟାସ୍ତ",
-    lblMasa:"ହିନ୍ଦୁ ମାସ",lblNakshatra:"ନକ୍ଷତ୍ର",lblSamvat:"ବିକ୍ରମ ସମ୍ବତ",lblTithi:"ତିଥି",lblPaksha:"ପକ୍ଷ",
-    ttAuspicious:"ଶୁଭ ସମୟ",ttInauspicious:"ଅଶୁଭ ସମୟ",
-    tlAbhijit:"ଅଭିଜିତ ମୁହୂର୍ତ୍ତ",tlAmrit:"ଅମୃତ କାଳ",tlRahu:"ରାହୁ କାଳ",tlYama:"ଯମଗଣ୍ଡ",tlGulika:"ଗୁଲିକ କାଳ",
-    upto:"ପର୍ଯ୍ୟନ୍ତ",next:"ପରବର୍ତ୍ତୀ",ritu:"ଋତୁ",samvatsara:"ସମ୍ବତ୍ସର",waxing:"ଶୁକ୍ଳ",waning:"କୃଷ୍ଣ",illuminated:"ଆଲୋକିତ",ofLabel:"ର",
-    faqTitle:"ବୈଦିକ ଜ୍ୟୋତିର୍ବିଜ୍ଞାନ ଗଣନା",faq1Q:"୧. ଦୃକ ସିଦ୍ଧାନ୍ତ",faq1A:"ବାହ୍ୟ API ବିନା ଗଣନା.",faq2Q:"୨. ତିଥି ଓ ନକ୍ଷତ୍ର",faq2A:"କୋଣୀୟ ସୀମା ଖୋଜି ଅନ୍ତ ସମୟ.",faq3Q:"୩. ଅମୃତ କାଳ",faq3A:"ଚୌଘଡ଼ିଆ ପଦ୍ଧତି.",faq4Q:"୪. ଦିନମାନ",faq4A:"ଦିନମାନ ୮ ଭାଗ.",
-    paksha:["ଶୁକ୍ଳ ପକ୍ଷ","କୃଷ୍ଣ ପକ୍ଷ"],
-    tithis:["ପ୍ରତିପଦା","ଦ୍ୱିତୀୟା","ତୃତୀୟା","ଚତୁର୍ଥୀ","ପଞ୍ଚମୀ","ଷଷ୍ଠୀ","ସପ୍ତମୀ","ଅଷ୍ଟମୀ","ନବମୀ","ଦଶମୀ","ଏକାଦଶୀ","ଦ୍ୱାଦଶୀ","ତ୍ରୟୋଦଶୀ","ଚତୁର୍ଦ୍ଦଶୀ","ପୂର୍ଣ୍ଣିମା","ଅମାବାସ୍ୟା"],
-    nakshatras:["ଅଶ୍ୱିନୀ","ଭରଣୀ","କୃତ୍ତିକା","ରୋହିଣୀ","ମୃଗଶିରା","ଆର୍ଦ୍ରା","ପୁନର୍ବସୁ","ପୁଷ୍ୟା","ଅଶ୍ଳେଷା","ମଘା","ପୂର୍ବ ଫାଲ୍ଗୁନୀ","ଉତ୍ତର ଫାଲ୍ଗୁନୀ","ହସ୍ତା","ଚିତ୍ରା","ସ୍ୱାତୀ","ବିଶାଖା","ଅନୁରାଧା","ଜ୍ୟେଷ୍ଠା","ମୂଳା","ପୂର୍ବାଷାଢ଼ା","ଉତ୍ତରାଷାଢ଼ା","ଶ୍ରବଣା","ଧନିଷ୍ଠା","ଶତଭିଷା","ପୂର୍ବ ଭାଦ୍ରପଦ","ଉତ୍ତର ଭାଦ୍ରପଦ","ରେବତୀ"],
-    masa:["ଚୈତ୍ର","ବୈଶାଖ","ଜ୍ୟେଷ୍ଠ","ଆଷାଢ","ଶ୍ରାବଣ","ଭାଦ୍ରବ","ଆଶ୍ୱିନ","କାର୍ତ୍ତିକ","ମାର୍ଗଶିର","ପୌଷ","ମାଘ","ଫାଲ୍ଗୁନ"],
-    rituNames:["ବସନ୍ତ","ଗ୍ରୀଷ୍ମ","ବର୍ଷା","ଶରତ","ହେମନ୍ତ","ଶିଶିର"],
-    weekdays:["ରବିବାର","ସୋମବାର","ମଙ୍ଗଳବାର","ବୁଧବାର","ଗୁରୁବାର","ଶୁକ୍ରବାର","ଶନିବାର"],
-    months:["ଜାନୁଆରୀ","ଫେବ୍ରୁଆରୀ","ମାର୍ଚ୍ଚ","ଏପ୍ରିଲ","ମେ","ଜୁନ","ଜୁଲାଇ","ଅଗଷ୍ଟ","ସେପ୍ଟେମ୍ବର","ଅକ୍ଟୋବର","ନଭେମ୍ବର","ଡିସେମ୍ବର"]
-},
-ur: {
-    mainTitle:"پنچانگ ڈیش بورڈ",faqBtn:"FAQ",themeAuto:"آٹو",themeDark:"ڈارک",themeLight:"لائٹ",
-    lblDate:"تاریخ",lblTime:"وقت",lblLocation:"مقام",lblLat:"عرض البلد",lblLon:"طول البلد",lblTz:"ٹائم زون",
-    applyBtn:"لاگو کریں",nowBtn:"ابھی ↻",customCoords:"حسب ضرورت…",
-    lblSunrise:"طلوع آفتاب",lblNoon:"دوپہر",lblSunset:"غروب آفتاب",
-    lblMasa:"ہندو مہینہ",lblNakshatra:"نکشتر",lblSamvat:"وکرم سموت",lblTithi:"تتھی",lblPaksha:"پکش",
-    ttAuspicious:"مبارک وقت",ttInauspicious:"منحوس وقت",
-    tlAbhijit:"ابھیجیت مہورت",tlAmrit:"امرت کال",tlRahu:"راہو کال",tlYama:"یمگنڈم",tlGulika:"گلیک کال",
-    upto:"تک",next:"اگلا",ritu:"موسم",samvatsara:"سموتسر",waxing:"بڑھتا",waning:"گھٹتا",illuminated:"روشن",ofLabel:"میں سے",
-    faqTitle:"ویدک فلکیاتی حسابات",faq1Q:"1. درک سدھانت",faq1A:"بیرونی API کے بغیر حساب.",faq2Q:"2. تتھی اور نکشتر",faq2A:"زاویائی حد تلاش کر کے اختتامی وقت.",faq3Q:"3. امرت کال",faq3A:"چوگھڑیا طریقہ.",faq4Q:"4. دنمان",faq4A:"دنمان 8 حصوں میں.",
-    paksha:["شکل پکش","کرشن پکش"],
-    tithis:["پرتھما","دوتیا","ترتیا","چترتھی","پنچمی","ششٹھی","سپتمی","اشٹمی","نومی","دشمی","ایکادشی","دوادشی","تریودشی","چتردشی","پورنیما","اماوسیا"],
-    nakshatras:["اشونی","بھرنی","کرتیکا","روہنی","مرگشیرا","اردرا","پنروسو","پشیا","اشلیشا","مگھا","پوروا پھالگنی","اترا پھالگنی","ہست","چترا","سواتی","وشاکھا","انورادھا","جیشٹھا","مولا","پورواشاڑھا","اتراشاڑھا","شراون","دھنشٹھا","شتبھشا","پوروا بھادرپد","اترا بھادرپد","ریوتی"],
-    masa:["چیتر","ویساکھ","جیٹھ","آساڑھ","ساون","بھادوں","آسوج","کاتک","مگھر","پوہ","ماگھ","پھاگن"],
-    rituNames:["بسنت","گریشم","برسات","شرد","ہیمنت","شیشر"],
-    weekdays:["اتوار","پیر","منگل","بدھ","جمعرات","جمعہ","ہفتہ"],
-    months:["جنوری","فروری","مارچ","اپریل","مئی","جون","جولائی","اگست","ستمبر","اکتوبر","نومبر","دسمبر"]
-}
+bn:{mainTitle:"পঞ্চাঙ্গ",kbBtn:"জ্ঞান ভাণ্ডার",themeAuto:"অটো",themeDark:"ডার্ক",themeLight:"লাইট",lblDate:"তারিখ",lblTime:"সময়",lblLocation:"অবস্থান",lblLat:"অক্ষাংশ",lblLon:"দ্রাঘিমা",lblTz:"UTC±",applyBtn:"প্রয়োগ",nowBtn:"এখন ↻",customCoords:"কাস্টম…",lblSunrise:"সূর্যোদয়",lblNoon:"মধ্যাহ্ন",lblSunset:"সূর্যাস্ত",lblMasa:"হিন্দু মাস",lblNakshatra:"নক্ষত্র",lblSamvat:"বিক্রম সংবত",lblTithi:"তিথি",lblPaksha:"পক্ষ",ttPancha:"পঞ্চাঙ্গ — পাঁচটি অঙ্গ",ttAuspicious:"শুভ সময়",ttInauspicious:"অশুভ সময়",ttHora:"গ্রহ হোরা",ttSandhya:"সন্ধ্যা ও অবধি",tlAbhijit:"অভিজিৎ মুহূর্ত",tlAmrit:"অমৃত কাল",tlBrahma:"ব্রহ্ম মুহূর্ত",tlGodhuli:"গোধূলি মুহূর্ত",tlRahu:"রাহু কাল",tlYama:"যমগণ্ড",tlGulika:"গুলিক কাল",tlDisha:"দিশা শূল",tlPratah:"প্রাতঃ সন্ধ্যা",tlSayam:"সায়ং সন্ধ্যা",tlDinmaan:"দিনমান",tlRatrimaan:"রাত্রিমান",thNum:"#",thTime:"সময়",thPlanet:"গ্রহ",upto:"পর্যন্ত",next:"পরবর্তী",ritu:"ঋতু",samvatsara:"সংবৎসর",waxing:"শুক্ল",waning:"কৃষ্ণ",illuminated:"আলোকিত",ofLabel:"এর মধ্যে",angaVaara:"বার",angaTithi:"তিথি",angaNakshatra:"নক্ষত্র",angaYoga:"যোগ",angaKarana:"করণ",kbTitle:"বৈদিক কালগণনা বিশ্বকোষ",disha:{0:"পূর্ব ↗",1:"উত্তর ↑",2:"দক্ষিণ ↓",3:"উত্তর ↑",4:"পশ্চিম ←",5:"পশ্চিম ←",6:"পূর্ব ↗"},paksha:["শুক্ল পক্ষ","কৃষ্ণ পক্ষ"],tithis:["প্রথমা","দ্বিতীয়া","তৃতীয়া","চতুর্থী","পঞ্চমী","ষষ্ঠী","সপ্তমী","অষ্টমী","নবমী","দশমী","একাদশী","দ্বাদশী","ত্রয়োদশী","চতুর্দশী","পূর্ণিমা","অমাবস্যা"],nakshatras:["অশ্বিনী","ভরণী","কৃত্তিকা","রোহিণী","মৃগশিরা","আর্দ্রা","পুনর্বসু","পুষ্যা","অশ্লেষা","মঘা","পূর্ব ফাল্গুনী","উত্তর ফাল্গুনী","হস্ত","চিত্রা","স্বাতী","বিশাখা","অনুরাধা","জ্যেষ্ঠা","মূলা","পূর্বাষাঢ়া","উত্তরাষাঢ়া","শ্রবণা","ধনিষ্ঠা","শতভিষা","পূর্ব ভাদ্রপদ","উত্তর ভাদ্রপদ","রেবতী"],masa:["চৈত্র","বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন"],rituNames:["বসন্ত","গ্রীষ্ম","বর্ষা","শরৎ","হেমন্ত","শীত"],weekdays:["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"],months:["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"],planets:["সূর্য","চন্দ্র","মঙ্গল","বুধ","বৃহস্পতি","শুক্র","শনি"]},
+
+mr:{mainTitle:"पंचांग",kbBtn:"ज्ञानकोश",themeAuto:"ऑटो",themeDark:"डार्क",themeLight:"लाईट",lblDate:"तारीख",lblTime:"वेळ",lblLocation:"स्थान",lblLat:"अक्षांश",lblLon:"रेखांश",lblTz:"UTC±",applyBtn:"लागू करा",nowBtn:"आता ↻",customCoords:"सानुकूल…",lblSunrise:"सूर्योदय",lblNoon:"दुपार",lblSunset:"सूर्यास्त",lblMasa:"हिंदू महिना",lblNakshatra:"नक्षत्र",lblSamvat:"विक्रम संवत",lblTithi:"तिथी",lblPaksha:"पक्ष",ttPancha:"पंचांग — पाच अंग",ttAuspicious:"शुभ वेळ",ttInauspicious:"अशुभ वेळ",ttHora:"ग्रह होरा",ttSandhya:"संध्या व अवधी",tlAbhijit:"अभिजित मुहूर्त",tlAmrit:"अमृत काळ",tlBrahma:"ब्रह्म मुहूर्त",tlGodhuli:"गोधूलि मुहूर्त",tlRahu:"राहु काळ",tlYama:"यमगंड",tlGulika:"गुलिक काळ",tlDisha:"दिशा शूल",tlPratah:"प्रातः संध्या",tlSayam:"सायं संध्या",tlDinmaan:"दिनमान",tlRatrimaan:"रात्रिमान",thNum:"#",thTime:"वेळ",thPlanet:"ग्रह",upto:"पर्यंत",next:"पुढील",ritu:"ऋतू",samvatsara:"संवत्सर",waxing:"शुक्ल",waning:"कृष्ण",illuminated:"प्रकाशित",ofLabel:"पैकी",angaVaara:"वार",angaTithi:"तिथी",angaNakshatra:"नक्षत्र",angaYoga:"योग",angaKarana:"करण",kbTitle:"वैदिक कालगणना ज्ञानकोश",disha:{0:"पूर्व ↗",1:"उत्तर ↑",2:"दक्षिण ↓",3:"उत्तर ↑",4:"पश्चिम ←",5:"पश्चिम ←",6:"पूर्व ↗"},paksha:["शुक्ल पक्ष","कृष्ण पक्ष"],tithis:["प्रथमा","द्वितीया","तृतीया","चतुर्थी","पंचमी","षष्ठी","सप्तमी","अष्टमी","नवमी","दशमी","एकादशी","द्वादशी","त्रयोदशी","चतुर्दशी","पौर्णिमा","अमावस्या"],nakshatras:["अश्विनी","भरणी","कृत्तिका","रोहिणी","मृगशीर्ष","आर्द्रा","पुनर्वसू","पुष्य","आश्लेषा","मघा","पूर्वा फाल्गुनी","उत्तरा फाल्गुनी","हस्त","चित्रा","स्वाती","विशाखा","अनुराधा","ज्येष्ठा","मूळ","पूर्वाषाढा","उत्तराषाढा","श्रवण","धनिष्ठा","शततारका","पूर्वा भाद्रपदा","उत्तरा भाद्रपदा","रेवती"],masa:["चैत्र","वैशाख","ज्येष्ठ","आषाढ","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन"],rituNames:["वसंत","ग्रीष्म","वर्षा","शरद","हेमंत","शिशिर"],weekdays:["रविवार","सोमवार","मंगळवार","बुधवार","गुरुवार","शुक्रवार","शनिवार"],months:["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"],planets:["सूर्य","चंद्र","मंगळ","बुध","गुरू","शुक्र","शनी"]},
+
+te:{mainTitle:"పంచాంగం",kbBtn:"జ్ఞాన భాండాగారం",themeAuto:"ఆటో",themeDark:"డార్క్",themeLight:"లైట్",lblDate:"తేదీ",lblTime:"సమయం",lblLocation:"స్థానం",lblLat:"అక్షాంశం",lblLon:"రేఖాంశం",lblTz:"UTC±",applyBtn:"వర్తింపజేయి",nowBtn:"ఇప్పుడు ↻",customCoords:"అనుకూల…",lblSunrise:"సూర్యోదయం",lblNoon:"మధ్యాహ్నం",lblSunset:"సూర్యాస్తమయం",lblMasa:"హిందూ మాసం",lblNakshatra:"నక్షత్రం",lblSamvat:"విక్రమ సంవత్సరం",lblTithi:"తిథి",lblPaksha:"పక్షం",ttPancha:"పంచాంగం — ఐదు అంగాలు",ttAuspicious:"శుభ సమయం",ttInauspicious:"అశుభ సమయం",ttHora:"గ్రహ హోరా",ttSandhya:"సంధ్యా & అవధి",tlAbhijit:"అభిజిత్ ముహూర్తం",tlAmrit:"అమృత కాలం",tlBrahma:"బ్రహ్మ ముహూర్తం",tlGodhuli:"గోధూళి ముహూర్తం",tlRahu:"రాహు కాలం",tlYama:"యమగండం",tlGulika:"గుళిక కాలం",tlDisha:"దిశా శూలం",tlPratah:"ప్రాతః సంధ్య",tlSayam:"సాయం సంధ్య",tlDinmaan:"దినమానం",tlRatrimaan:"రాత్రిమానం",thNum:"#",thTime:"సమయం",thPlanet:"గ్రహం",upto:"వరకు",next:"తదుపరి",ritu:"ఋతువు",samvatsara:"సంవత్సరం",waxing:"శుక్ల",waning:"కృష్ణ",illuminated:"ప్రకాశితం",ofLabel:"లో",angaVaara:"వారం",angaTithi:"తిథి",angaNakshatra:"నక్షత్రం",angaYoga:"యోగం",angaKarana:"కరణం",kbTitle:"వేద కాలగణన జ్ఞాన భాండాగారం",disha:{0:"తూర్పు ↗",1:"ఉత్తరం ↑",2:"దక్షిణం ↓",3:"ఉత్తరం ↑",4:"పడమర ←",5:"పడమర ←",6:"తూర్పు ↗"},paksha:["శుక్ల పక్షం","కృష్ణ పక్షం"],tithis:["పాడ్యమి","విదియ","తదియ","చవితి","పంచమి","షష్ఠి","సప్తమి","అష్టమి","నవమి","దశమి","ఏకాదశి","ద్వాదశి","త్రయోదశి","చతుర్దశి","పౌర్ణమి","అమావాస్య"],nakshatras:["అశ్విని","భరణి","కృత్తిక","రోహిణి","మృగశిర","ఆరుద్ర","పునర్వసు","పుష్యమి","ఆశ్లేష","మఖ","పుబ్బ","ఉత్తర","హస్త","చిత్త","స్వాతి","విశాఖ","అనూరాధ","జ్యేష్ఠ","మూల","పూర్వాషాఢ","ఉత్తరాషాఢ","శ్రవణం","ధనిష్ఠ","శతభిషం","పూర్వాభాద్ర","ఉత్తరాభాద్ర","రేవతి"],masa:["చైత్రం","వైశాఖం","జ్యేష్ఠం","ఆషాఢం","శ్రావణం","భాద్రపదం","ఆశ్వయుజం","కార్తీకం","మార్గశిరం","పుష్యం","మాఘం","ఫాల్గుణం"],rituNames:["వసంతం","గ్రీష్మం","వర్షం","శరత్తు","హేమంతం","శిశిరం"],weekdays:["ఆదివారం","సోమవారం","మంగళవారం","బుధవారం","గురువారం","శుక్రవారం","శనివారం"],months:["జనవరి","ఫిబ్రవరి","మార్చి","ఏప్రిల్","మే","జూన్","జులై","ఆగస్టు","సెప్టెంబర్","అక్టోబర్","నవంబర్","డిసెంబర్"],planets:["సూర్య","చంద్ర","కుజ","బుధ","గురు","శుక్ర","శని"]},
+
+ta:{mainTitle:"பஞ்சாங்கம்",kbBtn:"அறிவுக் களஞ்சியம்",themeAuto:"தானியங்கி",themeDark:"டார்க்",themeLight:"லைட்",lblDate:"தேதி",lblTime:"நேரம்",lblLocation:"இடம்",lblLat:"அட்சரேகை",lblLon:"தீர்க்கரேகை",lblTz:"UTC±",applyBtn:"பயன்படுத்து",nowBtn:"இப்போது ↻",customCoords:"தனிப்பயன்…",lblSunrise:"சூரியோதயம்",lblNoon:"நண்பகல்",lblSunset:"அஸ்தமனம்",lblMasa:"இந்து மாதம்",lblNakshatra:"நட்சத்திரம்",lblSamvat:"விக்ரம் சம்வத்",lblTithi:"திதி",lblPaksha:"பட்சம்",ttPancha:"பஞ்சாங்கம் — ஐந்து அங்கங்கள்",ttAuspicious:"நல்ல நேரம்",ttInauspicious:"கெட்ட நேரம்",ttHora:"கிரக ஹோரா",ttSandhya:"சந்தியா & அவதி",tlAbhijit:"அபிஜித் முகூர்த்தம்",tlAmrit:"அமிர்த காலம்",tlBrahma:"பிரம்ம முகூர்த்தம்",tlGodhuli:"கோதூலி முகூர்த்தம்",tlRahu:"ராகு காலம்",tlYama:"எமகண்டம்",tlGulika:"குளிகை காலம்",tlDisha:"திசை சூலம்",tlPratah:"காலை சந்தியா",tlSayam:"மாலை சந்தியா",tlDinmaan:"தினமானம்",tlRatrimaan:"ராத்திரிமானம்",thNum:"#",thTime:"நேரம்",thPlanet:"கிரகம்",upto:"வரை",next:"அடுத்து",ritu:"ருது",samvatsara:"சம்வத்சரம்",waxing:"வளர்பிறை",waning:"தேய்பிறை",illuminated:"ஒளிரும்",ofLabel:"இல்",angaVaara:"வாரம்",angaTithi:"திதி",angaNakshatra:"நட்சத்திரம்",angaYoga:"யோகம்",angaKarana:"கரணம்",kbTitle:"வேத கால அறிவியல் களஞ்சியம்",disha:{0:"கிழக்கு ↗",1:"வடக்கு ↑",2:"தெற்கு ↓",3:"வடக்கு ↑",4:"மேற்கு ←",5:"மேற்கு ←",6:"கிழக்கு ↗"},paksha:["சுக்ல பட்சம்","கிருஷ்ண பட்சம்"],tithis:["பிரதமை","துவிதியை","திருதியை","சதுர்த்தி","பஞ்சமி","சஷ்டி","சப்தமி","அஷ்டமி","நவமி","தசமி","ஏகாதசி","துவாதசி","திரயோதசி","சதுர்த்தசி","பௌர்ணமி","அமாவாசை"],nakshatras:["அஸ்வினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசீரிடம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","அஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி"],masa:["சித்திரை","வைகாசி","ஆனி","ஆடி","ஆவணி","புரட்டாசி","ஐப்பசி","கார்த்திகை","மார்கழி","தை","மாசி","பங்குனி"],rituNames:["வசந்தம்","கிரீஷ்மம்","வர்ஷம்","சரத்","ஹேமந்தம்","சிசிரம்"],weekdays:["ஞாயிறு","திங்கள்","செவ்வாய்","புதன்","வியாழன்","வெள்ளி","சனி"],months:["ஜனவரி","பிப்ரவரி","மார்ச்","ஏப்ரல்","மே","ஜூன்","ஜூலை","ஆகஸ்ட்","செப்டம்பர்","அக்டோபர்","நவம்பர்","டிசம்பர்"],planets:["சூரியன்","சந்திரன்","செவ்வாய்","புதன்","குரு","சுக்ரன்","சனி"]},
+
+gu:{mainTitle:"પંચાંગ",kbBtn:"જ્ઞાનકોશ",themeAuto:"ઓટો",themeDark:"ડાર્ક",themeLight:"લાઇટ",lblDate:"તારીખ",lblTime:"સમય",lblLocation:"સ્થાન",lblLat:"અક્ષાંશ",lblLon:"રેખાંશ",lblTz:"UTC±",applyBtn:"લાગુ કરો",nowBtn:"હવે ↻",customCoords:"કસ્ટમ…",lblSunrise:"સૂર્યોદય",lblNoon:"બપોર",lblSunset:"સૂર્યાસ્ત",lblMasa:"હિન્દુ માસ",lblNakshatra:"નક્ષત્ર",lblSamvat:"વિક્રમ સંવત",lblTithi:"તિથિ",lblPaksha:"પક્ષ",ttPancha:"પંચાંગ — પાંચ અંગ",ttAuspicious:"શુભ સમય",ttInauspicious:"અશુભ સમય",ttHora:"ગ્રહ હોરા",ttSandhya:"સંધ્યા અને અવધિ",tlAbhijit:"અભિજીત મુહૂર્ત",tlAmrit:"અમૃત કાળ",tlBrahma:"બ્રહ્મ મુહૂર્ત",tlGodhuli:"ગોધૂલિ મુહૂર્ત",tlRahu:"રાહુ કાળ",tlYama:"યમગંડ",tlGulika:"ગુલિક કાળ",tlDisha:"દિશા શૂલ",tlPratah:"પ્રાતઃ સંધ્યા",tlSayam:"સાયં સંધ્યા",tlDinmaan:"દિનમાન",tlRatrimaan:"રાત્રિમાન",thNum:"#",thTime:"સમય",thPlanet:"ગ્રહ",upto:"સુધી",next:"આગળ",ritu:"ઋતુ",samvatsara:"સંવત્સર",waxing:"શુક્લ",waning:"કૃષ્ણ",illuminated:"પ્રકાશિત",ofLabel:"માંથી",angaVaara:"વાર",angaTithi:"તિથિ",angaNakshatra:"નક્ષત્ર",angaYoga:"યોગ",angaKarana:"કરણ",kbTitle:"વૈદિક કાલગણના જ્ઞાનકોશ",disha:{0:"પૂર્વ ↗",1:"ઉત્તર ↑",2:"દક્ષિણ ↓",3:"ઉત્તર ↑",4:"પશ્ચિમ ←",5:"પશ્ચિમ ←",6:"પૂર્વ ↗"},paksha:["શુક્લ પક્ષ","કૃષ્ણ પક્ષ"],tithis:["પ્રથમા","દ્વિતીયા","તૃતીયા","ચતુર્થી","પંચમી","ષષ્ઠી","સપ્તમી","અષ્ટમી","નવમી","દશમી","એકાદશી","દ્વાદશી","ત્રયોદશી","ચતુર્દશી","પૂર્ણિમા","અમાવસ્યા"],nakshatras:["અશ્વિની","ભરણી","કૃત્તિકા","રોહિણી","મૃગશીર્ષ","આર્દ્રા","પુનર્વસુ","પુષ્ય","આશ્લેષા","મઘા","પૂર્વા ફાલ્ગુની","ઉત્તરા ફાલ્ગુની","હસ્ત","ચિત્રા","સ્વાતિ","વિશાખા","અનુરાધા","જ્યેષ્ઠા","મૂળ","પૂર્વાષાઢા","ઉત્તરાષાઢા","શ્રવણ","ધનિષ્ઠા","શતભિષા","પૂર્વા ભાદ્રપદ","ઉત્તરા ભાદ્રપદ","રેવતી"],masa:["ચૈત્ર","વૈશાખ","જ્યેષ્ઠ","અષાઢ","શ્રાવણ","ભાદ્રપદ","આશ્વિન","કાર્તિક","માર્ગશીર્ષ","પૌષ","માઘ","ફાલ્ગુન"],rituNames:["વસંત","ગ્રીષ્મ","વર્ષા","શરદ","હેમંત","શિશિર"],weekdays:["રવિવાર","સોમવાર","મંગળવાર","બુધવાર","ગુરુવાર","શુક્રવાર","શનિવાર"],months:["જાન્યુઆરી","ફેબ્રુઆરી","માર્ચ","એપ્રિલ","મે","જૂન","જુલાઈ","ઓગસ્ટ","સપ્ટેમ્બર","ઓક્ટોબર","નવેમ્બર","ડિસેમ્બર"],planets:["સૂર્ય","ચંદ્ર","મંગળ","બુધ","ગુરુ","શુક્ર","શનિ"]},
+
+kn:{mainTitle:"ಪಂಚಾಂಗ",kbBtn:"ಜ್ಞಾನ ಭಂಡಾರ",themeAuto:"ಆಟೋ",themeDark:"ಡಾರ್ಕ್",themeLight:"ಲೈಟ್",lblDate:"ದಿನಾಂಕ",lblTime:"ಸಮಯ",lblLocation:"ಸ್ಥಳ",lblLat:"ಅಕ್ಷಾಂಶ",lblLon:"ರೇಖಾಂಶ",lblTz:"UTC±",applyBtn:"ಅನ್ವಯಿಸಿ",nowBtn:"ಈಗ ↻",customCoords:"ಕಸ್ಟಮ್…",lblSunrise:"ಸೂರ್ಯೋದಯ",lblNoon:"ಮಧ್ಯಾಹ್ನ",lblSunset:"ಸೂರ್ಯಾಸ್ತ",lblMasa:"ಹಿಂದೂ ಮಾಸ",lblNakshatra:"ನಕ್ಷತ್ರ",lblSamvat:"ವಿಕ್ರಮ ಸಂವತ್",lblTithi:"ತಿಥಿ",lblPaksha:"ಪಕ್ಷ",ttPancha:"ಪಂಚಾಂಗ — ಐದು ಅಂಗಗಳು",ttAuspicious:"ಶುಭ ಸಮಯ",ttInauspicious:"ಅಶುಭ ಸಮಯ",ttHora:"ಗ್ರಹ ಹೋರಾ",ttSandhya:"ಸಂಧ್ಯಾ & ಅವಧಿ",tlAbhijit:"ಅಭಿಜಿತ್ ಮುಹೂರ್ತ",tlAmrit:"ಅಮೃತ ಕಾಲ",tlBrahma:"ಬ್ರಹ್ಮ ಮುಹೂರ್ತ",tlGodhuli:"ಗೋಧೂಳಿ ಮುಹೂರ್ತ",tlRahu:"ರಾಹು ಕಾಲ",tlYama:"ಯಮಗಂಡ",tlGulika:"ಗುಳಿಕ ಕಾಲ",tlDisha:"ದಿಶಾ ಶೂಲ",tlPratah:"ಪ್ರಾತಃ ಸಂಧ್ಯಾ",tlSayam:"ಸಾಯಂ ಸಂಧ್ಯಾ",tlDinmaan:"ದಿನಮಾನ",tlRatrimaan:"ರಾತ್ರಿಮಾನ",thNum:"#",thTime:"ಸಮಯ",thPlanet:"ಗ್ರಹ",upto:"ವರೆಗೆ",next:"ಮುಂದಿನ",ritu:"ಋತು",samvatsara:"ಸಂವತ್ಸರ",waxing:"ಶುಕ್ಲ",waning:"ಕೃಷ್ಣ",illuminated:"ಬೆಳಕು",ofLabel:"ರಲ್ಲಿ",angaVaara:"ವಾರ",angaTithi:"ತಿಥಿ",angaNakshatra:"ನಕ್ಷತ್ರ",angaYoga:"ಯೋಗ",angaKarana:"ಕರಣ",kbTitle:"ವೈದಿಕ ಕಾಲಗಣನೆ ಜ್ಞಾನಕೋಶ",disha:{0:"ಪೂರ್ವ ↗",1:"ಉತ್ತರ ↑",2:"ದಕ್ಷಿಣ ↓",3:"ಉತ್ತರ ↑",4:"ಪಶ್ಚಿಮ ←",5:"ಪಶ್ಚಿಮ ←",6:"ಪೂರ್ವ ↗"},paksha:["ಶುಕ್ಲ ಪಕ್ಷ","ಕೃಷ್ಣ ಪಕ್ಷ"],tithis:["ಪಾಡ್ಯ","ಬಿದಿಗೆ","ತದಿಗೆ","ಚೌತಿ","ಪಂಚಮಿ","ಷಷ್ಠಿ","ಸಪ್ತಮಿ","ಅಷ್ಟಮಿ","ನವಮಿ","ದಶಮಿ","ಏಕಾದಶಿ","ದ್ವಾದಶಿ","ತ್ರಯೋದಶಿ","ಚತುರ್ದಶಿ","ಹುಣ್ಣಿಮೆ","ಅಮಾವಾಸ್ಯೆ"],nakshatras:["ಅಶ್ವಿನಿ","ಭರಣಿ","ಕೃತ್ತಿಕಾ","ರೋಹಿಣಿ","ಮೃಗಶಿರ","ಆರ್ದ್ರಾ","ಪುನರ್ವಸು","ಪುಷ್ಯ","ಆಶ್ಲೇಷಾ","ಮಘಾ","ಹುಬ್ಬಾ","ಉತ್ತರ ಫಲ್ಗುಣಿ","ಹಸ್ತ","ಚಿತ್ತಾ","ಸ್ವಾತಿ","ವಿಶಾಖಾ","ಅನುರಾಧಾ","ಜ್ಯೇಷ್ಠಾ","ಮೂಲಾ","ಪೂರ್ವಾಷಾಢಾ","ಉತ್ತರಾಷಾಢಾ","ಶ್ರವಣ","ಧನಿಷ್ಠಾ","ಶತಭಿಷಾ","ಪೂರ್ವಾಭಾದ್ರ","ಉತ್ತರಾಭಾದ್ರ","ರೇವತಿ"],masa:["ಚೈತ್ರ","ವೈಶಾಖ","ಜ್ಯೇಷ್ಠ","ಆಷಾಢ","ಶ್ರಾವಣ","ಭಾದ್ರಪದ","ಆಶ್ವಯುಜ","ಕಾರ್ತೀಕ","ಮಾರ್ಗಶಿರ","ಪುಷ್ಯ","ಮಾಘ","ಫಾಲ್ಗುಣ"],rituNames:["ವಸಂತ","ಗ್ರೀಷ್ಮ","ವರ್ಷಾ","ಶರದ","ಹೇಮಂತ","ಶಿಶಿರ"],weekdays:["ಭಾನುವಾರ","ಸೋಮವಾರ","ಮಂಗಳವಾರ","ಬುಧವಾರ","ಗುರುವಾರ","ಶುಕ್ರವಾರ","ಶನಿವಾರ"],months:["ಜನವರಿ","ಫೆಬ್ರವರಿ","ಮಾರ್ಚ್","ಏಪ್ರಿಲ್","ಮೇ","ಜೂನ್","ಜುಲೈ","ಆಗಸ್ಟ್","ಸೆಪ್ಟೆಂಬರ್","ಅಕ್ಟೋಬರ್","ನವೆಂಬರ್","ಡಿಸೆಂಬರ್"],planets:["ಸೂರ್ಯ","ಚಂದ್ರ","ಮಂಗಳ","ಬುಧ","ಗುರು","ಶುಕ್ರ","ಶನಿ"]},
+
+ml:{mainTitle:"പഞ്ചാംഗം",kbBtn:"വിജ്ഞാനകോശം",themeAuto:"ഓട്ടോ",themeDark:"ഡാർക്ക്",themeLight:"ലൈറ്റ്",lblDate:"തീയതി",lblTime:"സമയം",lblLocation:"സ്ഥലം",lblLat:"അക്ഷാംശം",lblLon:"രേഖാംശം",lblTz:"UTC±",applyBtn:"പ്രയോഗിക്കുക",nowBtn:"ഇപ്പോൾ ↻",customCoords:"ഇഷ്ടാനുസൃത…",lblSunrise:"സൂര്യോദയം",lblNoon:"ഉച്ച",lblSunset:"സൂര്യാസ്തമയം",lblMasa:"ഹിന്ദു മാസം",lblNakshatra:"നക്ഷത്രം",lblSamvat:"വിക്രമ സംവത്",lblTithi:"തിഥി",lblPaksha:"പക്ഷം",ttPancha:"പഞ്ചാംഗം — അഞ്ച് അംഗങ്ങൾ",ttAuspicious:"ശുഭ സമയം",ttInauspicious:"അശുഭ സമയം",ttHora:"ഗ്രഹ ഹോര",ttSandhya:"സന്ധ്യാ & അവധി",tlAbhijit:"അഭിജിത്ത് മുഹൂർത്തം",tlAmrit:"അമൃത കാലം",tlBrahma:"ബ്രഹ്മ മുഹൂർത്തം",tlGodhuli:"ഗോധൂളി മുഹൂർത്തം",tlRahu:"രാഹു കാലം",tlYama:"യമകണ്ടം",tlGulika:"ഗുളിക കാലം",tlDisha:"ദിശാ ശൂലം",tlPratah:"പ്രാതഃ സന്ധ്യ",tlSayam:"സായം സന്ധ്യ",tlDinmaan:"ദിനമാനം",tlRatrimaan:"രാത്രിമാനം",thNum:"#",thTime:"സമയം",thPlanet:"ഗ്രഹം",upto:"വരെ",next:"അടുത്ത",ritu:"ഋതു",samvatsara:"സംവത്സരം",waxing:"ശുക്ല",waning:"കൃഷ്ണ",illuminated:"പ്രകാശിതം",ofLabel:"ൽ",angaVaara:"വാരം",angaTithi:"തിഥി",angaNakshatra:"നക്ഷത്രം",angaYoga:"യോഗം",angaKarana:"കരണം",kbTitle:"വേദ ജ്യോതിശാസ്ത്ര വിജ്ഞാനകോശം",disha:{0:"കിഴക്ക് ↗",1:"വടക്ക് ↑",2:"തെക്ക് ↓",3:"വടക്ക് ↑",4:"പടിഞ്ഞാറ് ←",5:"പടിഞ്ഞാറ് ←",6:"കിഴക്ക് ↗"},paksha:["ശുക്ല പക്ഷം","കൃഷ്ണ പക്ഷം"],tithis:["പ്രഥമ","ദ്വിതീയ","തൃതീയ","ചതുർത്ഥി","പഞ്ചമി","ഷഷ്ഠി","സപ്തമി","അഷ്ടമി","നവമി","ദശമി","ഏകാദശി","ദ്വാദശി","ത്രയോദശി","ചതുർദശി","പൗർണ്ണമി","അമാവാസി"],nakshatras:["അശ്വതി","ഭരണി","കാർത്തിക","രോഹിണി","മകയിരം","തിരുവാതിര","പുണർതം","പൂയം","ആയില്യം","മകം","പൂരം","ഉത്രം","അത്തം","ചിത്തിര","ചോതി","വിശാഖം","അനിഴം","തൃക്കേട്ട","മൂലം","പൂരാടം","ഉത്രാടം","തിരുവോണം","അവിട്ടം","ചതയം","പൂരുരുട്ടാതി","ഉത്രട്ടാതി","രേവതി"],masa:["ചൈത്രം","വൈശാഖം","ജ്യേഷ്ഠം","ആഷാഢം","ശ്രാവണം","ഭാദ്രപദം","ആശ്വിനം","കാർത്തികം","മാർഗശീർഷം","പൗഷം","മാഘം","ഫാൽഗുണം"],rituNames:["വസന്തം","ഗ്രീഷ്മം","വർഷം","ശരത്ത്","ഹേമന്തം","ശിശിരം"],weekdays:["ഞായർ","തിങ്കൾ","ചൊവ്വ","ബുധൻ","വ്യാഴം","വെള്ളി","ശനി"],months:["ജനുവരി","ഫെബ്രുവരി","മാർച്ച്","ഏപ്രിൽ","മേയ്","ജൂൺ","ജൂലൈ","ഓഗസ്റ്റ്","സെപ്റ്റംബർ","ഒക്ടോബർ","നവംബർ","ഡിസംബർ"],planets:["സൂര്യൻ","ചന്ദ്രൻ","ചൊവ്വ","ബുധൻ","വ്യാഴം","ശുക്രൻ","ശനി"]},
+
+pa:{mainTitle:"ਪੰਚਾਂਗ",kbBtn:"ਗਿਆਨ ਭੰਡਾਰ",themeAuto:"ਆਟੋ",themeDark:"ਡਾਰਕ",themeLight:"ਲਾਈਟ",lblDate:"ਤਾਰੀਖ਼",lblTime:"ਸਮਾਂ",lblLocation:"ਸਥਾਨ",lblLat:"ਅਕਸ਼ਾਂਸ਼",lblLon:"ਦੇਸ਼ਾਂਤਰ",lblTz:"UTC±",applyBtn:"ਲਾਗੂ",nowBtn:"ਹੁਣ ↻",customCoords:"ਕਸਟਮ…",lblSunrise:"ਸੂਰਜ ਚੜ੍ਹਨਾ",lblNoon:"ਦੁਪਹਿਰ",lblSunset:"ਸੂਰਜ ਡੁੱਬਣਾ",lblMasa:"ਹਿੰਦੂ ਮਹੀਨਾ",lblNakshatra:"ਨਕਸ਼ੱਤਰ",lblSamvat:"ਵਿਕਰਮ ਸੰਵਤ",lblTithi:"ਤਿਥੀ",lblPaksha:"ਪੱਖ",ttPancha:"ਪੰਚਾਂਗ — ਪੰਜ ਅੰਗ",ttAuspicious:"ਸ਼ੁਭ ਸਮਾਂ",ttInauspicious:"ਅਸ਼ੁਭ ਸਮਾਂ",ttHora:"ਗ੍ਰਹਿ ਹੋਰਾ",ttSandhya:"ਸੰਧਿਆ ਤੇ ਅਵਧੀ",tlAbhijit:"ਅਭਿਜੀਤ ਮੁਹੂਰਤ",tlAmrit:"ਅਮ੍ਰਿਤ ਕਾਲ",tlBrahma:"ਬ੍ਰਹਮ ਮੁਹੂਰਤ",tlGodhuli:"ਗੋਧੂਲੀ ਮੁਹੂਰਤ",tlRahu:"ਰਾਹੂ ਕਾਲ",tlYama:"ਯਮਗੰਡ",tlGulika:"ਗੁਲਿਕ ਕਾਲ",tlDisha:"ਦਿਸ਼ਾ ਸ਼ੂਲ",tlPratah:"ਪ੍ਰਾਤਃ ਸੰਧਿਆ",tlSayam:"ਸਾਯੰ ਸੰਧਿਆ",tlDinmaan:"ਦਿਨਮਾਨ",tlRatrimaan:"ਰਾਤ੍ਰਿਮਾਨ",thNum:"#",thTime:"ਸਮਾਂ",thPlanet:"ਗ੍ਰਹਿ",upto:"ਤੱਕ",next:"ਅਗਲਾ",ritu:"ਰੁੱਤ",samvatsara:"ਸੰਵਤਸਰ",waxing:"ਸ਼ੁਕਲ",waning:"ਕ੍ਰਿਸ਼ਨ",illuminated:"ਪ੍ਰਕਾਸ਼ਿਤ",ofLabel:"ਵਿੱਚੋਂ",angaVaara:"ਵਾਰ",angaTithi:"ਤਿਥੀ",angaNakshatra:"ਨਕਸ਼ੱਤਰ",angaYoga:"ਯੋਗ",angaKarana:"ਕਰਣ",kbTitle:"ਵੈਦਿਕ ਕਾਲ ਗਿਆਨਕੋਸ਼",disha:{0:"ਪੂਰਬ ↗",1:"ਉੱਤਰ ↑",2:"ਦੱਖਣ ↓",3:"ਉੱਤਰ ↑",4:"ਪੱਛਮ ←",5:"ਪੱਛਮ ←",6:"ਪੂਰਬ ↗"},paksha:["ਸ਼ੁਕਲ ਪੱਖ","ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],tithis:["ਪ੍ਰਥਮਾ","ਦ੍ਵਿਤੀਯਾ","ਤ੍ਰਿਤੀਯਾ","ਚਤੁਰਥੀ","ਪੰਚਮੀ","ਸ਼ਸ਼ਠੀ","ਸਪਤਮੀ","ਅਸ਼ਟਮੀ","ਨਵਮੀ","ਦਸ਼ਮੀ","ਏਕਾਦਸ਼ੀ","ਦ੍ਵਾਦਸ਼ੀ","ਤ੍ਰਯੋਦਸ਼ੀ","ਚਤੁਰਦਸ਼ੀ","ਪੂਰਨਿਮਾ","ਅਮਾਵਸਯਾ"],nakshatras:["ਅਸ਼ਵਿਨੀ","ਭਰਣੀ","ਕ੍ਰਿਤਿਕਾ","ਰੋਹਿਣੀ","ਮ੍ਰਿਗਸ਼ਿਰਾ","ਆਰਦ੍ਰਾ","ਪੁਨਰਵਸੁ","ਪੁਸ਼ਯਾ","ਅਸ਼ਲੇਸ਼ਾ","ਮਘਾ","ਪੂਰਵ ਫਾਲਗੁਨੀ","ਉੱਤਰ ਫਾਲਗੁਨੀ","ਹਸਤ","ਚਿਤ੍ਰਾ","ਸਵਾਤੀ","ਵਿਸ਼ਾਖਾ","ਅਨੁਰਾਧਾ","ਜਯੇਸ਼ਠਾ","ਮੂਲਾ","ਪੂਰਵਾਸ਼ਾਢਾ","ਉੱਤਰਾਸ਼ਾਢਾ","ਸ਼੍ਰਵਣ","ਧਨਿਸ਼ਠਾ","ਸ਼ਤਭਿਸ਼ਾ","ਪੂਰਵ ਭਾਦਰਪਦ","ਉੱਤਰ ਭਾਦਰਪਦ","ਰੇਵਤੀ"],masa:["ਚੈਤ੍ਰ","ਵੈਸ਼ਾਖ","ਜੇਠ","ਹਾੜ","ਸਾਵਣ","ਭਾਦੋਂ","ਅੱਸੂ","ਕੱਤਕ","ਮੱਘਰ","ਪੋਹ","ਮਾਘ","ਫੱਗਣ"],rituNames:["ਬਸੰਤ","ਗ੍ਰੀਖਮ","ਬਰਸਾਤ","ਸ਼ਰਦ","ਹੇਮੰਤ","ਸ਼ਿਸ਼ਿਰ"],weekdays:["ਐਤਵਾਰ","ਸੋਮਵਾਰ","ਮੰਗਲਵਾਰ","ਬੁੱਧਵਾਰ","ਵੀਰਵਾਰ","ਸ਼ੁੱਕਰਵਾਰ","ਸ਼ਨਿੱਚਰਵਾਰ"],months:["ਜਨਵਰੀ","ਫਰਵਰੀ","ਮਾਰਚ","ਅਪ੍ਰੈਲ","ਮਈ","ਜੂਨ","ਜੁਲਾਈ","ਅਗਸਤ","ਸਤੰਬਰ","ਅਕਤੂਬਰ","ਨਵੰਬਰ","ਦਸੰਬਰ"],planets:["ਸੂਰਜ","ਚੰਦਰ","ਮੰਗਲ","ਬੁੱਧ","ਗੁਰੂ","ਸ਼ੁੱਕਰ","ਸ਼ਨੀ"]},
+
+or:{mainTitle:"ପଞ୍ଚାଙ୍ଗ",kbBtn:"ଜ୍ଞାନ ଭଣ୍ଡାର",themeAuto:"ଅଟୋ",themeDark:"ଡାର୍କ",themeLight:"ଲାଇଟ୍",lblDate:"ତାରିଖ",lblTime:"ସମୟ",lblLocation:"ସ୍ଥାନ",lblLat:"ଅକ୍ଷାଂଶ",lblLon:"ଦ୍ରାଘିମା",lblTz:"UTC±",applyBtn:"ପ୍ରୟୋଗ",nowBtn:"ଏବେ ↻",customCoords:"କଷ୍ଟମ…",lblSunrise:"ସୂର୍ଯ୍ୟୋଦୟ",lblNoon:"ମଧ୍ୟାହ୍ନ",lblSunset:"ସୂର୍ଯ୍ୟାସ୍ତ",lblMasa:"ହିନ୍ଦୁ ମାସ",lblNakshatra:"ନକ୍ଷତ୍ର",lblSamvat:"ବିକ୍ରମ ସମ୍ବତ",lblTithi:"ତିଥି",lblPaksha:"ପକ୍ଷ",ttPancha:"ପଞ୍ଚାଙ୍ଗ — ପାଞ୍ଚ ଅଙ୍ଗ",ttAuspicious:"ଶୁଭ ସମୟ",ttInauspicious:"ଅଶୁଭ ସମୟ",ttHora:"ଗ୍ରହ ହୋରା",ttSandhya:"ସନ୍ଧ୍ୟା ଓ ଅବଧି",tlAbhijit:"ଅଭିଜିତ ମୁହୂର୍ତ୍ତ",tlAmrit:"ଅମୃତ କାଳ",tlBrahma:"ବ୍ରହ୍ମ ମୁହୂର୍ତ୍ତ",tlGodhuli:"ଗୋଧୂଳି ମୁହୂର୍ତ୍ତ",tlRahu:"ରାହୁ କାଳ",tlYama:"ଯମଗଣ୍ଡ",tlGulika:"ଗୁଲିକ କାଳ",tlDisha:"ଦିଶା ଶୂଳ",tlPratah:"ପ୍ରାତଃ ସନ୍ଧ୍ୟା",tlSayam:"ସାୟଂ ସନ୍ଧ୍ୟା",tlDinmaan:"ଦିନମାନ",tlRatrimaan:"ରାତ୍ରିମାନ",thNum:"#",thTime:"ସମୟ",thPlanet:"ଗ୍ରହ",upto:"ପର୍ଯ୍ୟନ୍ତ",next:"ପରବର୍ତ୍ତୀ",ritu:"ଋତୁ",samvatsara:"ସମ୍ବତ୍ସର",waxing:"ଶୁକ୍ଳ",waning:"କୃଷ୍ଣ",illuminated:"ଆଲୋକିତ",ofLabel:"ର",angaVaara:"ବାର",angaTithi:"ତିଥି",angaNakshatra:"ନକ୍ଷତ୍ର",angaYoga:"ଯୋଗ",angaKarana:"କରଣ",kbTitle:"ବୈଦିକ କାଳଗଣନା ଜ୍ଞାନକୋଶ",disha:{0:"ପୂର୍ବ ↗",1:"ଉତ୍ତର ↑",2:"ଦକ୍ଷିଣ ↓",3:"ଉତ୍ତର ↑",4:"ପଶ୍ଚିମ ←",5:"ପଶ୍ଚିମ ←",6:"ପୂର୍ବ ↗"},paksha:["ଶୁକ୍ଳ ପକ୍ଷ","କୃଷ୍ଣ ପକ୍ଷ"],tithis:["ପ୍ରତିପଦା","ଦ୍ୱିତୀୟା","ତୃତୀୟା","ଚତୁର୍ଥୀ","ପଞ୍ଚମୀ","ଷଷ୍ଠୀ","ସପ୍ତମୀ","ଅଷ୍ଟମୀ","ନବମୀ","ଦଶମୀ","ଏକାଦଶୀ","ଦ୍ୱାଦଶୀ","ତ୍ରୟୋଦଶୀ","ଚତୁର୍ଦ୍ଦଶୀ","ପୂର୍ଣ୍ଣିମା","ଅମାବାସ୍ୟା"],nakshatras:["ଅଶ୍ୱିନୀ","ଭରଣୀ","କୃତ୍ତିକା","ରୋହିଣୀ","ମୃଗଶିରା","ଆର୍ଦ୍ରା","ପୁନର୍ବସୁ","ପୁଷ୍ୟା","ଅଶ୍ଳେଷା","ମଘା","ପୂର୍ବ ଫାଲ୍ଗୁନୀ","ଉତ୍ତର ଫାଲ୍ଗୁନୀ","ହସ୍ତା","ଚିତ୍ରା","ସ୍ୱାତୀ","ବିଶାଖା","ଅନୁରାଧା","ଜ୍ୟେଷ୍ଠା","ମୂଳା","ପୂର୍ବାଷାଢ଼ା","ଉତ୍ତରାଷାଢ଼ା","ଶ୍ରବଣା","ଧନିଷ୍ଠା","ଶତଭିଷା","ପୂର୍ବ ଭାଦ୍ରପଦ","ଉତ୍ତର ଭାଦ୍ରପଦ","ରେବତୀ"],masa:["ଚୈତ୍ର","ବୈଶାଖ","ଜ୍ୟେଷ୍ଠ","ଆଷାଢ","ଶ୍ରାବଣ","ଭାଦ୍ରବ","ଆଶ୍ୱିନ","କାର୍ତ୍ତିକ","ମାର୍ଗଶିର","ପୌଷ","ମାଘ","ଫାଲ୍ଗୁନ"],rituNames:["ବସନ୍ତ","ଗ୍ରୀଷ୍ମ","ବର୍ଷା","ଶରତ","ହେମନ୍ତ","ଶିଶିର"],weekdays:["ରବିବାର","ସୋମବାର","ମଙ୍ଗଳବାର","ବୁଧବାର","ଗୁରୁବାର","ଶୁକ୍ରବାର","ଶନିବାର"],months:["ଜାନୁଆରୀ","ଫେବ୍ରୁଆରୀ","ମାର୍ଚ୍ଚ","ଏପ୍ରିଲ","ମେ","ଜୁନ","ଜୁଲାଇ","ଅଗଷ୍ଟ","ସେପ୍ଟେମ୍ବର","ଅକ୍ଟୋବର","ନଭେମ୍ବର","ଡିସେମ୍ବର"],planets:["ସୂର୍ଯ୍ୟ","ଚନ୍ଦ୍ର","ମଙ୍ଗଳ","ବୁଧ","ଗୁରୁ","ଶୁକ୍ର","ଶନି"]},
+
+ur:{mainTitle:"پنچانگ",kbBtn:"علمی ذخیرہ",themeAuto:"آٹو",themeDark:"ڈارک",themeLight:"لائٹ",lblDate:"تاریخ",lblTime:"وقت",lblLocation:"مقام",lblLat:"عرض البلد",lblLon:"طول البلد",lblTz:"UTC±",applyBtn:"لاگو",nowBtn:"ابھی ↻",customCoords:"حسب ضرورت…",lblSunrise:"طلوع آفتاب",lblNoon:"دوپہر",lblSunset:"غروب آفتاب",lblMasa:"ہندو مہینہ",lblNakshatra:"نکشتر",lblSamvat:"وکرم سموت",lblTithi:"تتھی",lblPaksha:"پکش",ttPancha:"پنچانگ — پانچ اعضا",ttAuspicious:"مبارک وقت",ttInauspicious:"منحوس وقت",ttHora:"سیاروی ہورا",ttSandhya:"صندھیا اور مدت",tlAbhijit:"ابھیجیت مہورت",tlAmrit:"امرت کال",tlBrahma:"برہم مہورت",tlGodhuli:"گودھولی مہورت",tlRahu:"راہو کال",tlYama:"یمگنڈم",tlGulika:"گلیک کال",tlDisha:"دشا شول",tlPratah:"صبح صندھیا",tlSayam:"شام صندھیا",tlDinmaan:"دنمان",tlRatrimaan:"راتری مان",thNum:"#",thTime:"وقت",thPlanet:"سیارہ",upto:"تک",next:"اگلا",ritu:"موسم",samvatsara:"سموتسر",waxing:"بڑھتا",waning:"گھٹتا",illuminated:"روشن",ofLabel:"میں سے",angaVaara:"وار",angaTithi:"تتھی",angaNakshatra:"نکشتر",angaYoga:"یوگ",angaKarana:"کرن",kbTitle:"ویدک فلکیات علمی ذخیرہ",disha:{0:"مشرق ↗",1:"شمال ↑",2:"جنوب ↓",3:"شمال ↑",4:"مغرب ←",5:"مغرب ←",6:"مشرق ↗"},paksha:["شکل پکش","کرشن پکش"],tithis:["پرتھما","دوتیا","ترتیا","چترتھی","پنچمی","ششٹھی","سپتمی","اشٹمی","نومی","دشمی","ایکادشی","دوادشی","تریودشی","چتردشی","پورنیما","اماوسیا"],nakshatras:["اشونی","بھرنی","کرتیکا","روہنی","مرگشیرا","اردرا","پنروسو","پشیا","اشلیشا","مگھا","پوروا پھالگنی","اترا پھالگنی","ہست","چترا","سواتی","وشاکھا","انورادھا","جیشٹھا","مولا","پورواشاڑھا","اتراشاڑھا","شراون","دھنشٹھا","شتبھشا","پوروا بھادرپد","اترا بھادرپد","ریوتی"],masa:["چیتر","ویساکھ","جیٹھ","آساڑھ","ساون","بھادوں","آسوج","کاتک","مگھر","پوہ","ماگھ","پھاگن"],rituNames:["بسنت","گریشم","برسات","شرد","ہیمنت","شیشر"],weekdays:["اتوار","پیر","منگل","بدھ","جمعرات","جمعہ","ہفتہ"],months:["جنوری","فروری","مارچ","اپریل","مئی","جون","جولائی","اگست","ستمبر","اکتوبر","نومبر","دسمبر"],planets:["سورج","چاند","مریخ","عطارد","مشتری","زہرہ","زحل"]}
 };
 
-// Samvat names (Sanskrit, same for all languages)
+function t(key){return(L[S.lang]&&L[S.lang][key])||L.en[key]||key;}
+function tArr(key){return(L[S.lang]&&L[S.lang][key])||L.en[key]||[];}
+
+const YOGA_EN=["Vishkambha","Priti","Ayushman","Saubhagya","Shobhana","Atiganda","Sukarma","Dhriti","Shula","Ganda","Vriddhi","Dhruva","Vyaghata","Harshana","Vajra","Siddhi","Vyatipata","Variyana","Parigha","Shiva","Siddha","Sadhya","Shubha","Shukla","Brahma","Indra","Vaidhriti"];
+const KARANA_EN=["Bava","Balava","Kaulava","Taitila","Garija","Vanija","Vishti","Shakuni","Chatushpada","Nagava","Kimstughna"];
 const SAMVAT_NAMES=["Prabhava","Vibhava","Shukla","Pramoda","Prajapati","Angirasa","Shrimukha","Bhava","Yuva","Dhata","Ishvara","Bahudhanya","Pramathi","Vikrama","Vrisha","Chitrabhanu","Subhanu","Tarana","Parthiva","Vyaya","Sarvajit","Sarvadharin","Virodhi","Vikrita","Khara","Nandana","Vijaya","Jaya","Manmatha","Durmukha","Hemalamba","Vilamba","Vikarin","Sharvari","Plava","Shubhakrit","Shobhakrit","Krodhi","Vishvavasu","Parabhava","Plavanga","Kilaka","Saumya","Sadharana","Virodhikrit","Paritapin","Paridhavi","Pramadicha","Ananda","Rakshasa","Nala","Pingala","Kalayukta","Siddharthi","Raudra","Durmathi","Dundubhi","Rudhirodgari","Raktakshi","Krodhana"];
 
-function t(key) { return L[S.lang][key] || L.en[key] || key; }
-
-// ===== MEEUS ENGINE (unchanged) =====
+// =================== MEEUS ENGINE (same as v4) ===================
 function toJD(yr,mo,dy,utH){let y=yr,m=mo;if(m<=2){y--;m+=12;}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+dy+utH/24+B-1524.5;}
-function getT(jd){return(jd-2451545)/36525;}
-function getLahiriAyanamsa(T){return 23.853+0.01397*T*100;}
-function getSunLong(T){
-    let L0=norm(280.46646+T*(36000.76983+T*0.0003032)),M=norm(357.52911+T*(35999.05029-0.0001537*T)),e=0.016708634-T*(0.000042037+T*0.0000001267);
-    let C=Math.sin(M*RAD)*(1.914602-T*(0.004817+0.000014*T))+Math.sin(2*M*RAD)*(0.019993-0.000101*T)+Math.sin(3*M*RAD)*0.000289;
-    let omega=125.04-1934.136*T,sunApp=L0+C-0.00569-0.00478*Math.sin(omega*RAD);
-    let obliq=23+(26+(21.448-T*(46.815+T*(0.00059-T*0.001813)))/60)/60+0.00256*Math.cos(omega*RAD);
-    let decl=Math.asin(Math.sin(obliq*RAD)*Math.sin(sunApp*RAD))*DEG;
-    let y2=Math.tan((obliq/2)*RAD);y2*=y2;
-    let eot=y2*Math.sin(2*L0*RAD)-2*e*Math.sin(M*RAD)+4*e*y2*Math.sin(M*RAD)*Math.cos(2*L0*RAD)-0.5*y2*y2*Math.sin(4*L0*RAD)-1.25*e*e*Math.sin(2*M*RAD);
-    return{sunApp:norm(sunApp),decl,eot:4*eot*DEG};
-}
-function getMoonLong(T){
-    let Lp=norm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841),Dn=norm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868);
-    let M=norm(357.5291092+35999.0502909*T-0.0001536*T*T),Mp=norm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699),F=norm(93.272095+483202.0175233*T-0.0036539*T*T);
-    let sl=6.288774*Math.sin(Mp*RAD)+1.274027*Math.sin((2*Dn-Mp)*RAD)+0.658314*Math.sin(2*Dn*RAD)+0.213618*Math.sin(2*Mp*RAD)-0.185116*Math.sin(M*RAD)-0.114332*Math.sin(2*F*RAD)+0.058793*Math.sin((2*Dn-2*Mp)*RAD)+0.057066*Math.sin((2*Dn-M-Mp)*RAD)+0.053322*Math.sin((2*Dn+Mp)*RAD)+0.045758*Math.sin((2*Dn-M)*RAD)-0.040923*Math.sin((M-Mp)*RAD)-0.03472*Math.sin(Dn*RAD)-0.030383*Math.sin((M+Mp)*RAD)+0.015327*Math.sin((2*Dn-2*F)*RAD)-0.012528*Math.sin((Mp+2*F)*RAD)+0.01098*Math.sin((Mp-2*F)*RAD)+0.010675*Math.sin((4*Dn-Mp)*RAD)+0.010034*Math.sin(3*Mp*RAD)+0.008548*Math.sin((4*Dn-2*Mp)*RAD)-0.007888*Math.sin((2*Dn+M-Mp)*RAD)-0.006766*Math.sin((2*Dn+M)*RAD)+0.005751*Math.sin((M-2*Mp)*RAD);
-    return norm(Lp+sl);
-}
-function fmtH(h){if(isNaN(h))return"--:--";if(h<0)h+=24;if(h>=24)h-=24;let hr=Math.floor(h),mn=Math.floor((h-hr)*60),sc=Math.floor(((h-hr)*60-mn)*60);return`${(''+hr).padStart(2,'0')}:${(''+mn).padStart(2,'0')}:${(''+sc).padStart(2,'0')}`;}
-function fmtHM(h){if(isNaN(h))return"--:--";if(h<0)h+=24;if(h>=24)h-=24;let hr=Math.floor(h),mn=Math.floor((h-hr)*60);return`${(''+hr).padStart(2,'0')}:${(''+mn).padStart(2,'0')}`;}
+function getT(jd){return(jd-2451545)/36525;}function getLahiriAyanamsa(T){return 23.853+0.01397*T*100;}
+function getSunLong(T){let L0=norm(280.46646+T*(36000.76983+T*0.0003032)),M=norm(357.52911+T*(35999.05029-0.0001537*T)),e=0.016708634-T*(0.000042037+T*0.0000001267);let C=Math.sin(M*RAD)*(1.914602-T*(0.004817+0.000014*T))+Math.sin(2*M*RAD)*(0.019993-0.000101*T)+Math.sin(3*M*RAD)*0.000289;let omega=125.04-1934.136*T,sunApp=L0+C-0.00569-0.00478*Math.sin(omega*RAD);let obliq=23+(26+(21.448-T*(46.815+T*(0.00059-T*0.001813)))/60)/60+0.00256*Math.cos(omega*RAD);let decl=Math.asin(Math.sin(obliq*RAD)*Math.sin(sunApp*RAD))*DEG;let y2=Math.tan((obliq/2)*RAD);y2*=y2;let eot=y2*Math.sin(2*L0*RAD)-2*e*Math.sin(M*RAD)+4*e*y2*Math.sin(M*RAD)*Math.cos(2*L0*RAD)-0.5*y2*y2*Math.sin(4*L0*RAD)-1.25*e*e*Math.sin(2*M*RAD);return{sunApp:norm(sunApp),decl,eot:4*eot*DEG};}
+function getMoonLong(T){let Lp=norm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841),Dn=norm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868),M=norm(357.5291092+35999.0502909*T-0.0001536*T*T),Mp=norm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699),F=norm(93.272095+483202.0175233*T-0.0036539*T*T);let sl=6.288774*Math.sin(Mp*RAD)+1.274027*Math.sin((2*Dn-Mp)*RAD)+0.658314*Math.sin(2*Dn*RAD)+0.213618*Math.sin(2*Mp*RAD)-0.185116*Math.sin(M*RAD)-0.114332*Math.sin(2*F*RAD)+0.058793*Math.sin((2*Dn-2*Mp)*RAD)+0.057066*Math.sin((2*Dn-M-Mp)*RAD)+0.053322*Math.sin((2*Dn+Mp)*RAD)+0.045758*Math.sin((2*Dn-M)*RAD)-0.040923*Math.sin((M-Mp)*RAD)-0.03472*Math.sin(Dn*RAD)-0.030383*Math.sin((M+Mp)*RAD)+0.015327*Math.sin((2*Dn-2*F)*RAD)-0.012528*Math.sin((Mp+2*F)*RAD)+0.01098*Math.sin((Mp-2*F)*RAD)+0.010675*Math.sin((4*Dn-Mp)*RAD)+0.010034*Math.sin(3*Mp*RAD)+0.008548*Math.sin((4*Dn-2*Mp)*RAD)-0.007888*Math.sin((2*Dn+M-Mp)*RAD)-0.006766*Math.sin((2*Dn+M)*RAD)+0.005751*Math.sin((M-2*Mp)*RAD);return norm(Lp+sl);}
+function fmtH(h){if(isNaN(h))return"--:--:--";while(h<0)h+=24;while(h>=24)h-=24;let hr=Math.floor(h),mn=Math.floor((h-hr)*60),sc=Math.floor(((h-hr)*60-mn)*60);return`${(''+hr).padStart(2,'0')}:${(''+mn).padStart(2,'0')}:${(''+sc).padStart(2,'0')}`;}
+function fmtHM(h){if(isNaN(h))return"--:--";while(h<0)h+=24;while(h>=24)h-=24;let hr=Math.floor(h),mn=Math.floor((h-hr)*60);return`${(''+hr).padStart(2,'0')}:${(''+mn).padStart(2,'0')}`;}
 function getSunTimes(jd,lat,lon,tz){const T=getT(jd),sun=getSunLong(T);let haA=(Math.cos(90.833*RAD)/(Math.cos(lat*RAD)*Math.cos(sun.decl*RAD)))-Math.tan(lat*RAD)*Math.tan(sun.decl*RAD);haA=Math.max(-1,Math.min(1,haA));let ha=Math.acos(haA)*DEG,nUTC=(720-4*lon-sun.eot)/60;return{rise:nUTC-ha*4/60+tz,set:nUTC+ha*4/60+tz,noon:nUTC+tz,sunApp:sun.sunApp};}
-
-function findTithiEnd(jdS,tN){let jd=jdS;for(let i=0;i<500;i++){let T=getT(jd),d=norm(getMoonLong(T)-getSunLong(T).sunApp);if(Math.floor(d/12)!==tN){let lo=jd-10/1440,hi=jd;for(let j=0;j<20;j++){let m=(lo+hi)/2,Tm=getT(m),dm=norm(getMoonLong(Tm)-getSunLong(Tm).sunApp);if(Math.floor(dm/12)===tN)lo=m;else hi=m;}return hi;}jd+=10/1440;}return jdS+1;}
-function findNakEnd(jdS,nI){let jd=jdS;const sg=360/27;for(let i=0;i<500;i++){let T=getT(jd),ms=norm(getMoonLong(T)-getLahiriAyanamsa(T));if(Math.floor(ms/sg)!==nI){let lo=jd-10/1440,hi=jd;for(let j=0;j<20;j++){let m=(lo+hi)/2,Tm=getT(m),ms2=norm(getMoonLong(Tm)-getLahiriAyanamsa(Tm));if(Math.floor(ms2/sg)===nI)lo=m;else hi=m;}return hi;}jd+=10/1440;}return jdS+1;}
+function findTithiEnd(js,tn){let j=js;for(let i=0;i<500;i++){let T=getT(j),d=norm(getMoonLong(T)-getSunLong(T).sunApp);if(Math.floor(d/12)!==tn){let lo=j-10/1440,hi=j;for(let k=0;k<20;k++){let m=(lo+hi)/2,Tm=getT(m),dm=norm(getMoonLong(Tm)-getSunLong(Tm).sunApp);Math.floor(dm/12)===tn?lo=m:hi=m;}return hi;}j+=10/1440;}return js+1;}
+function findNakEnd(js,ni){let j=js;const sg=360/27;for(let i=0;i<500;i++){let T=getT(j),ms=norm(getMoonLong(T)-getLahiriAyanamsa(T));if(Math.floor(ms/sg)!==ni){let lo=j-10/1440,hi=j;for(let k=0;k<20;k++){let m=(lo+hi)/2,Tm=getT(m),ms2=norm(getMoonLong(Tm)-getLahiriAyanamsa(Tm));Math.floor(ms2/sg)===ni?lo=m:hi=m;}return hi;}j+=10/1440;}return js+1;}
+function findYogaEnd(js,yi){let j=js;const sg=360/27;for(let i=0;i<500;i++){let T=getT(j),ay=getLahiriAyanamsa(T),ss=norm(getSunLong(T).sunApp-ay),ms=norm(getMoonLong(T)-ay);if(Math.floor(norm(ss+ms)/sg)!==yi){let lo=j-10/1440,hi=j;for(let k=0;k<20;k++){let m=(lo+hi)/2,Tm=getT(m),ay2=getLahiriAyanamsa(Tm),ss2=norm(getSunLong(Tm).sunApp-ay2),ms2=norm(getMoonLong(Tm)-ay2);Math.floor(norm(ss2+ms2)/sg)===yi?lo=m:hi=m;}return hi;}j+=10/1440;}return js+1;}
 function jdToLocalH(jd,tz){return(jd-Math.floor(jd)-0.5)*24+tz;}
-
-function getAmrit(rise,set,dow){
-    const ds=[1,2,3,4,5,6,7],ns=[6,7,1,2,3,4,5];
-    const dL=set-rise,nL=24-dL,dS=dL/8,nS=nL/8;let r=[];
-    let d0=ds[dow];for(let i=0;i<8;i++){if(((d0-1+i)%7+1)===2)r.push({s:rise+i*dS,e:rise+(i+1)*dS});}
-    let n0=ns[dow];for(let i=0;i<8;i++){if(((n0-1+i)%7+1)===2)r.push({s:set+i*nS,e:set+(i+1)*nS});}
-    return r;
-}
-function getMasa(sunSid){const m=[1,2,3,4,5,6,7,8,9,10,11,0];return m[Math.floor(sunSid/30)];}
+function getKarana(diff){let kn=Math.floor(diff/6);if(kn===0)return 10;if(kn>=57)return[7,8,9][kn-57];return(kn-1)%7;}
+function getAmrit(rise,set,dow){const ds=[1,2,3,4,5,6,7],ns=[6,7,1,2,3,4,5],dL=set-rise,nL=24-dL,dS=dL/8,nS=nL/8;let r=[];let d0=ds[dow];for(let i=0;i<8;i++)if(((d0-1+i)%7+1)===2)r.push({s:rise+i*dS,e:rise+(i+1)*dS});let n0=ns[dow];for(let i=0;i<8;i++)if(((n0-1+i)%7+1)===2)r.push({s:set+i*nS,e:set+(i+1)*nS});return r;}
+function getMasa(sunSid){return[1,2,3,4,5,6,7,8,9,10,11,0][Math.floor(sunSid/30)];}
 function getRitu(mi){return Math.floor(mi/2);}
-function getVS(mi,yr){return mi>=1?yr+57:yr+57;}
+function getVS(mi,yr){return yr+57;}
+function getHoras(rise,set,dow){const ch=[6,4,2,0,5,3,1],dl=[0,1,2,3,4,5,6];let si=ch.indexOf(dl[dow]),dL=set-rise,nL=24-dL,dH=dL/12,nH=nL/12,h=[];for(let i=0;i<24;i++){let p=ch[(si+i)%7],s,e;if(i<12){s=rise+i*dH;e=rise+(i+1)*dH;}else{let ni=i-12;s=set+ni*nH;e=set+(ni+1)*nH;}h.push({planet:p,s,e});}return h;}
+function drawMoon(ti){const svg=document.getElementById('moon-svg'),r=28,cx=32,cy=32;let il=ti<=14?ti/14:1-(ti-14)/15;if(il<.01){svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a1a1a" stroke="#333" stroke-width="1"/>`;return;}if(il>.99){svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#f0e8c8" stroke="#8a7a50" stroke-width="1"/>`;return;}const b=Math.abs(2*il-1)*r,bd=il>.5?1:0;let p;if(ti<=14)p=`M ${cx} ${cy-r} A ${r} ${r} 0 0 1 ${cx} ${cy+r} A ${b} ${r} 0 0 ${bd} ${cx} ${cy-r}`;else p=`M ${cx} ${cy-r} A ${r} ${r} 0 0 0 ${cx} ${cy+r} A ${b} ${r} 0 0 ${1-bd} ${cx} ${cy-r}`;svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a1a1a" stroke="#333" stroke-width="1"/><path d="${p}" fill="#f0e8c8"/>`;}
 
-// Moon phase SVG
-function drawMoon(ti){
-    const svg=document.getElementById('moon-svg'),r=28,cx=32,cy=32;
-    let illum=ti<=14?ti/14:1-(ti-14)/15;
-    if(illum<0.01){svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a1a1a" stroke="#333" stroke-width="1"/>`;return;}
-    if(illum>0.99){svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#f0e8c8" stroke="#8a7a50" stroke-width="1"/><circle cx="${cx-6}" cy="${cy-8}" r="4" fill="#e0d8b0" opacity="0.5"/>`;return;}
-    const b=Math.abs(2*illum-1)*r,bd=illum>0.5?1:0,lit='#f0e8c8',dark='#1a1a1a';
-    let p;if(ti<=14)p=`M ${cx} ${cy-r} A ${r} ${r} 0 0 1 ${cx} ${cy+r} A ${b} ${r} 0 0 ${bd} ${cx} ${cy-r}`;
-    else p=`M ${cx} ${cy-r} A ${r} ${r} 0 0 0 ${cx} ${cy+r} A ${b} ${r} 0 0 ${1-bd} ${cx} ${cy-r}`;
-    svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${dark}" stroke="#333" stroke-width="1"/><path d="${p}" fill="${lit}"/>`;
+// =================== COMPUTE ===================
+function compute(){const dt=S.date,y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDate(),h=dt.getHours()+dt.getMinutes()/60+dt.getSeconds()/3600,jd=toJD(y,m,d,h-S.tz),T=getT(jd),sun=getSunLong(T),st=getSunTimes(jd,S.lat,S.lon,S.tz);D.sunrise=st.rise;D.sunset=st.set;D.noon=st.noon;const moonT=getMoonLong(T),ay=getLahiriAyanamsa(T),moonS=norm(moonT-ay),sunS=norm(sun.sunApp-ay);let diff=norm(moonT-sun.sunApp),ti=Math.floor(diff/12);if(ti>=30)ti=29;D.ti=ti;D.tiEndH=jdToLocalH(findTithiEnd(jd,ti),S.tz);D.nextTi=(ti+1)%30;const sg=360/27;let ni=Math.floor(moonS/sg);if(ni>=27)ni=26;D.ni=ni;D.niEndH=jdToLocalH(findNakEnd(jd,ni),S.tz);D.nextNi=(ni+1)%27;let ys=norm(sunS+moonS),yi=Math.floor(ys/sg);if(yi>=27)yi=26;D.yi=yi;D.yiEndH=jdToLocalH(findYogaEnd(jd,yi),S.tz);D.nextYi=(yi+1)%27;D.karana=getKarana(diff);D.paksha=ti<15?0:1;D.masaIdx=getMasa(sunS);D.rituIdx=getRitu(D.masaIdx);D.vs=getVS(D.masaIdx,y);D.samvatIdx=(D.vs-1)%60;const dL=D.sunset-D.sunrise,seg=dL/8,dow=dt.getDay();const rR=[8,2,7,5,6,4,3],yR=[5,4,3,2,1,7,6],gR=[7,6,5,4,3,2,1];D.rahu={s:D.sunrise+(rR[dow]-1)*seg,e:D.sunrise+rR[dow]*seg};D.yama={s:D.sunrise+(yR[dow]-1)*seg,e:D.sunrise+yR[dow]*seg};D.gulika={s:D.sunrise+(gR[dow]-1)*seg,e:D.sunrise+gR[dow]*seg};const muh=dL/15;D.abhijit={s:D.sunrise+7*muh,e:D.sunrise+8*muh};D.brahma={s:D.sunrise-96/60,e:D.sunrise-48/60};D.godhuli={s:D.sunset-24/60,e:D.sunset+24/60};D.pratah={s:D.sunrise-24/60,e:D.sunrise+24/60};D.sayam={s:D.sunset-24/60,e:D.sunset+24/60};D.dinmaan=dL;D.ratrimaan=24-dL;D.amrit=getAmrit(D.sunrise,D.sunset,dow);D.horas=getHoras(D.sunrise,D.sunset,dow);D.dow=dow;D.illum=ti<=14?ti/14:1-(ti-14)/15;D.h=h;D.jd=jd;}
+
+function tithiName(n){const a=tArr('tithis');if(n===14)return a[14];if(n===29)return a[15];return n<15?a[n]:a[n-15];}
+
+// =================== RENDER ===================
+function render(){const dt=S.date,lk=L[S.lang]||L.en;
+const ids={'ui-mainTitle':'mainTitle','ui-kbBtn':'kbBtn','ui-themeAuto':'themeAuto','ui-themeDark':'themeDark','ui-themeLight':'themeLight','ui-lblDate':'lblDate','ui-lblTime':'lblTime','ui-lblLocation':'lblLocation','ui-lblLat':'lblLat','ui-lblLon':'lblLon','ui-lblTz':'lblTz','ui-applyBtn':'applyBtn','ui-nowBtn':'nowBtn','ui-customCoords':'customCoords','lbl-sunrise':'lblSunrise','lbl-noon':'lblNoon','lbl-sunset':'lblSunset','lbl-date':'lblDate','lbl-masa':'lblMasa','lbl-nakshatra':'lblNakshatra','lbl-samvat':'lblSamvat','lbl-tithi':'lblTithi','lbl-paksha':'lblPaksha','tt-pancha':'ttPancha','tt-auspicious':'ttAuspicious','tt-inauspicious':'ttInauspicious','tt-hora':'ttHora','tt-sandhya':'ttSandhya','tl-abhijit':'tlAbhijit','tl-amrit':'tlAmrit','tl-brahma':'tlBrahma','tl-godhuli':'tlGodhuli','tl-rahu':'tlRahu','tl-yama':'tlYama','tl-gulika':'tlGulika','tl-disha':'tlDisha','tl-pratah':'tlPratah','tl-sayam':'tlSayam','tl-dinmaan':'tlDinmaan','tl-ratrimaan':'tlRatrimaan','th-hora-num':'thNum','th-hora-time':'thTime','th-hora-planet':'thPlanet','ui-kbTitle':'kbTitle'};
+for(const[id,key]of Object.entries(ids)){const el=document.getElementById(id);if(el)el.textContent=t(key);}
+const mo=dt.getMonth(),dy=dt.getDate(),yr=dt.getFullYear();
+document.getElementById('disp-date').textContent=tN(`${dy} ${tArr('months')[mo]} ${yr}`);
+document.getElementById('disp-weekday').textContent=tArr('weekdays')[dt.getDay()];
+document.getElementById('disp-coords').textContent=tN(`${S.lat.toFixed(4)}°${S.lat>=0?'N':'S'}, ${S.lon.toFixed(4)}°${S.lon>=0?'E':'W'} | UTC${S.tz>=0?'+':''}${S.tz}`);
+document.getElementById('disp-vs').textContent=tN(D.vs);
+document.getElementById('disp-samvat-name').textContent=SAMVAT_NAMES[D.samvatIdx]+' '+t('samvatsara');
+document.getElementById('disp-masa').textContent=tArr('masa')[D.masaIdx];
+document.getElementById('disp-ritu').textContent=tArr('rituNames')[D.rituIdx]+' '+t('ritu');
+document.getElementById('disp-tithi').textContent=tithiName(D.ti);
+document.getElementById('disp-tithi-detail').innerHTML=`${t('upto')} ${tN(fmtH(D.tiEndH))}<br><strong>${t('next')}:</strong> ${tithiName(D.nextTi)}`;
+document.getElementById('disp-paksha').textContent=tArr('paksha')[D.paksha];
+document.getElementById('disp-nakshatra').textContent=tArr('nakshatras')[D.ni];
+document.getElementById('disp-nakshatra-detail').innerHTML=`${t('upto')} ${tN(fmtH(D.niEndH))}<br><strong>${t('next')}:</strong> ${tArr('nakshatras')[D.nextNi]}`;
+document.getElementById('v-sunrise').textContent=tN(fmtH(D.sunrise));document.getElementById('v-noon').textContent=tN(fmtHM(D.noon));document.getElementById('v-sunset').textContent=tN(fmtH(D.sunset));
+document.getElementById('v-rahu').textContent=tN(`${fmtH(D.rahu.s)} – ${fmtH(D.rahu.e)}`);document.getElementById('v-yama').textContent=tN(`${fmtH(D.yama.s)} – ${fmtH(D.yama.e)}`);document.getElementById('v-gulika').textContent=tN(`${fmtH(D.gulika.s)} – ${fmtH(D.gulika.e)}`);
+document.getElementById('v-abhijit').textContent=tN(`${fmtH(D.abhijit.s)} – ${fmtH(D.abhijit.e)}`);document.getElementById('v-brahma').textContent=tN(`${fmtH(D.brahma.s)} – ${fmtH(D.brahma.e)}`);document.getElementById('v-godhuli').textContent=tN(`${fmtH(D.godhuli.s)} – ${fmtH(D.godhuli.e)}`);
+document.getElementById('v-pratah').textContent=tN(`${fmtH(D.pratah.s)} – ${fmtH(D.pratah.e)}`);document.getElementById('v-sayam').textContent=tN(`${fmtH(D.sayam.s)} – ${fmtH(D.sayam.e)}`);
+const dH=Math.floor(D.dinmaan),dM=Math.round((D.dinmaan-dH)*60),nH=Math.floor(D.ratrimaan),nM=Math.round((D.ratrimaan-nH)*60);
+document.getElementById('v-dinmaan').textContent=tN(`${dH}h ${dM}m`);document.getElementById('v-ratrimaan').textContent=tN(`${nH}h ${nM}m`);
+const dishaMap=lk.disha||L.en.disha;document.getElementById('v-disha').textContent=dishaMap[D.dow];
+if(D.amrit.length>0)document.getElementById('v-amrit').textContent=tN(D.amrit.map(a=>`${fmtH(a.s)} – ${fmtH(a.e)}`).join(', '));else document.getElementById('v-amrit').textContent='—';
+drawMoon(D.ti);const illP=Math.round(D.illum*100),phL=D.ti<=14?t('waxing'):t('waning'),tIdx=D.ti<15?D.ti+1:D.ti-14;
+document.getElementById('moon-info').innerHTML=`<strong>${tArr('paksha')[D.paksha]}</strong><br>${phL} · ${tN(illP)}% ${t('illuminated')}<br>${t('lblTithi')} ${tN(tIdx)} ${t('ofLabel')} ${tN(15)}`;
+// Pancha Anga
+const ag=document.getElementById('angas-grid');ag.innerHTML=[
+{l:t('angaVaara'),v:tArr('weekdays')[D.dow],d:''},{l:t('angaTithi'),v:tithiName(D.ti),d:tArr('paksha')[D.paksha]},
+{l:t('angaNakshatra'),v:tArr('nakshatras')[D.ni],d:`${t('upto')} ${tN(fmtH(D.niEndH))}`},
+{l:t('angaYoga'),v:YOGA_EN[D.yi],d:`${t('upto')} ${tN(fmtH(D.yiEndH))}`},{l:t('angaKarana'),v:KARANA_EN[D.karana],d:''}
+].map(a=>`<div class="anga-card"><div class="anga-num">${a.l}</div><div class="anga-name">${a.v}</div><div class="anga-detail">${a.d}</div></div>`).join('');
+// Hora
+const planets=lk.planets||L.en.planets,hb=document.getElementById('hora-body');let hH='';D.horas.forEach((hr,i)=>{const ic=D.h>=hr.s&&D.h<hr.e;hH+=`<tr class="${ic?'current-hora':''}"><td>${tN(i+1)}</td><td>${tN(fmtHM(hr.s))} – ${tN(fmtHM(hr.e))}</td><td>${planets[hr.planet]}</td></tr>`;});hb.innerHTML=hH;
+// Main summary
+document.getElementById('main-summary').innerHTML=`<strong>${tArr('weekdays')[D.dow]}, ${tN(dy)} ${tArr('months')[mo]} ${tN(yr)}</strong> — ${tArr('masa')[D.masaIdx]} (${tArr('rituNames')[D.rituIdx]} ${t('ritu')}). <strong>${tArr('paksha')[D.paksha]} ${tithiName(D.ti)}</strong> · <strong>${tArr('nakshatras')[D.ni]}</strong> ${t('angaNakshatra')} · ${YOGA_EN[D.yi]} ${t('angaYoga')} · ${t('tlAbhijit')}: <strong>${tN(fmtH(D.abhijit.s))} – ${tN(fmtH(D.abhijit.e))}</strong> · ${t('tlDisha')}: <strong>${dishaMap[D.dow]}</strong>`;
+// KB
+renderKB();renderKundli();
 }
+function renderKB(){const dt=S.date,lk=L[S.lang]||L.en,dishaMap=lk.disha||L.en.disha;
+document.getElementById('kb-dynamic').innerHTML=`<strong>${tArr('weekdays')[D.dow]}, ${tN(dt.getDate())} ${tArr('months')[dt.getMonth()]} ${tN(dt.getFullYear())}</strong> — ${tArr('masa')[D.masaIdx]} (${tArr('rituNames')[D.rituIdx]} ${t('ritu')}). Today is <strong>${tArr('paksha')[D.paksha]} ${tithiName(D.ti)}</strong> under <strong>${tArr('nakshatras')[D.ni]}</strong>. Yoga: <strong>${YOGA_EN[D.yi]}</strong>, Karana: <strong>${KARANA_EN[D.karana]}</strong>. Sunrise <strong>${tN(fmtH(D.sunrise))}</strong>, Sunset <strong>${tN(fmtH(D.sunset))}</strong>. Avoid ${dishaMap[D.dow]} direction (Disha Shool). Abhijit Muhurta: <strong>${tN(fmtH(D.abhijit.s))} – ${tN(fmtH(D.abhijit.e))}</strong>.`;
+document.getElementById('kb-content').innerHTML=`<div class="kb-section"><h3>The Five Limbs (Pancha Anga)</h3><p>The word <em>Panchangam</em> derives from Sanskrit <em>pancha</em> (five) + <em>anga</em> (limb). These five—<em>Vaara</em> (weekday), <em>Tithi</em> (lunar day), <em>Nakshatra</em> (lunar mansion), <em>Yoga</em> (luni-solar combination), and <em>Karana</em> (half-tithi)—form the complete Hindu calendar. This system is referenced in the Vedanga Jyotisha (c. 1400–1200 BCE).</p><p><em>Tithi:</em> Each 12° increment in Moon-Sun angular separation = one tithi (30 per synodic month, ~19–26 hours each). <em>Nakshatra:</em> 27 segments of 13°20' tracking sidereal Moon position (attested in Taittiriya Samhita). <em>Yoga:</em> Sum of sidereal Sun+Moon longitudes ÷ 13°20'. <em>Vishkambha</em> and <em>Vaidhriti</em> are inauspicious; <em>Siddhi</em> and <em>Shiva</em> are highly auspicious. <em>Karana:</em> Half-tithi; 11 types (7 movable + 4 fixed). <em>Vishti</em> (Bhadra) is inauspicious for new ventures.</p></div><div class="kb-section"><h3>Muhurta System</h3><p>The Vedic day has 30 muhurtas (~48 min each). The 8th daytime muhurta is <em>Abhijit</em>, centered on solar noon—universally auspicious (presided by Vishnu). <em>Brahma Muhurta</em> (96 min before sunrise) is prescribed in Ashtanga Hridaya for meditation. <em>Godhuli</em> (cow-dust twilight around sunset) is blessed for marriages.</p></div><div class="kb-section"><h3>Rahu Kaalam & Disha Shool</h3><p>Daylight (Dinamana) divided into 8 segments using Chaldean planetary order. Rahu Kaalam: Mon=2nd, Sat=3rd, Fri=4th, Wed=5th, Thu=6th, Tue=7th, Sun=8th segment. <em>Disha Shool:</em> East (Sun/Sat), North (Mon/Wed), South (Tue), West (Thu/Fri).</p></div><div class="kb-section"><h3>Graha Hora</h3><p>24 planetary hours per day (12 day + 12 night, unequal). First hora = weekday lord, then Chaldean descent (Saturn→Jupiter→Mars→Sun→Venus→Mercury→Moon). This cycle is the origin of our modern weekday sequence.</p></div><div class="kb-section"><h3>Algorithms & Precision</h3><p>Client-side computation using Jean Meeus' <em>Astronomical Algorithms</em>. Solar position: VSOP87-derived with full 6-term Equation of Time. Lunar position: 22 perturbation terms (ELP-2000/82). <em>Lahiri Ayanamsa</em> (Chitrapaksha, adopted by India's Calendar Reform Committee 1957, chaired by Meghnad Saha) sets Spica at 0° Libra (~24.2° precession). Sunrise/sunset: upper limb at -0.833° apparent altitude.</p></div><div class="kb-section"><h3>Calendar Systems</h3><p><em>Vikram Samvat</em> (57 BCE, attributed to Vikramaditya of Ujjain): New year at Chaitra Shukla Pratipada. 60-year Jovian cycle (Prabhava to Krodhana). <em>Shaka Samvat</em> (78 CE, National Calendar of India since 1957). Regional variants: Tamil Thiruvalluvar, Bengali San, Malayalam Kolla Varsham.</p></div><div class="kb-section"><h3>Historical Context</h3><p><em>Surya Siddhanta</em> (c. 4th–5th CE): geocentric model with trigonometry, planetary equations, precession. Refined by Aryabhata (476 CE), Varahamihira (505 CE), Brahmagupta (598 CE). Modern panchangams follow <em>Drik Ganita</em> (observational) over older <em>Vakya</em> (tabular) systems. This dashboard: Meeus algorithms, accuracy ~1–2 arcmin (Sun), ~5–10 arcmin (Moon).</p></div>`;}
 
-// ===== MASTER COMPUTE =====
-function compute(){
-    const dt=S.date,y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDate();
-    const h=dt.getHours()+dt.getMinutes()/60+dt.getSeconds()/3600;
-    const jd=toJD(y,m,d,h-S.tz),T=getT(jd);
-    const sun=getSunLong(T),st=getSunTimes(jd,S.lat,S.lon,S.tz);
-    D.sunrise=st.rise;D.sunset=st.set;D.noon=st.noon;
-    const moonT=getMoonLong(T),ay=getLahiriAyanamsa(T),moonS=norm(moonT-ay),sunS=norm(sun.sunApp-ay);
-    let diff=norm(moonT-sun.sunApp),ti=Math.floor(diff/12);if(ti>=30)ti=29;D.ti=ti;
-    D.tiEndH=jdToLocalH(findTithiEnd(jd,ti),S.tz);D.nextTi=(ti+1)%30;
-    const sg=360/27;let ni=Math.floor(moonS/sg);if(ni>=27)ni=26;D.ni=ni;
-    D.niEndH=jdToLocalH(findNakEnd(jd,ni),S.tz);D.nextNi=(ni+1)%27;
-    D.paksha=ti<15?0:1;D.masaIdx=getMasa(sunS);D.rituIdx=getRitu(D.masaIdx);
-    D.vs=getVS(D.masaIdx,y);D.samvatIdx=(D.vs-1)%60;
-    const dL=D.sunset-D.sunrise,seg=dL/8,dow=dt.getDay();
-    const rR=[8,2,7,5,6,4,3],yR=[5,4,3,2,1,7,6],gR=[7,6,5,4,3,2,1];
-    D.rahu={s:D.sunrise+(rR[dow]-1)*seg,e:D.sunrise+rR[dow]*seg};
-    D.yama={s:D.sunrise+(yR[dow]-1)*seg,e:D.sunrise+yR[dow]*seg};
-    D.gulika={s:D.sunrise+(gR[dow]-1)*seg,e:D.sunrise+gR[dow]*seg};
-    const muh=dL/15;D.abhijit={s:D.sunrise+7*muh,e:D.sunrise+8*muh};
-    D.amrit=getAmrit(D.sunrise,D.sunset,dow);D.dow=dow;
-    D.illum=ti<=14?ti/14:1-(ti-14)/15;
-}
+// =================== CLOCK ===================
+function buildClockNums(){const w=document.getElementById('clock');for(let i=1;i<=12;i++){const a=(i*30-90)*RAD,x=50+42*Math.cos(a),y=50+42*Math.sin(a),el=document.createElement('div');el.className='clock-num';el.textContent=i;el.style.left=x+'%';el.style.top=y+'%';el.style.transform='translate(-50%,-50%)';w.appendChild(el);}}
+function tickClock(){const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000,localMs=utcMs+S.tz*3600000,local=new Date(localMs);const s=local.getSeconds()+local.getMilliseconds()/1000,m=local.getMinutes()+s/60,h=(local.getHours()%12)+m/60;document.getElementById('hand-h').style.transform=`rotate(${h*30}deg)`;document.getElementById('hand-m').style.transform=`rotate(${m*6}deg)`;document.getElementById('hand-s').style.transform=`rotate(${s*6}deg)`;document.getElementById('digital-clock').textContent=tN(`${(''+local.getHours()).padStart(2,'0')}:${(''+local.getMinutes()).padStart(2,'0')}:${(''+local.getSeconds()).padStart(2,'0')}`);if(S.liveMode){S.date=local;if(local.getSeconds()===0){compute();render();}}requestAnimationFrame(tickClock);}
 
-// ===== TITHI NAME HELPER =====
-function tithiName(num){
-    const arr=L[S.lang].tithis||L.en.tithis;
-    if(num===14)return arr[14];if(num===29)return arr[15];
-    return num<15?arr[num]:arr[num-15];
-}
-
-// ===== RENDER (fully localized) =====
-function render(){
-    const dt=S.date, lk=L[S.lang]||L.en;
-
-    // Static UI labels
-    document.getElementById('ui-mainTitle').textContent = t('mainTitle');
-    document.getElementById('ui-faqBtn').textContent = t('faqBtn');
-    document.getElementById('ui-themeAuto').textContent = t('themeAuto');
-    document.getElementById('ui-themeDark').textContent = t('themeDark');
-    document.getElementById('ui-themeLight').textContent = t('themeLight');
-    document.getElementById('ui-lblDate').textContent = t('lblDate');
-    document.getElementById('ui-lblTime').textContent = t('lblTime');
-    document.getElementById('ui-lblLocation').textContent = t('lblLocation');
-    document.getElementById('ui-lblLat').textContent = t('lblLat');
-    document.getElementById('ui-lblLon').textContent = t('lblLon');
-    document.getElementById('ui-lblTz').textContent = t('lblTz');
-    document.getElementById('ui-applyBtn').textContent = t('applyBtn');
-    document.getElementById('ui-nowBtn').textContent = t('nowBtn');
-    document.getElementById('ui-customCoords').textContent = t('customCoords');
-    document.getElementById('lbl-sunrise').textContent = t('lblSunrise');
-    document.getElementById('lbl-noon').textContent = t('lblNoon');
-    document.getElementById('lbl-sunset').textContent = t('lblSunset');
-    document.getElementById('lbl-date').textContent = t('lblDate');
-    document.getElementById('lbl-masa').textContent = t('lblMasa');
-    document.getElementById('lbl-nakshatra').textContent = t('lblNakshatra');
-    document.getElementById('lbl-samvat').textContent = t('lblSamvat');
-    document.getElementById('lbl-tithi').textContent = t('lblTithi');
-    document.getElementById('lbl-paksha').textContent = t('lblPaksha');
-    document.getElementById('tt-auspicious').textContent = t('ttAuspicious');
-    document.getElementById('tt-inauspicious').textContent = t('ttInauspicious');
-    document.getElementById('tl-abhijit').textContent = t('tlAbhijit');
-    document.getElementById('tl-amrit').textContent = t('tlAmrit');
-    document.getElementById('tl-rahu').textContent = t('tlRahu');
-    document.getElementById('tl-yama').textContent = t('tlYama');
-    document.getElementById('tl-gulika').textContent = t('tlGulika');
-    // FAQ
-    document.getElementById('ui-faqTitle').textContent = t('faqTitle');
-    document.getElementById('ui-faq1Q').textContent = t('faq1Q');
-    document.getElementById('ui-faq1A').textContent = t('faq1A');
-    document.getElementById('ui-faq2Q').textContent = t('faq2Q');
-    document.getElementById('ui-faq2A').textContent = t('faq2A');
-    document.getElementById('ui-faq3Q').textContent = t('faq3Q');
-    document.getElementById('ui-faq3A').textContent = t('faq3A');
-    document.getElementById('ui-faq4Q').textContent = t('faq4Q');
-    document.getElementById('ui-faq4A').textContent = t('faq4A');
-
-    // Dynamic data
-    const mo = dt.getMonth(), dy = dt.getDate(), yr = dt.getFullYear();
-    document.getElementById('disp-date').textContent = tN(`${dy} ${lk.months[mo]} ${yr}`);
-    document.getElementById('disp-weekday').textContent = lk.weekdays[dt.getDay()];
-    document.getElementById('disp-coords').textContent = tN(`${t('lblLat')}: ${S.lat.toFixed(4)}° | ${t('lblLon')}: ${S.lon.toFixed(4)}°`);
-
-    document.getElementById('disp-vs').textContent = tN(D.vs);
-    document.getElementById('disp-samvat-name').textContent = SAMVAT_NAMES[D.samvatIdx] + ' ' + t('samvatsara');
-
-    document.getElementById('disp-masa').textContent = lk.masa[D.masaIdx];
-    document.getElementById('disp-ritu').textContent = lk.rituNames[D.rituIdx] + ' ' + t('ritu');
-
-    document.getElementById('disp-tithi').textContent = tithiName(D.ti);
-    document.getElementById('disp-tithi-detail').innerHTML = `${t('upto')} ${tN(fmtH(D.tiEndH))}<br><strong>${t('next')}:</strong> ${tithiName(D.nextTi)}`;
-
-    document.getElementById('disp-paksha').textContent = lk.paksha[D.paksha];
-
-    document.getElementById('disp-nakshatra').textContent = lk.nakshatras[D.ni];
-    document.getElementById('disp-nakshatra-detail').innerHTML = `${t('upto')} ${tN(fmtH(D.niEndH))}<br><strong>${t('next')}:</strong> ${lk.nakshatras[D.nextNi]}`;
-
-    document.getElementById('v-sunrise').textContent = tN(fmtH(D.sunrise));
-    document.getElementById('v-noon').textContent = tN(fmtHM(D.noon));
-    document.getElementById('v-sunset').textContent = tN(fmtH(D.sunset));
-
-    document.getElementById('v-rahu').textContent = tN(`${fmtH(D.rahu.s)} - ${fmtH(D.rahu.e)}`);
-    document.getElementById('v-yama').textContent = tN(`${fmtH(D.yama.s)} - ${fmtH(D.yama.e)}`);
-    document.getElementById('v-gulika').textContent = tN(`${fmtH(D.gulika.s)} - ${fmtH(D.gulika.e)}`);
-    document.getElementById('v-abhijit').textContent = tN(`${fmtH(D.abhijit.s)} - ${fmtH(D.abhijit.e)}`);
-
-    if(D.amrit.length>0){document.getElementById('v-amrit').textContent = tN(D.amrit.map(a=>`${fmtH(a.s)} - ${fmtH(a.e)}`).join(', '));}
-    else{document.getElementById('v-amrit').textContent='—';}
-
-    drawMoon(D.ti);
-    const illumPct=Math.round(D.illum*100);
-    const phaseLabel=D.ti<=14?t('waxing'):t('waning');
-    const tIdx=D.ti<15?D.ti+1:D.ti-14;
-    document.getElementById('moon-info').innerHTML=`<strong>${lk.paksha[D.paksha]}</strong><br>${phaseLabel} · ${tN(illumPct)}% ${t('illuminated')}<br>${t('lblTithi')} ${tN(tIdx)} ${t('ofLabel')} ${tN(15)}`;
-}
-
-// ===== CLOCK =====
-function buildClockNums(){const w=document.getElementById('clock');for(let i=1;i<=12;i++){const a=(i*30-90)*RAD,x=50+42*Math.cos(a),y=50+42*Math.sin(a);const el=document.createElement('div');el.className='clock-num';el.textContent=i;el.style.left=x+'%';el.style.top=y+'%';el.style.transform='translate(-50%,-50%)';w.appendChild(el);}}
-
-function tickClock(){
-    const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000,localMs=utcMs+S.tz*3600000,local=new Date(localMs);
-    const s=local.getSeconds()+local.getMilliseconds()/1000,m=local.getMinutes()+s/60,h=(local.getHours()%12)+m/60;
-    document.getElementById('hand-h').style.transform=`rotate(${h*30}deg)`;
-    document.getElementById('hand-m').style.transform=`rotate(${m*6}deg)`;
-    document.getElementById('hand-s').style.transform=`rotate(${s*6}deg)`;
-    document.getElementById('digital-clock').textContent=tN(`${(''+local.getHours()).padStart(2,'0')}:${(''+local.getMinutes()).padStart(2,'0')}:${(''+local.getSeconds()).padStart(2,'0')}`);
-    if(S.liveMode){S.date=local;if(local.getSeconds()===0){compute();render();}}
-    requestAnimationFrame(tickClock);
-}
-
-// ===== UI CONTROLS =====
+// =================== UI ===================
 function setTheme(v){if(v==='system')v=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',v);}
 function setLang(v){S.lang=v;document.body.style.direction=v==='ur'?'rtl':'ltr';render();}
-function toggleFaq(){const m=document.getElementById('faq-modal');m.style.display=m.style.display==='flex'?'none':'flex';}
-function onLocationPreset(v){const c=document.getElementById('custom-lat-group'),d=document.getElementById('custom-lon-group');if(v==='custom'){c.style.display='';d.style.display='';}else{c.style.display='none';d.style.display='none';}}
+function toggleKB(){const m=document.getElementById('kb-modal');m.style.display=m.style.display==='flex'?'none':'flex';}
+function onLocPreset(v){const a=document.getElementById('custom-lat-group'),b=document.getElementById('custom-lon-group'),c=document.getElementById('custom-tz-group');if(v==='custom'){a.style.display='';b.style.display='';c.style.display='';}else{a.style.display='none';b.style.display='none';c.style.display='none';}}
+function applySelections(){const dv=document.getElementById('sel-date').value,tv=document.getElementById('sel-time').value||'12:00:00';if(dv){const[yr,mo,dy]=dv.split('-').map(Number),p=(tv+':00').split(':').map(Number);S.date=new Date(yr,mo-1,dy,p[0],p[1],p[2]||0);S.liveMode=false;}const lv=document.getElementById('sel-location').value;if(lv==='custom'){const la=parseFloat(document.getElementById('sel-lat').value),lo=parseFloat(document.getElementById('sel-lon').value),tz=parseFloat(document.getElementById('sel-tz-custom').value);if(!isNaN(la))S.lat=la;if(!isNaN(lo))S.lon=lo;if(!isNaN(tz))S.tz=tz;}else{const p=lv.split(',').map(Number);S.lat=p[0];S.lon=p[1];if(p[2]!==undefined)S.tz=p[2];}compute();render();}
+function resetToNow(){S.liveMode=true;const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000;S.date=new Date(utcMs+S.tz*3600000);const ist=S.date;document.getElementById('sel-date').value=`${ist.getFullYear()}-${(''+(ist.getMonth()+1)).padStart(2,'0')}-${(''+ist.getDate()).padStart(2,'0')}`;document.getElementById('sel-time').value=`${(''+ist.getHours()).padStart(2,'0')}:${(''+ist.getMinutes()).padStart(2,'0')}`;compute();render();}
+function acceptConsent(){document.getElementById('consent-banner').style.display='none';try{localStorage.setItem('panchangam_consent','1');}catch(e){}}
 
-function applySelections(){
-    const dv=document.getElementById('sel-date').value,tv=document.getElementById('sel-time').value||'12:00:00';
-    if(dv){const[yr,mo,dy]=dv.split('-').map(Number),p=(tv+':00').split(':').map(Number);S.date=new Date(yr,mo-1,dy,p[0],p[1],p[2]||0);S.liveMode=false;}
-    const lv=document.getElementById('sel-location').value;
-    if(lv==='custom'){const la=parseFloat(document.getElementById('sel-lat').value),lo=parseFloat(document.getElementById('sel-lon').value);if(!isNaN(la)&&!isNaN(lo)){S.lat=la;S.lon=lo;}}
-    else{const[la,lo]=lv.split(',').map(Number);S.lat=la;S.lon=lo;}
-    S.tz=parseFloat(document.getElementById('sel-tz').value);
-    compute();render();
+// =================== API ===================
+function checkAPI(){const p=new URLSearchParams(window.location.search);if(p.get('api')!=='true')return false;const ds=p.get('date'),ts=p.get('time')||'12:00:00',lat=parseFloat(p.get('lat'))||28.6139,lon=parseFloat(p.get('lon'))||77.209,tz=parseFloat(p.get('tz'))||5.5;S.lat=lat;S.lon=lon;S.tz=tz;if(ds){let yr,mo,dy;if(ds.includes('-')){[yr,mo,dy]=ds.split('-').map(Number);}else{dy=parseInt(ds.substr(0,2));mo=parseInt(ds.substr(2,2));yr=parseInt(ds.substr(4,4));}const[hh,mm,ss]=(ts+':00').split(':').map(Number);S.date=new Date(yr,mo-1,dy,hh,mm,ss||0);}else{const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000;S.date=new Date(utcMs+tz*3600000);}S.liveMode=false;compute();const tName=n=>{const a=L.en.tithis;if(n===14)return a[14];if(n===29)return a[15];return n<15?a[n]:a[n-15];};
+const o={metadata:{generated:new Date().toISOString(),coordinates:{latitude:S.lat,longitude:S.lon},timezone_utc_offset:S.tz,algorithms:"Meeus+Lahiri"},date:{gregorian:`${S.date.getFullYear()}-${(''+(S.date.getMonth()+1)).padStart(2,'0')}-${(''+S.date.getDate()).padStart(2,'0')}`,weekday:L.en.weekdays[D.dow],vikram_samvat:D.vs,samvatsara:SAMVAT_NAMES[D.samvatIdx],masa:L.en.masa[D.masaIdx],ritu:L.en.rituNames[D.rituIdx]},pancha_anga:{vaara:L.en.weekdays[D.dow],tithi:{name:tName(D.ti),paksha:L.en.paksha[D.paksha],ends_at:fmtH(D.tiEndH),next:tName(D.nextTi)},nakshatra:{name:L.en.nakshatras[D.ni],ends_at:fmtH(D.niEndH),next:L.en.nakshatras[D.nextNi]},yoga:{name:YOGA_EN[D.yi],ends_at:fmtH(D.yiEndH)},karana:{name:KARANA_EN[D.karana]}},sun:{sunrise:fmtH(D.sunrise),sunset:fmtH(D.sunset),noon:fmtH(D.noon)},moon:{illumination_pct:Math.round(D.illum*100),phase:D.ti<=14?"Waxing":"Waning"},auspicious:{abhijit:{start:fmtH(D.abhijit.s),end:fmtH(D.abhijit.e)},brahma:{start:fmtH(D.brahma.s),end:fmtH(D.brahma.e)},godhuli:{start:fmtH(D.godhuli.s),end:fmtH(D.godhuli.e)},amrit:D.amrit.map(a=>({start:fmtH(a.s),end:fmtH(a.e)}))},inauspicious:{rahu:{start:fmtH(D.rahu.s),end:fmtH(D.rahu.e)},yama:{start:fmtH(D.yama.s),end:fmtH(D.yama.e)},gulika:{start:fmtH(D.gulika.s),end:fmtH(D.gulika.e)},disha_shool:L.en.disha[D.dow]}};
+document.getElementById('app-root').style.display='none';document.querySelector('.fixed-header').style.display='none';document.querySelector('.fixed-footer').style.display='none';const apiEl=document.getElementById('api-output');apiEl.style.display='block';apiEl.textContent=JSON.stringify(o,null,2);document.title='Panchangam API';return true;}
+
+// =================== PLANETARY POSITIONS (Approximate Meeus) ===================
+function getPlanetLong(T){
+    // Approximate heliocentric longitudes, then convert to geocentric
+    // Sun (already have tropical), we need sidereal for rashi
+    const ay=getLahiriAyanamsa(T);
+    const sunT=getSunLong(T).sunApp, sunS=norm(sunT-ay);
+    const moonT=getMoonLong(T), moonS=norm(moonT-ay);
+    // Mean longitudes for planets (simplified Meeus)
+    // Mars
+    let marsL=norm(355.433+19140.2993*T); let marsA=319.839+36.3793*T;
+    let marsC=10.691*Math.sin(norm(marsA)*RAD)+0.623*Math.sin(2*norm(marsA)*RAD);
+    let marsGeoApprox=norm(marsL+marsC); // heliocentric approx
+    // Geocentric correction (simplified): add Sun longitude offset for outer planets
+    let marsGeo=norm(marsGeoApprox); // For outer planets, geocentric ≈ helio + parallax
+    // Mercury
+    let mercL=norm(252.251+149472.6746*T);
+    let mercA=norm(174.795+149472.5153*T);
+    let mercC=23.440*Math.sin(mercA*RAD)+2.9818*Math.sin(2*mercA*RAD);
+    let mercGeo=norm(mercL+mercC-ay);
+    // Jupiter
+    let jupL=norm(34.351+3034.9057*T);
+    let jupA=norm(20.469+3034.2117*T);
+    let jupC=5.555*Math.sin(jupA*RAD)+0.168*Math.sin(2*jupA*RAD);
+    let jupGeo=norm(jupL+jupC-ay);
+    // Venus
+    let venL=norm(181.979+58517.8157*T);
+    let venA=norm(50.416+58517.8039*T);
+    let venC=0.775*Math.sin(venA*RAD)+0.0033*Math.sin(2*venA*RAD);
+    let venGeo=norm(venL+venC-ay);
+    // Saturn
+    let satL=norm(50.077+1222.1138*T);
+    let satA=norm(317.021+1222.1132*T);
+    let satC=6.399*Math.sin(satA*RAD)+0.175*Math.sin(2*satA*RAD);
+    let satGeo=norm(satL+satC-ay);
+    // Rahu (mean north node) — moves retrograde
+    let rahu=norm(125.0445-1934.1363*T-ay);
+    let ketu=norm(rahu+180);
+    return {
+        Sun:{lon:sunS,name:'Sun'},Moon:{lon:moonS,name:'Moon'},
+        Mars:{lon:norm(marsGeo-ay),name:'Mars'},Mercury:{lon:mercGeo,name:'Mercury'},
+        Jupiter:{lon:jupGeo,name:'Jupiter'},Venus:{lon:venGeo,name:'Venus'},
+        Saturn:{lon:satGeo,name:'Saturn'},Rahu:{lon:rahu,name:'Rahu'},Ketu:{lon:ketu,name:'Ketu'}
+    };
 }
 
-function resetToNow(){
-    S.liveMode=true;const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000;S.date=new Date(utcMs+S.tz*3600000);
-    const ist=S.date;document.getElementById('sel-date').value=`${ist.getFullYear()}-${(''+(ist.getMonth()+1)).padStart(2,'0')}-${(''+ist.getDate()).padStart(2,'0')}`;
-    document.getElementById('sel-time').value=`${(''+ist.getHours()).padStart(2,'0')}:${(''+ist.getMinutes()).padStart(2,'0')}`;
-    compute();render();
+const RASHI_EN=["Mesha","Vrishabha","Mithuna","Karka","Simha","Kanya","Tula","Vrischika","Dhanus","Makara","Kumbha","Meena"];
+const RASHI_SYM=["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+
+function renderKundli(){
+    const T=D.T, planets=getPlanetLong(T);
+    // Assign planets to rashis (0-11)
+    const houses=Array.from({length:12},()=>[]);
+    const planetList=Object.values(planets);
+    planetList.forEach(p=>{
+        p.rashi=Math.floor(p.lon/30);
+        p.deg=p.lon%30;
+        houses[p.rashi].push(p);
+    });
+    // Find lagna (ascendant) — approximate: sunrise rashi
+    const sunRashi=Math.floor(planets.Sun.lon/30);
+    const lagnaRashi=sunRashi; // simplified: use Sun sign as reference
+
+    // North Indian chart layout — diamond style
+    // House positions in the diamond (house 1 = top center)
+    // Mapping: actual rashi displayed in each position depends on lagna
+    const svg=document.getElementById('kundli-svg');
+    const W=400,C=200;
+    // North Indian fixed house positions (diamond)
+    // Houses labeled 1-12, positioned as: 1=top, going clockwise
+    // Diamond coordinates for each house center
+    const housePos=[
+        {x:200,y:55},   // 1 top
+        {x:105,y:105},  // 2
+        {x:55,y:200},   // 3 left
+        {x:105,y:295},  // 4
+        {x:200,y:345},  // 5 bottom
+        {x:295,y:295},  // 6
+        {x:345,y:200},  // 7 right
+        {x:295,y:105},  // 8
+        {x:200,y:150},  // 9 inner top
+        {x:150,y:200},  // 10 inner left
+        {x:200,y:250},  // 11 inner bottom
+        {x:250,y:200}   // 12 inner right
+    ];
+
+    // Actually, North Indian chart is a square with diagonal lines creating 12 triangular houses
+    // Let me draw the proper North Indian chart
+    const pad=10,sz=W-2*pad;
+    const tl=pad,tr=W-pad,bl=pad,br=W-pad;
+    let lines=`
+        <rect x="${pad}" y="${pad}" width="${sz}" height="${sz}" fill="none" stroke="var(--border)" stroke-width="2" rx="4"/>
+        <line x1="${pad}" y1="${pad}" x2="${C}" y2="${C}" class="house-line"/>
+        <line x1="${W-pad}" y1="${pad}" x2="${C}" y2="${C}" class="house-line"/>
+        <line x1="${pad}" y1="${W-pad}" x2="${C}" y2="${C}" class="house-line"/>
+        <line x1="${W-pad}" y1="${W-pad}" x2="${C}" y2="${C}" class="house-line"/>
+        <line x1="${C}" y1="${pad}" x2="${pad}" y2="${C}" class="house-line"/>
+        <line x1="${C}" y1="${pad}" x2="${W-pad}" y2="${C}" class="house-line"/>
+        <line x1="${C}" y1="${W-pad}" x2="${pad}" y2="${C}" class="house-line"/>
+        <line x1="${C}" y1="${W-pad}" x2="${W-pad}" y2="${C}" class="house-line"/>
+    `;
+
+    // North Indian house centers (standard layout)
+    // House 1=top center diamond, then counter-clockwise
+    const hCenters=[
+        {x:200,y:60},    // 1 - top center
+        {x:90,y:60},     // 2 - top left
+        {x:55,y:110},    // 3 - left top
+        {x:55,y:200},    // 4 - left center (actually left)
+        {x:55,y:290},    // 5 - left bottom
+        {x:90,y:340},    // 6 - bottom left
+        {x:200,y:340},   // 7 - bottom center
+        {x:310,y:340},   // 8 - bottom right
+        {x:345,y:290},   // 9 - right bottom
+        {x:345,y:200},   // 10 - right center
+        {x:345,y:110},   // 11 - right top
+        {x:310,y:60}     // 12 - top right
+    ];
+
+    // Map rashis to houses based on lagna
+    let planetLabels='';
+    for(let h=0;h<12;h++){
+        const rashiIdx=(lagnaRashi+h)%12;
+        const rashiPlanets=houses[rashiIdx];
+        const cx=hCenters[h].x, cy=hCenters[h].y;
+        // Rashi number
+        planetLabels+=`<text x="${cx}" y="${cy-12}" class="rashi-num" text-anchor="middle">${rashiIdx+1}</text>`;
+        // Planets in this house
+        const names=rashiPlanets.map(p=>{
+            const abbr=p.name.substring(0,3);
+            return abbr;
+        });
+        if(names.length>0){
+            names.forEach((n,i)=>{
+                planetLabels+=`<text x="${cx}" y="${cy+4+i*14}" class="planet-text" text-anchor="middle">${n}</text>`;
+            });
+        }
+    }
+
+    svg.innerHTML=lines+planetLabels;
+
+    // Planet table
+    const tbl=document.getElementById('kundli-table');
+    const pNames=tArr('planets')||L.en.planets;
+    const graha=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'];
+    const nodes=['Rahu','Ketu'];
+    let rows='<tr><td style="color:var(--text3);font-size:10px;font-weight:700">GRAHA</td><td style="color:var(--text3);font-size:10px;font-weight:700">RASHI</td><td style="color:var(--text3);font-size:10px;font-weight:700">DEG</td></tr>';
+    [...graha,...nodes].forEach((key,i)=>{
+        const p=planets[key];
+        const localName=i<7?(pNames[i]||key):key;
+        rows+=`<tr><td class="planet-name">${localName}</td><td>${RASHI_EN[p.rashi]} ${RASHI_SYM[p.rashi]}</td><td>${tN(Math.floor(p.deg))}°${tN(Math.floor((p.deg%1)*60))}'</td></tr>`;
+    });
+    tbl.innerHTML=rows;
 }
 
-// ===== INIT =====
-function init(){
-    setTheme('system');buildClockNums();
-    const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000;S.date=new Date(utcMs+S.tz*3600000);
-    const ist=S.date;document.getElementById('sel-date').value=`${ist.getFullYear()}-${(''+(ist.getMonth()+1)).padStart(2,'0')}-${(''+ist.getDate()).padStart(2,'0')}`;
-    document.getElementById('sel-time').value=`${(''+ist.getHours()).padStart(2,'0')}:${(''+ist.getMinutes()).padStart(2,'0')}`;
-    compute();render();requestAnimationFrame(tickClock);
-}
+// =================== INIT ===================
+function init(){if(checkAPI())return;setTheme('system');buildClockNums();const now=new Date(),utcMs=now.getTime()+now.getTimezoneOffset()*60000;S.date=new Date(utcMs+S.tz*3600000);const ist=S.date;document.getElementById('sel-date').value=`${ist.getFullYear()}-${(''+(ist.getMonth()+1)).padStart(2,'0')}-${(''+ist.getDate()).padStart(2,'0')}`;document.getElementById('sel-time').value=`${(''+ist.getHours()).padStart(2,'0')}:${(''+ist.getMinutes()).padStart(2,'0')}`;compute();render();requestAnimationFrame(tickClock);document.getElementById('footer-year').textContent=new Date().getFullYear();try{if(!localStorage.getItem('panchangam_consent'))document.getElementById('consent-banner').style.display='flex';}catch(e){document.getElementById('consent-banner').style.display='flex';}}
 init();
 </script>
 </body>
