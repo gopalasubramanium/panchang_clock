@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(awk '/const L={/,/^};/' /home/gopalasubramanium/Documents/github/panchang_clock/index.html)",
+      "Bash(grep:*)",
+      "Bash(git show:*)",
+      "Read(//tmp/**)"
+    ]
+  }
+}
