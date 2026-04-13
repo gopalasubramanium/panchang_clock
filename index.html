@@ -948,7 +948,11 @@ window.addEventListener('load',()=>EksaarSharer.init());
 </script>
 <script>
 const EksaarAutoLocator=(function(){
-  const SELECT_ID='sel-location';
+  const LOCATION_SELECT_ID='sel-location';
+  const CUSTOM_OPTION_VALUE='custom';
+  const LAT_INPUT_ID='sel-lat';
+  const LON_INPUT_ID='sel-lon';
+  const MAX_DISTANCE_KM=50;
   const GEO_OPTIONS={enableHighAccuracy:false,timeout:8000,maximumAge:300000};
 
   function toRadians(value){
@@ -963,10 +967,18 @@ const EksaarAutoLocator=(function(){
     return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
   }
 
+  function emitChange(element){
+    element.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+
+  function emitInput(element){
+    element.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+
   function parseOptionCoordinates(option){
-    if(!option||option.value==='custom')return null;
-    const dataLat=parseFloat(option.dataset.lat);
-    const dataLon=parseFloat(option.dataset.lon);
+    if(!option||option.value===CUSTOM_OPTION_VALUE)return null;
+    const dataLat=parseFloat(option.getAttribute('data-lat'));
+    const dataLon=parseFloat(option.getAttribute('data-lon'));
     if(Number.isFinite(dataLat)&&Number.isFinite(dataLon))return{lat:dataLat,lon:dataLon};
     const parts=option.value.split(',').map((part)=>parseFloat(part.trim()));
     if(parts.length<2||!Number.isFinite(parts[0])||!Number.isFinite(parts[1]))return null;
@@ -974,37 +986,56 @@ const EksaarAutoLocator=(function(){
   }
 
   function findClosestOption(select,userLat,userLon){
-    let closestOption=null;
-    let closestDistance=Infinity;
+    let closest=null;
     Array.from(select.options).forEach((option)=>{
       const coords=parseOptionCoordinates(option);
       if(!coords)return;
-      const distance=haversineKm(userLat,userLon,coords.lat,coords.lon);
-      if(distance<closestDistance){
-        closestDistance=distance;
-        closestOption=option;
+      const distanceKm=haversineKm(userLat,userLon,coords.lat,coords.lon);
+      if(!closest||distanceKm<closest.distanceKm){
+        closest={option,distanceKm};
       }
     });
-    return closestOption;
+    return closest;
   }
 
-  function applyNearestLocation(select,userLat,userLon){
-    const closestOption=findClosestOption(select,userLat,userLon);
-    if(!closestOption||closestOption.value===select.value)return;
-    select.value=closestOption.value;
-    select.dispatchEvent(new Event('change',{bubbles:true}));
+  function applyPreset(select,option){
+    if(!option||select.value===option.value)return;
+    select.value=option.value;
+    emitChange(select);
+  }
+
+  function applyCustom(select,latInput,lonInput,userLat,userLon){
+    if(!latInput||!lonInput)return;
+    if(select.value!==CUSTOM_OPTION_VALUE){
+      select.value=CUSTOM_OPTION_VALUE;
+      emitChange(select);
+    }
+    latInput.value=String(userLat);
+    lonInput.value=String(userLon);
+    emitInput(latInput);
+    emitChange(latInput);
+    emitInput(lonInput);
+    emitChange(lonInput);
+    if(typeof window.applySelections==='function')window.applySelections();
   }
 
   function start(){
-    const select=document.getElementById(SELECT_ID);
-    if(!select||!navigator.geolocation||select.value==='custom')return;
+    if(!navigator.geolocation)return;
+    const select=document.getElementById(LOCATION_SELECT_ID);
+    const latInput=document.getElementById(LAT_INPUT_ID);
+    const lonInput=document.getElementById(LON_INPUT_ID);
+    if(!select)return;
     navigator.geolocation.getCurrentPosition(
       (position)=>{
-        applyNearestLocation(
-          select,
-          position.coords.latitude,
-          position.coords.longitude
-        );
+        const userLat=position.coords.latitude;
+        const userLon=position.coords.longitude;
+        const closest=findClosestOption(select,userLat,userLon);
+        if(!closest)return;
+        if(closest.distanceKm<=MAX_DISTANCE_KM){
+          applyPreset(select,closest.option);
+        }else{
+          applyCustom(select,latInput,lonInput,userLat,userLon);
+        }
       },
       ()=>{},
       GEO_OPTIONS
