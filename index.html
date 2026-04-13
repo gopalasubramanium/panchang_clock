@@ -961,13 +961,6 @@ async function downloadPanchangPDF(){
   const speedDial=document.getElementById(SPEED_DIAL_ID);
   if(!reportElement||typeof html2pdf==='undefined')return;
 
-  const docStyle=getComputedStyle(document.documentElement);
-  const bodyStyle=getComputedStyle(document.body);
-  const reportStyle=getComputedStyle(reportElement);
-
-  const darkBg=docStyle.getPropertyValue('--bg').trim()||reportStyle.backgroundColor||bodyStyle.backgroundColor||'#080b10';
-  const textColor=docStyle.getPropertyValue('--text').trim()||reportStyle.color||bodyStyle.color||'#e2ddd5';
-
   const buildFilename=()=>{
     const dateText=((document.getElementById('disp-date')||{}).textContent||'').trim();
     const locationSelect=document.getElementById('sel-location');
@@ -982,68 +975,35 @@ async function downloadPanchangPDF(){
   };
 
   const previousSpeedDialStyle=speedDial?speedDial.getAttribute('style'):null;
-  const previousReportStyle=reportElement.getAttribute('style');
-  const previousHtmlOverflow=document.documentElement.style.overflow;
-  const previousBodyOverflow=document.body.style.overflow;
-
-  const captureWidth=Math.max(
-    1440,
-    reportElement.scrollWidth,
-    reportElement.offsetWidth,
-    document.documentElement.scrollWidth,
-    window.innerWidth
-  );
 
   try{
     if(speedDial)speedDial.style.setProperty('display','none','important');
 
-    document.documentElement.style.overflow='visible';
-    document.body.style.overflow='visible';
-
-    reportElement.style.setProperty('background',darkBg,'important');
-    reportElement.style.setProperty('background-color',darkBg,'important');
-    reportElement.style.setProperty('color',textColor,'important');
-    reportElement.style.setProperty('width',captureWidth+'px','important');
-    reportElement.style.setProperty('max-width','none','important');
-    reportElement.style.setProperty('overflow','visible','important');
-
     const opt={
-      margin:[8,8,8,8],
+      margin:[0.5,0.5,0.5,0.5],
       filename:buildFilename(),
-      image:{type:'jpeg',quality:0.98},
-      pagebreak:{mode:['css','legacy']},
+      image:{type:'jpeg',quality:1.0},
       html2canvas:{
         scale:2,
         useCORS:true,
-        allowTaint:true,
-        logging:false,
-        backgroundColor:darkBg,
-        scrollX:0,
-        scrollY:0,
-        windowWidth:captureWidth,
-        windowHeight:reportElement.scrollHeight
+        windowWidth:1440,
+        backgroundColor:'#080b10'
       },
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+      jsPDF:{
+        unit:'in',
+        format:'a4',
+        orientation:'landscape'
+      }
     };
 
     await html2pdf().set(opt).from(reportElement).save();
   }finally{
-    if(speedDial){
-      if(previousSpeedDialStyle===null){
-        speedDial.removeAttribute('style');
-      }else{
-        speedDial.setAttribute('style',previousSpeedDialStyle);
-      }
-    }
-
-    if(previousReportStyle===null){
-      reportElement.removeAttribute('style');
+    if(!speedDial)return;
+    if(previousSpeedDialStyle===null){
+      speedDial.removeAttribute('style');
     }else{
-      reportElement.setAttribute('style',previousReportStyle);
+      speedDial.setAttribute('style',previousSpeedDialStyle);
     }
-
-    document.documentElement.style.overflow=previousHtmlOverflow;
-    document.body.style.overflow=previousBodyOverflow;
   }
 }
 
