@@ -1185,27 +1185,27 @@ async function downloadPanchangPDF(){
     document.getElementById('eksaar-pdf-kundli-table').innerHTML=section(text('tt-kundli'),buildDataTable(kundliRows.shift()||['Graha','Rashi','Deg'],kundliRows));
 
     captureWrapper=document.createElement('div');
-    captureWrapper.setAttribute('style','position:absolute;top:20000px;left:0;width:800px;background:#ffffff;margin:0;padding:0;display:block;z-index:1;');
+    captureWrapper.style.cssText='position:fixed;top:0;left:-9999px;width:800px;background:#ffffff;margin:0;padding:0;display:block;z-index:-1;overflow:visible;';
     captureClone=template.cloneNode(true);
-    captureClone.removeAttribute('id');
-    captureClone.setAttribute('style','display:block !important;position:static !important;left:auto !important;top:auto !important;z-index:auto !important;pointer-events:none;width:100%;max-width:100%;background:#ffffff;color:#111;opacity:1;visibility:visible;');
+    // Keep the id so #eksaar-pdf-template CSS rules (word-wrap, page-break, etc.) apply to clone.
+    // The original template remains display:none and won't interfere.
+    captureClone.style.cssText='display:block;position:static;left:auto;top:auto;z-index:auto;pointer-events:none;width:800px;max-width:800px;background:#ffffff;color:#111;opacity:1;visibility:visible;';
     captureWrapper.appendChild(captureClone);
     document.body.appendChild(captureWrapper);
 
-    await new Promise((resolve)=>setTimeout(resolve,300));
+    await new Promise((resolve)=>requestAnimationFrame(()=>setTimeout(resolve,350)));
 
     const opt={
       margin:[0.8,0.4,0.8,0.4],
-      filename:'Eksaar_Panchang_Report.pdf',
+      filename:buildFilename(),
       image:{type:'jpeg',quality:1.0},
-      pagebreak:{mode:['css','legacy']},
+      pagebreak:{mode:['css','legacy'],avoid:['tr','thead','tbody']},
       html2canvas:{
         scale:2,
         useCORS:true,
         width:800,
         windowWidth:800,
-        backgroundColor:'#ffffff',
-        scrollY:0
+        backgroundColor:'#ffffff'
       },
       jsPDF:{
         unit:'in',
@@ -1214,7 +1214,7 @@ async function downloadPanchangPDF(){
       }
     };
 
-    const worker=html2pdf().set(opt).from(captureWrapper).toPdf();
+    const worker=html2pdf().set(opt).from(captureClone).toPdf();
     await worker.get('pdf').then((pdf)=>{
       const totalPages=pdf.internal.getNumberOfPages();
       const pageWidth=pdf.internal.pageSize.getWidth();
