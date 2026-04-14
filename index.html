@@ -124,6 +124,7 @@
 /* === VIRAL HOOKS === */
 /* Status Indicator */
 .time-quality{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:12px 18px;background:var(--panel);border:1px solid var(--border);border-radius:8px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);transition:all .3s}
+.festival-bar{display:none;justify-content:center;align-items:center;margin-bottom:16px;padding:9px 18px;background:var(--panel);border:1px solid var(--accent-dim);border-radius:8px;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);text-align:center;gap:8px;}
 .tq-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;animation:tqPulse 2s ease-in-out infinite}
 .tq-dot.green{background:#2ecc71;box-shadow:0 0 12px rgba(46,204,113,.6)}
 .tq-dot.amber{background:#f39c12;box-shadow:0 0 12px rgba(243,156,18,.5)}
@@ -257,6 +258,8 @@
     <div class="summary-bar" id="main-summary"></div>
     <!-- TIME QUALITY INDICATOR -->
     <div class="time-quality" id="time-quality"><div class="tq-dot" id="tq-dot"></div><div><div class="tq-label" id="tq-label">—</div><div class="tq-reason" id="tq-reason"></div></div></div>
+    <!-- FESTIVAL BAR -->
+    <div id="festival-bar" class="festival-bar"></div>
     <!-- MAIN GRID -->
     <div class="main-grid">
         <div class="panel left-panel">
@@ -328,6 +331,7 @@ tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
         <div id="eksaar-pdf-methodology">
             <div id="eksaar-pdf-methodology-title">Calculation Methodology</div>
             <p>All astrological calculations are performed using the high-precision Drik Ganita system, applying the Lahiri (Chitra Paksha) Ayanamsa for tropical to sidereal conversions. Time coordinates are mathematically adjusted for exact geocentric latitude and longitude, ensuring strict adherence to traditional Vedic Panchangam principles while maintaining modern astronomical accuracy based on Meeus algorithms.</p>
+            <p>Note on Variations: Eksaar utilizes the Drik Ganita (Thirukanitha) system, calculating exact, real-time astronomical planetary positions. Users may notice variations in Tithi/Nakshatra end times compared to traditional printed calendars using the ancient Vakya system. Furthermore, timings for Rahu Kaalam and Yamagandam are calculated dynamically based on the exact geocentric sunrise/sunset of the selected location, rather than a static 6:00 AM assumption.</p>
         </div>
     </div>
 </div>
@@ -643,7 +647,8 @@ en:[
 {title:"Rahu Kaalam, Yamagandam, Gulika, and Disha Shool",html:`<p>These cautionary windows are part of practical household Panchang use. <strong>Rahu Kaalam</strong> is generally avoided for launching new ventures, signing agreements, first departures, or initiating ceremonies, though ongoing duties may continue. <strong>Yamagandam</strong> and <strong>Gulika Kaalam</strong> are likewise watched when planning beginnings.</p><p><strong>Disha Shool</strong> adds a directional warning linked to the weekday, advising care about the direction of first movement or pilgrimage departure. In living tradition, these periods are not meant to create fear; they act as advisory layers, best read together with the full Panchanga and the purpose of the activity.</p>`},
 {title:"Graha Hora and Planetary Rhythm",html:`<p>The 24 horas divide the civil day into planetary rulerships beginning with the lord of the weekday. Because day and night are each divided into 12 unequal segments, hora lengths vary seasonally, making them a genuinely local rhythm rather than a fixed clock abstraction.</p><p>Practitioners often prefer Sun hora for authority and visibility, Moon hora for care and responsiveness, Mercury hora for learning and communication, Jupiter hora for blessings and counsel, Venus hora for harmony and art, and Mars or Saturn horas for more strenuous or duty-bound tasks. Hora is one of the easiest ways to bring Panchanga into ordinary daily scheduling.</p>`},
 {title:"Masa, Paksha, Ritu, and Samvatsara",html:`<p>The Panchang does not stop with one day; it places that day inside a larger sacred calendar. <strong>Paksha</strong> distinguishes the waxing and waning halves of the lunar month, <strong>Masa</strong> gives the ritual month, and <strong>Ritu</strong> situates time within the six-season Vedic cycle. <strong>Samvatsara</strong> names the year within the traditional sixty-year Jovian cycle.</p><p>These layers matter because observances, vratas, ancestor rites, temple festivals, and regional new-year traditions all depend on the interaction between lunar phase, solar transit, season, and calendrical convention. A moment becomes intelligible only when seen in this wider frame.</p>`},
-{title:"Astronomy, Ayanamsa, and Interpretation",html:`<p>Behind the devotional language lies rigorous celestial measurement. This dashboard uses modern astronomical computation with a sidereal framework, applying <strong>Lahiri Ayanamsa</strong> to convert tropical longitudes into the zodiac used by most contemporary Indian Panchang systems. Sunrise and sunset are computed from local coordinates, which is why place matters so much.</p><p>The practical lesson is simple: Panchang is neither blind superstition nor bare mathematics. It is a bridge between observation and meaning, using precise solar-lunar relationships to classify time for ritual, ethics, psychology, and action.</p>`}
+{title:"Astronomy, Ayanamsa, and Interpretation",html:`<p>Behind the devotional language lies rigorous celestial measurement. This dashboard uses modern astronomical computation with a sidereal framework, applying <strong>Lahiri Ayanamsa</strong> to convert tropical longitudes into the zodiac used by most contemporary Indian Panchang systems. Sunrise and sunset are computed from local coordinates, which is why place matters so much.</p><p>The practical lesson is simple: Panchang is neither blind superstition nor bare mathematics. It is a bridge between observation and meaning, using precise solar-lunar relationships to classify time for ritual, ethics, psychology, and action.</p>`},
+{title:"Why do times differ from my printed calendar?",html:`<p>Printed regional calendars often use the <strong>Vakya system</strong>, relying on ancient, static formulas. Eksaar uses <strong>Drik Ganita</strong>, employing modern astronomical algorithms for exact planetary positioning. Additionally, Eksaar calculates inauspicious periods (like Rahu Kaalam) dynamically using your location's exact daily sunrise and sunset, rather than the rough 6:00 AM to 6:00 PM standard used in print.</p>`}
 ],
 hi:[
 {title:"पंचांग के पाँच अंग",html:`<p><em>पंचांग</em> का शाब्दिक अर्थ है समय के पाँच अंग: <strong>वार</strong>, <strong>तिथि</strong>, <strong>नक्षत्र</strong>, <strong>योग</strong> और <strong>करण</strong>। पारंपरिक दृष्टि से किसी दिन की पूर्ण समझ तभी बनती है जब इन पाँचों को साथ पढ़ा जाए, क्योंकि ये केवल समय नहीं बताते, समय की प्रकृति भी बताते हैं।</p><p>वार दिन की ग्रहात्मक ध्वनि देता है, तिथि धार्मिक और संस्कारगत उपयुक्तता दिखाती है, नक्षत्र सूक्ष्म मानसिक और कर्मगत वातावरण बताता है, योग समग्र गुण देता है, और करण क्रिया तथा आरंभ के स्तर पर विशेष महत्व रखता है। यही पंचांग-वाचन का मूल है।</p>`},
@@ -792,10 +797,25 @@ const ag=document.getElementById('angas-grid');ag.innerHTML=[
 ].map(a=>`<div class="anga-card"><div class="anga-num">${a.l}</div><div class="anga-name">${a.v}</div><div class="anga-detail">${a.d}</div></div>`).join('');
 const planets=getPlanetNames(),hb=document.getElementById('hora-body');let hH='';D.horas.forEach((hr,i)=>{const ic=D.h>=hr.s&&D.h<hr.e;hH+=`<tr class="${ic?'current-hora':''}"><td>${tN(i+1)}</td><td>${tN(fmtHM(hr.s))} – ${tN(fmtHM(hr.e))}</td><td>${planets[hr.planet]}</td></tr>`;});hb.innerHTML=hH;
 document.getElementById('main-summary').innerHTML=`<strong>${tArr('weekdays')[D.dow]}, ${tN(dy)} ${tArr('months')[mo]} ${tN(yr)}</strong> — ${tArr('masa')[D.masaIdx]} (${tArr('rituNames')[D.rituIdx]} ${t('ritu')}). <strong>${tArr('paksha')[D.paksha]} ${tithiName(D.ti)}</strong> · <strong>${tArr('nakshatras')[D.ni]}</strong> ${t('angaNakshatra')} · ${yogaNames[D.yi]} ${t('angaYoga')} · ${t('tlAbhijit')}: <strong>${tN(fmtH(D.abhijit.s))} – ${tN(fmtH(D.abhijit.e))}</strong> · ${t('tlDisha')}: <strong>${dishaMap[D.dow]}</strong>`;
-renderTimeQuality();renderKB();renderKundli();}
+renderTimeQuality();renderKB();renderKundli();renderFestivalBar();}
 
 function renderKB(){const dt=S.date,lk=getLangData(),dishaMap=lk.disha||L.en.disha;const yogaNames=(tArr('yogas').length?tArr('yogas'):YOGA_EN);const karanaNames=(tArr('karanas').length?tArr('karanas'):KARANA_EN);document.getElementById('kb-dynamic').innerHTML=`<strong>${tArr('weekdays')[D.dow]}, ${tN(dt.getDate())} ${tArr('months')[dt.getMonth()]} ${tN(dt.getFullYear())}</strong> — ${tArr('masa')[D.masaIdx]} (${tArr('rituNames')[D.rituIdx]} ${t('ritu')}). ${lk.kbTodayIs} <strong>${tArr('paksha')[D.paksha]} ${tithiName(D.ti)}</strong> ${lk.kbUnder} <strong>${tArr('nakshatras')[D.ni]}</strong>. ${t('angaYoga')}: <strong>${yogaNames[D.yi]}</strong>, ${t('angaKarana')}: <strong>${karanaNames[D.karana]}</strong>. ${t('lblSunrise')} <strong>${tN(fmtH(D.sunrise))}</strong>, ${t('lblSunset')} <strong>${tN(fmtH(D.sunset))}</strong>. ${lk.kbAvoid} <strong>${dishaMap[D.dow]}</strong> (${t('tlDisha')}). ${t('tlAbhijit')}: <strong>${tN(fmtH(D.abhijit.s))} – ${tN(fmtH(D.abhijit.e))}</strong>.`;renderKBContent();}
 
+function getFestivals(date,masaIdx,ti){
+  const f=[],m=date.getMonth()+1,d=date.getDate();
+  // Solar festivals — fixed Gregorian dates
+  [[1,14,'Makar Sankranti \u2013 Pongal \u2013 Lohri'],[1,15,'Makar Sankranti \u2013 Pongal'],[4,13,'Baisakhi \u2013 Vaisakhi'],[4,14,'Tamil New Year (Puthandu) \u2013 Vaisakhi'],[8,15,'Indian Independence Day'],[10,2,'Gandhi Jayanti']].forEach(([fm,fd,name])=>{if(m===fm&&d===fd)f.push(name);});
+  // Lunar festivals — [masaIdx, rawTi (0-29), name]
+  // ti 0-14 = Shukla Pratipada..Purnima; 15-28 = Krishna Pratipada..Chaturdashi; 29 = Amavasya
+  [[0,0,'Ugadi \u2013 Gudi Padwa'],[0,8,'Rama Navami'],[0,14,'Hanuman Jayanti'],[1,2,'Akshaya Tritiya'],[3,1,'Ratha Yatra'],[3,14,'Guru Purnima'],[4,14,'Raksha Bandhan'],[4,22,'Krishna Janmashtami'],[5,3,'Ganesh Chaturthi'],[6,0,'Navratri Begins (Sharad)'],[6,7,'Maha Ashtami \u2013 Durga Puja'],[6,9,'Dussehra \u2013 Vijayadashami'],[7,27,'Dhanteras'],[7,28,'Naraka Chaturdashi'],[7,29,'Diwali \u2013 Lakshmi Puja'],[7,1,'Bhai Dooj'],[7,14,'Dev Deepawali'],[8,10,'Gita Jayanti'],[10,4,'Vasant Panchami \u2013 Saraswati Puja'],[11,14,'Holi'],[11,28,'Maha Shivaratri']].forEach(([ma,tIdx,name])=>{if(masaIdx===ma&&ti===tIdx)f.push(name);});
+  return f;
+}
+function renderFestivalBar(){
+  const bar=document.getElementById('festival-bar');if(!bar)return;
+  const f=getFestivals(S.date,D.masaIdx,D.ti);
+  if(f.length){bar.textContent=f.join(' \u00b7 ');bar.style.display='flex';}
+  else{bar.style.display='none';}
+}
 function buildClockNums(){const w=document.getElementById('clock');w.querySelectorAll('.clock-num').forEach(el=>el.remove());for(let i=1;i<=12;i++){const a=(i*30-90)*RAD,x=50+42*Math.cos(a),y=50+42*Math.sin(a),el=document.createElement('div');el.className='clock-num';el.textContent=tN(i);el.style.left=x+'%';el.style.top=y+'%';el.style.transform='translate(-50%,-50%)';w.appendChild(el);}}
 function setLang(v){S.lang=L[v]?v:'en';document.documentElement.lang=S.lang;document.body.style.direction=S.lang==='ur'?'rtl':'ltr';try{localStorage.setItem('panchangam_lang',S.lang);}catch(e){}render();}
 function shareWhatsApp(){const dt=S.date,mo=dt.getMonth(),dy=dt.getDate(),yr=dt.getFullYear();const yogaNames=(tArr('yogas').length?tArr('yogas'):YOGA_EN);const msg=`*${t('mainTitle')} — ${tArr('weekdays')[dt.getDay()]}, ${tN(dy)} ${tArr('months')[mo]} ${tN(yr)}*\n\n${t('lblTithi')}: ${tithiName(D.ti)} (${tArr('paksha')[D.paksha]})\n${t('lblNakshatra')}: ${tArr('nakshatras')[D.ni]}\n${t('angaYoga')}: ${yogaNames[D.yi]}\n\n${t('tlAbhijit')}: ${tN(fmtH(D.abhijit.s))} – ${tN(fmtH(D.abhijit.e))}\n${t('tlRahu')}: ${tN(fmtH(D.rahu.s))} – ${tN(fmtH(D.rahu.e))}\n\nhttps://panchang.eksaar.com`;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
@@ -1102,6 +1122,7 @@ async function downloadPanchangPDF(){
     if(speedDial)speedDial.style.setProperty('display','none','important');
     if(chartWrap)chartWrap.innerHTML='';
 
+    const pdfFestivals=(typeof getFestivals==='function'?getFestivals(S.date,D.masaIdx,D.ti):[]);
     const metaRows=[
       [text('lbl-date'),`${text('disp-weekday')}, ${text('disp-date')}`],
       [text('ui-lblLocation'),getLocationText()],
@@ -1114,7 +1135,8 @@ async function downloadPanchangPDF(){
       [text('lbl-rashi'),`${text('disp-rashi')} — ${text('disp-rashi-detail')}`],
       [text('lbl-sunrise'),text('v-sunrise')],
       [text('lbl-noon'),text('v-noon')],
-      [text('lbl-sunset'),text('v-sunset')]
+      [text('lbl-sunset'),text('v-sunset')],
+      ...(pdfFestivals.length?[['Festivals & Events',pdfFestivals.join(', ')]]:[])
     ];
     const auspiciousRows=[
       [text('tl-abhijit'),text('v-abhijit')],
