@@ -1123,6 +1123,8 @@ async function downloadPanchangPDF(){
 
   const previousSpeedDialStyle=speedDial?speedDial.getAttribute('style'):null;
   const previousTemplateStyle=template.getAttribute('style');
+  let captureWrapper=null;
+  let captureClone=null;
 
   try{
     if(speedDial)speedDial.style.setProperty('display','none','important');
@@ -1182,30 +1184,27 @@ async function downloadPanchangPDF(){
     document.getElementById('eksaar-pdf-hora-table').innerHTML=section(text('tt-hora'),buildDataTable([text('th-hora-num'),text('th-hora-time'),text('th-hora-planet')],horaRows));
     document.getElementById('eksaar-pdf-kundli-table').innerHTML=section(text('tt-kundli'),buildDataTable(kundliRows.shift()||['Graha','Rashi','Deg'],kundliRows));
 
-    template.style.display='block';
-    template.style.position='absolute';
-    template.style.top='0';
-    template.style.left='0';
-    template.style.zIndex='-9999';
-    template.style.backgroundColor='#ffffff';
-    template.style.width='800px';
-    template.style.visibility='visible';
-    template.style.opacity='1';
+    captureWrapper=document.createElement('div');
+    captureWrapper.setAttribute('style','position:absolute;top:20000px;left:0;width:800px;background:#ffffff;margin:0;padding:0;display:block;z-index:1;');
+    captureClone=template.cloneNode(true);
+    captureClone.removeAttribute('id');
+    captureClone.setAttribute('style','display:block !important;position:static !important;left:auto !important;top:auto !important;z-index:auto !important;pointer-events:none;width:100%;max-width:100%;background:#ffffff;color:#111;opacity:1;visibility:visible;');
+    captureWrapper.appendChild(captureClone);
+    document.body.appendChild(captureWrapper);
 
-    await new Promise((resolve)=>setTimeout(resolve,100));
+    await new Promise((resolve)=>setTimeout(resolve,300));
 
     const opt={
-      margin:[0.8,0.5,0.8,0.5],
-      filename:buildFilename(),
-      image:{type:'jpeg',quality:0.98},
-      pagebreak:{mode:['css','legacy'],avoid:['tr','thead','tbody']},
+      margin:[0.8,0.4,0.8,0.4],
+      filename:'Eksaar_Panchang_Report.pdf',
+      image:{type:'jpeg',quality:1.0},
+      pagebreak:{mode:['css','legacy']},
       html2canvas:{
-        scale:1.25,
+        scale:2,
         useCORS:true,
-        backgroundColor:'#ffffff',
-        windowWidth:800,
         width:800,
-        scrollX:0,
+        windowWidth:800,
+        backgroundColor:'#ffffff',
         scrollY:0
       },
       jsPDF:{
@@ -1215,7 +1214,7 @@ async function downloadPanchangPDF(){
       }
     };
 
-    const worker=html2pdf().set(opt).from(template).toPdf();
+    const worker=html2pdf().set(opt).from(captureWrapper).toPdf();
     await worker.get('pdf').then((pdf)=>{
       const totalPages=pdf.internal.getNumberOfPages();
       const pageWidth=pdf.internal.pageSize.getWidth();
@@ -1241,6 +1240,9 @@ async function downloadPanchangPDF(){
         speedDial.setAttribute('style',previousSpeedDialStyle);
       }
     }
+    if(captureWrapper)captureWrapper.remove();
+    captureWrapper=null;
+    captureClone=null;
     if(chartWrap)chartWrap.innerHTML='';
     if(userNameSlot)userNameSlot.textContent='';
     document.getElementById('eksaar-pdf-subtitle').textContent='—';
@@ -1254,7 +1256,7 @@ async function downloadPanchangPDF(){
     document.getElementById('eksaar-pdf-hora-table').innerHTML='';
     document.getElementById('eksaar-pdf-kundli-table').innerHTML='';
     if(previousTemplateStyle===null){
-      template.setAttribute('style','display:none;position:static;left:auto;top:auto;z-index:auto;pointer-events:none;width:800px;background:#fff;color:#111;opacity:1;');
+      template.setAttribute('style','display:none;position:static;left:auto;top:auto;z-index:auto;pointer-events:none;width:800px;background:#fff;color:#111;');
     }else{
       template.setAttribute('style',previousTemplateStyle);
     }
