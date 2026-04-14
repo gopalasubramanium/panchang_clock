@@ -166,8 +166,8 @@
 #eksaar-pdf-template .pdf-kundli-center-title{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 #eksaar-pdf-template .pdf-kundli-center-subtitle{font-size:10px;line-height:1.35;margin-top:4px}
 #eksaar-pdf-methodology-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;font-style:normal;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #111;padding-bottom:6px;margin-bottom:8px}
-#eksaar-pdf-template .pdf-avoid-break{page-break-inside:avoid;break-inside:avoid;}
-#eksaar-pdf-template .pdf-page-break{page-break-before:always;break-before:page;}
+#eksaar-pdf-template table,#eksaar-pdf-template tr,#eksaar-pdf-template tbody,#eksaar-pdf-template .pdf-avoid-break{page-break-inside:avoid !important;break-inside:avoid !important;}
+.pdf-page-break{page-break-before:always !important;break-before:page !important;}
 /* === MOBILE NAV === */
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--accent);line-height:0}
 .hamburger svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -333,7 +333,7 @@ tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
         <div id="eksaar-pdf-chart-wrap" class="pdf-page-break"></div>
         <div id="eksaar-pdf-hora-table" class="pdf-page-break"></div>
         <div id="eksaar-pdf-kundli-table" class="pdf-page-break"></div>
-        <div id="eksaar-pdf-methodology">
+        <div id="eksaar-pdf-methodology" class="pdf-avoid-break">
             <div id="eksaar-pdf-methodology-title">Calculation Methodology</div>
             <p>All astrological calculations are performed using the high-precision Drik Ganita system, applying the Lahiri (Chitra Paksha) Ayanamsa for tropical to sidereal conversions. Time coordinates are mathematically adjusted for exact geocentric latitude and longitude, ensuring strict adherence to traditional Vedic Panchangam principles while maintaining modern astronomical accuracy based on Meeus algorithms.</p>
             <p>Note on Variations: Eksaar utilizes the Drik Ganita (Thirukanitha) system, calculating exact, real-time astronomical planetary positions. Users may notice variations in Tithi/Nakshatra end times compared to traditional printed calendars using the ancient Vakya system. Furthermore, timings for Rahu Kaalam and Yamagandam are calculated dynamically based on the exact geocentric sunrise/sunset of the selected location, rather than a static 6:00 AM assumption.</p>
