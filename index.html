@@ -1185,9 +1185,14 @@ async function downloadPanchangPDF(){
     template.style.display='block';
     template.style.position='absolute';
     template.style.top='0';
-    template.style.left='-9999px';
-    template.style.zIndex='-1';
+    template.style.left='0';
+    template.style.zIndex='-9999';
+    template.style.backgroundColor='#ffffff';
+    template.style.width='800px';
     template.style.visibility='visible';
+    template.style.opacity='1';
+
+    await new Promise((resolve)=>setTimeout(resolve,100));
 
     const opt={
       margin:[0.8,0.5,0.8,0.5],
@@ -1249,7 +1254,7 @@ async function downloadPanchangPDF(){
     document.getElementById('eksaar-pdf-hora-table').innerHTML='';
     document.getElementById('eksaar-pdf-kundli-table').innerHTML='';
     if(previousTemplateStyle===null){
-      template.setAttribute('style','display:none;position:static;left:auto;top:auto;z-index:auto;pointer-events:none;width:800px;background:#fff;color:#111;');
+      template.setAttribute('style','display:none;position:static;left:auto;top:auto;z-index:auto;pointer-events:none;width:800px;background:#fff;color:#111;opacity:1;');
     }else{
       template.setAttribute('style',previousTemplateStyle);
     }
