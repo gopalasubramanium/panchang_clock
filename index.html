@@ -308,7 +308,7 @@ tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
 </div>
 <div id="eksaar-pdf-template" style="display:none;position:fixed;left:-99999px;top:0;width:794px;background:#fff;color:#111;z-index:-1;pointer-events:none;">
     <div id="eksaar-pdf-sheet">
-        <h1 id="eksaar-pdf-header">ॐ Panchangam 𑁍</h1>
+        <h1 id="eksaar-pdf-header" style="display:none;">ॐ Panchangam 𑁍</h1>
         <div style="border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:16px;">
             <div style="font-family:'Cinzel',serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Eksaar Panchang Report</div>
             <div id="pdf-user-name" style="font-family:'Cinzel',serif;font-size:14px;line-height:1.5;margin-top:8px;"></div>
@@ -1057,30 +1057,62 @@ async function downloadPanchangPDF(){
     }
     return clean.slice(0,3);
   };
-  const generateStaticPdfChart=(planetData)=>{
-    const rashiNames=typeof tArr==='function'&&tArr('rashis').length?tArr('rashis'):(typeof RASHI_EN!=='undefined'?RASHI_EN:Array.from({length:12},(_,i)=>`Rashi ${i+1}`));
-    const rashiSymbols=typeof RASHI_SYM!=='undefined'?RASHI_SYM:Array.from({length:12},(_,i)=>String(i+1));
+  const generateStaticPdfChartCanvas=(planetData)=>{
+    const rashiNames=typeof tArr==='function'&&tArr('rashis').length?tArr('rashis'):(typeof RASHI_EN!=='undefined'?RASHI_EN:Array.from({length:12},(_,i)=>`R${i+1}`));
     const groups=Array.from({length:12},()=>[]);
     (planetData||[]).forEach((planet)=>{
       if(typeof planet.rashi!=='number'||planet.rashi<0||planet.rashi>11)return;
       groups[planet.rashi].push(shortPlanetName(planet.name,planet.key));
     });
-    const cells=[
-      {sign:11,row:1,col:1},
-      {sign:0,row:1,col:2},
-      {sign:1,row:1,col:3},
-      {sign:2,row:1,col:4},
-      {sign:10,row:2,col:1},
-      {sign:3,row:2,col:4},
-      {sign:9,row:3,col:1},
-      {sign:4,row:3,col:4},
-      {sign:8,row:4,col:1},
-      {sign:7,row:4,col:2},
-      {sign:6,row:4,col:3},
-      {sign:5,row:4,col:4}
+    const SZ=400,CELL=100;
+    const chartCanvas=document.createElement('canvas');
+    chartCanvas.width=SZ;chartCanvas.height=SZ;
+    const ctx=chartCanvas.getContext('2d');
+    // White background
+    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,SZ,SZ);
+    ctx.strokeStyle='#111111';ctx.lineWidth=1.5;
+    // Outer border
+    ctx.strokeRect(1,1,SZ-2,SZ-2);
+    // Inner 4x4 grid lines
+    [1,2,3].forEach(i=>{
+      ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,SZ);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(SZ,i*CELL);ctx.stroke();
+    });
+    // Corner diagonals — outer corner to inner corner (traditional North Indian style)
+    [[0,0,CELL,CELL],[SZ,0,3*CELL,CELL],[0,SZ,CELL,3*CELL],[SZ,SZ,3*CELL,3*CELL]].forEach(([x1,y1,x2,y2])=>{
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    });
+    // Center 2x2 cross diagonals
+    ctx.beginPath();ctx.moveTo(CELL,CELL);ctx.lineTo(3*CELL,3*CELL);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(3*CELL,CELL);ctx.lineTo(CELL,3*CELL);ctx.stroke();
+    // House cells: {sign, tx, ty} = text origin (top-left of cell, inset by 4px)
+    const houses=[
+      {sign:11,tx:4,ty:4},{sign:0,tx:CELL+4,ty:4},{sign:1,tx:2*CELL+4,ty:4},{sign:2,tx:3*CELL+4,ty:4},
+      {sign:10,tx:4,ty:CELL+4},{sign:3,tx:3*CELL+4,ty:CELL+4},
+      {sign:9,tx:4,ty:2*CELL+4},{sign:4,tx:3*CELL+4,ty:2*CELL+4},
+      {sign:8,tx:4,ty:3*CELL+4},{sign:7,tx:CELL+4,ty:3*CELL+4},{sign:6,tx:2*CELL+4,ty:3*CELL+4},{sign:5,tx:3*CELL+4,ty:3*CELL+4}
     ];
-    const cellMarkup=cells.map(({sign,row,col})=>`<div class="pdf-kundli-cell" style="grid-area:${row}/${col}/${row+1}/${col+1};"><div class="pdf-kundli-sign">${escapeHtml(rashiNames[sign]||`Rashi ${sign+1}`)}</div><div class="pdf-kundli-rashi">${escapeHtml(rashiSymbols[sign]||String(sign+1))}</div><div class="pdf-kundli-planets">${groups[sign].length?groups[sign].map((label)=>escapeHtml(label)).join('<br>'):'—'}</div></div>`).join('');
-    return `<div class="pdf-kundli-chart"><div class="pdf-kundli-grid">${cellMarkup}<div class="pdf-kundli-cell pdf-kundli-center" style="grid-area:2/2/4/4;"><div class="pdf-kundli-center-title">Graha Sthiti</div><div class="pdf-kundli-center-subtitle">${escapeHtml(text('disp-date'))}</div><div class="pdf-kundli-center-subtitle">${escapeHtml(getLocationText())}</div></div></div></div>`;
+    ctx.textBaseline='top';ctx.textAlign='left';
+    houses.forEach(({sign,tx,ty})=>{
+      // Rashi name (abbreviated, gray)
+      ctx.font='bold 9px Arial,sans-serif';ctx.fillStyle='#777777';
+      ctx.fillText((rashiNames[sign]||`R${sign+1}`).slice(0,7),tx,ty);
+      // Planet abbreviations (bold, dark)
+      if(groups[sign].length){
+        ctx.font='bold 11px Arial,sans-serif';ctx.fillStyle='#111111';
+        groups[sign].forEach((p,i)=>ctx.fillText(p,tx,ty+12+(i*13)));
+      }
+    });
+    // Center label
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font='bold 12px Arial,sans-serif';ctx.fillStyle='#111111';
+    ctx.fillText('Graha Sthiti',SZ/2,SZ/2-14);
+    ctx.font='9px Arial,sans-serif';ctx.fillStyle='#555555';
+    ctx.fillText((text('disp-date')||'').slice(0,24),SZ/2,SZ/2+2);
+    ctx.fillText((getLocationText()||'').slice(0,24),SZ/2,SZ/2+16);
+    const dataUrl=chartCanvas.toDataURL('image/png');
+    chartCanvas.width=0;chartCanvas.height=0;
+    return dataUrl;
   };
 
   const buildFilename=()=>{
@@ -1149,7 +1181,7 @@ async function downloadPanchangPDF(){
     document.getElementById('eksaar-pdf-auspicious-table').innerHTML=section(text('tt-auspicious'),buildTable(auspiciousRows));
     document.getElementById('eksaar-pdf-inauspicious-table').innerHTML=section(text('tt-inauspicious'),buildTable(inauspiciousRows));
     document.getElementById('eksaar-pdf-sandhya-table').innerHTML=section(text('tt-sandhya'),buildTable(sandhyaRows));
-    if(chartWrap)chartWrap.innerHTML=section(text('tt-kundli'),generateStaticPdfChart(planetData));
+    if(chartWrap){const chartImgData=generateStaticPdfChartCanvas(planetData);chartWrap.innerHTML=section(text('tt-kundli'),`<img src="${chartImgData}" style="max-width:300px;height:auto;display:block;margin:0 auto;" />`);}
     document.getElementById('eksaar-pdf-hora-table').innerHTML=section(text('tt-hora'),buildDataTable([text('th-hora-num'),text('th-hora-time'),text('th-hora-planet')],horaRows));
     document.getElementById('eksaar-pdf-kundli-table').innerHTML=section(text('tt-kundli'),buildDataTable(kundliRows.shift()||['Graha','Rashi','Deg'],kundliRows));
 
@@ -1158,8 +1190,19 @@ async function downloadPanchangPDF(){
     template.style.top='0';
     template.style.visibility='visible';
 
+    // Build canvas header image for "ॐ Panchangam 𑁍" — avoids jsPDF Unicode issues
+    const headerCanvas=document.createElement('canvas');
+    headerCanvas.width=900;headerCanvas.height=72;
+    const hctx=headerCanvas.getContext('2d');
+    hctx.fillStyle='#ffffff';hctx.fillRect(0,0,900,72);
+    hctx.fillStyle='#111111';hctx.font='bold 38px Georgia,serif';
+    hctx.textAlign='center';hctx.textBaseline='middle';
+    hctx.fillText('\u0950 Panchangam \u{1104D}',450,36);
+    const headerImgData=headerCanvas.toDataURL('image/png');
+    headerCanvas.width=0;headerCanvas.height=0;
+
     const opt={
-      margin:[0.5,0.5,0.5,0.5],
+      margin:[1.0,0.5,0.5,0.5],
       filename:buildFilename(),
       image:{type:'jpeg',quality:0.98},
       pagebreak:{mode:['css','legacy']},
@@ -1182,6 +1225,9 @@ async function downloadPanchangPDF(){
       const pageHeight=pdf.internal.pageSize.getHeight();
       for(let i=1;i<=totalPages;i++){
         pdf.setPage(i);
+        // Canvas-rendered header image — immune to Unicode/font issues in jsPDF
+        pdf.addImage(headerImgData,'PNG',0.3,0.15,pageWidth-0.6,0.5);
+        // Footer text
         pdf.setFont('times','normal');
         pdf.setFontSize(10);
         pdf.text('© 2026 Eksaar | panchang.eksaar.com | All calculations are for reference only.',pageWidth/2,pageHeight-0.3,{align:'center'});
