@@ -146,8 +146,11 @@
 #eksaar-pdf-sheet{width:794px;min-height:1123px;padding:72px 36px 58px;background:#fff;color:#111;font-family:'Cormorant Garamond',Georgia,serif}
 #eksaar-pdf-template table{width:100%;border-collapse:collapse;table-layout:fixed}
 #eksaar-pdf-template th,#eksaar-pdf-template td,#eksaar-pdf-template div,#eksaar-pdf-template p,#eksaar-pdf-template span{white-space:normal;overflow-wrap:break-word;word-wrap:break-word}
-#eksaar-pdf-chart-wrap{margin-bottom:18px;page-break-inside:avoid}
+#eksaar-pdf-chart-wrap{margin-bottom:18px;page-break-inside:avoid;max-width:100%}
 #eksaar-pdf-chart-wrap svg,#eksaar-pdf-chart-wrap img{display:block;max-width:100%;height:auto;margin:0 auto}
+#eksaar-pdf-template img{max-width:100% !important;height:auto !important;object-fit:contain;margin:0 auto;display:block}
+#eksaar-pdf-methodology{margin-top:18px;font-size:13px;line-height:1.55;font-style:italic}
+#eksaar-pdf-methodology-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;font-style:normal;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #111;padding-bottom:6px;margin-bottom:8px}
 /* === MOBILE NAV === */
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--accent);line-height:0}
 .hamburger svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -297,6 +300,7 @@ tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
     <div id="eksaar-pdf-sheet">
         <div style="border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:16px;">
             <div style="font-family:'Cinzel',serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Eksaar Panchang Report</div>
+            <div id="pdf-user-name" style="font-family:'Cinzel',serif;font-size:14px;line-height:1.5;margin-top:8px;"></div>
             <div id="eksaar-pdf-subtitle" style="font-size:16px;line-height:1.5;margin-top:8px;">—</div>
         </div>
         <div id="eksaar-pdf-summary" style="font-size:15px;line-height:1.6;margin-bottom:18px;">—</div>
@@ -308,6 +312,10 @@ tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
         <div id="eksaar-pdf-chart-wrap"></div>
         <div id="eksaar-pdf-hora-table"></div>
         <div id="eksaar-pdf-kundli-table"></div>
+        <div id="eksaar-pdf-methodology">
+            <div id="eksaar-pdf-methodology-title">Calculation Methodology</div>
+            <p>All astrological calculations are performed using the high-precision Drik Ganita system, applying the Lahiri (Chitra Paksha) Ayanamsa for tropical to sidereal conversions. Time coordinates are mathematically adjusted for exact geocentric latitude and longitude, ensuring strict adherence to traditional Vedic Panchangam principles while maintaining modern astronomical accuracy based on Meeus algorithms.</p>
+        </div>
     </div>
 </div>
 <!-- FIXED FOOTER -->
@@ -976,6 +984,7 @@ window.addEventListener('load',()=>EksaarSharer.init());
 </script>
 <script>
 async function downloadPanchangPDF(){
+  const userName=window.prompt("Enter a name for this report (leave blank for none):");
   const REPORT_ROOT_ID='app-root';
   const SPEED_DIAL_ID='eksaar-speed-dial';
   const TEMPLATE_ID='eksaar-pdf-template';
@@ -987,6 +996,7 @@ async function downloadPanchangPDF(){
   const template=document.getElementById(TEMPLATE_ID);
   const templateSheet=document.getElementById(TEMPLATE_SHEET_ID);
   const chartWrap=document.getElementById('eksaar-pdf-chart-wrap');
+  const userNameSlot=document.getElementById('pdf-user-name');
   if(!reportElement||!template||!templateSheet||typeof html2pdf==='undefined')return;
 
   const text=(id)=>{const el=document.getElementById(id);return el?el.textContent.trim():'—';};
@@ -1000,12 +1010,12 @@ async function downloadPanchangPDF(){
   const getTableRows=(selector)=>Array.from(document.querySelectorAll(selector)).map((row)=>Array.from(row.children).map((cell)=>cell.textContent.trim()).filter(Boolean));
   const getChartMarkup=()=>{
     const svg=document.getElementById('kundli-svg');
-    if(svg)return `<div style="border:1px solid #111;padding:12px 10px;background:#fff;">${svg.outerHTML}</div>`;
+    if(svg)return `<div style="border:1px solid #111;padding:12px 10px;background:#fff;max-width:100%;">${svg.outerHTML}</div>`;
     const canvas=document.querySelector('#kundli-svg canvas, .kundli-chart canvas');
     if(canvas&&typeof canvas.toDataURL==='function'){
-      return `<div style="border:1px solid #111;padding:12px 10px;background:#fff;"><img src="${canvas.toDataURL('image/png')}" alt="Graha Sthiti Chart"></div>`;
+      return `<div style="border:1px solid #111;padding:12px 10px;background:#fff;max-width:100%;"><img src="${canvas.toDataURL('image/png')}" alt="Graha Sthiti Chart"></div>`;
     }
-    return '<div style="border:1px solid #111;padding:12px 10px;">Chart unavailable.</div>';
+    return '<div style="border:1px solid #111;padding:12px 10px;max-width:100%;">Chart unavailable.</div>';
   };
 
   const buildFilename=()=>{
@@ -1065,6 +1075,7 @@ async function downloadPanchangPDF(){
     const horaRows=getTableRows('#hora-body tr');
     const kundliRows=getTableRows('#kundli-table tr');
 
+    if(userNameSlot)userNameSlot.textContent=userName&&userName.trim()?`Prepared for: ${userName.trim()}`:'';
     document.getElementById('eksaar-pdf-subtitle').textContent=`${text('disp-weekday')}, ${text('disp-date')} | ${getLocationText()}`;
     document.getElementById('eksaar-pdf-summary').innerHTML=html('main-summary');
     document.getElementById('eksaar-pdf-meta-table').innerHTML=section('Report Overview',buildTable(metaRows));
@@ -1107,10 +1118,10 @@ async function downloadPanchangPDF(){
         pdf.setPage(i);
         pdf.setFont('times','bold');
         pdf.setFontSize(14);
-        pdf.text('ॐ Panchangam 𑁍',pageWidth/2,0.5,{align:'center'});
+        pdf.text('ॐ Panchangam 𑁍',pageWidth/2,20.32,{align:'center'});
         pdf.setFont('times','normal');
         pdf.setFontSize(10);
-        pdf.text('© 2026 Eksaar. All calculations are for reference only.',pageWidth/2,pageHeight-0.4,{align:'center'});
+        pdf.text('© 2026 Eksaar | panchang.eksaar.com | All calculations are for reference only.',pageWidth/2,pageHeight-10.16,{align:'center'});
       }
     });
     await worker.save();
@@ -1123,6 +1134,7 @@ async function downloadPanchangPDF(){
       }
     }
     if(chartWrap)chartWrap.innerHTML='';
+    if(userNameSlot)userNameSlot.textContent='';
     document.getElementById('eksaar-pdf-subtitle').textContent='—';
     document.getElementById('eksaar-pdf-summary').textContent='—';
     document.getElementById('eksaar-pdf-meta-table').innerHTML='';
