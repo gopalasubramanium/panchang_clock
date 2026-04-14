@@ -161,6 +161,8 @@
 #eksaar-pdf-template .pdf-kundli-center-subtitle{font-size:10px;line-height:1.35;margin-top:4px}
 #eksaar-pdf-methodology{margin-top:18px;font-size:13px;line-height:1.55;font-style:italic}
 #eksaar-pdf-methodology-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;font-style:normal;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #111;padding-bottom:6px;margin-bottom:8px}
+#eksaar-pdf-template .pdf-avoid-break{page-break-inside:avoid;break-inside:avoid;}
+#eksaar-pdf-template .pdf-page-break{page-break-before:always;break-before:page;}
 /* === MOBILE NAV === */
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--accent);line-height:0}
 .hamburger svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -315,14 +317,14 @@ tz=5.5          UTC offset in hours (e.g., 5.5 for IST, -5 for EST).</pre>
             <div id="eksaar-pdf-subtitle" style="font-size:16px;line-height:1.5;margin-top:8px;">—</div>
         </div>
         <div id="eksaar-pdf-summary" style="font-size:15px;line-height:1.6;margin-bottom:18px;">—</div>
-        <div id="eksaar-pdf-meta-table"></div>
-        <div id="eksaar-pdf-anga-table"></div>
-        <div id="eksaar-pdf-auspicious-table"></div>
-        <div id="eksaar-pdf-inauspicious-table"></div>
-        <div id="eksaar-pdf-sandhya-table"></div>
-        <div id="eksaar-pdf-chart-wrap"></div>
-        <div id="eksaar-pdf-hora-table"></div>
-        <div id="eksaar-pdf-kundli-table"></div>
+        <div id="eksaar-pdf-meta-table" class="pdf-avoid-break"></div>
+        <div id="eksaar-pdf-anga-table" class="pdf-avoid-break"></div>
+        <div id="eksaar-pdf-auspicious-table" class="pdf-avoid-break"></div>
+        <div id="eksaar-pdf-inauspicious-table" class="pdf-avoid-break"></div>
+        <div id="eksaar-pdf-sandhya-table" class="pdf-avoid-break"></div>
+        <div id="eksaar-pdf-chart-wrap" class="pdf-page-break"></div>
+        <div id="eksaar-pdf-hora-table" class="pdf-page-break"></div>
+        <div id="eksaar-pdf-kundli-table" class="pdf-page-break"></div>
         <div id="eksaar-pdf-methodology">
             <div id="eksaar-pdf-methodology-title">Calculation Methodology</div>
             <p>All astrological calculations are performed using the high-precision Drik Ganita system, applying the Lahiri (Chitra Paksha) Ayanamsa for tropical to sidereal conversions. Time coordinates are mathematically adjusted for exact geocentric latitude and longitude, ensuring strict adherence to traditional Vedic Panchangam principles while maintaining modern astronomical accuracy based on Meeus algorithms.</p>
@@ -1013,9 +1015,9 @@ async function downloadPanchangPDF(){
   const text=(id)=>{const el=document.getElementById(id);return el?el.textContent.trim():'—';};
   const html=(id)=>{const el=document.getElementById(id);return el?el.innerHTML:'—';};
   const escapeHtml=(value)=>String(value??'').replace(/[&<>"']/g,(ch)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  const section=(title,content)=>`<section style="margin-bottom:18px;page-break-inside:avoid;"><div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #111;padding-bottom:6px;margin-bottom:8px;">${escapeHtml(title)}</div>${content}</section>`;
-  const buildTable=(rows)=>`<table style="font-size:15px;line-height:1.45;">${rows.map(([label,value])=>`<tr><td style="width:38%;border:1px solid #111;padding:6px 8px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;vertical-align:top;">${escapeHtml(label)}</td><td style="border:1px solid #111;padding:6px 8px;vertical-align:top;">${value||'—'}</td></tr>`).join('')}</table>`;
-  const buildDataTable=(headers,rows)=>`<table style="font-size:14px;line-height:1.4;"><thead><tr>${headers.map((header)=>`<th style="border:1px solid #111;padding:6px 8px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;text-align:left;">${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${rows.map((row)=>`<tr>${row.map((cell)=>`<td style="border:1px solid #111;padding:6px 8px;vertical-align:top;">${escapeHtml(cell||'—')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const section=(title,content)=>`<section class="pdf-avoid-break" style="margin-bottom:18px;page-break-inside:avoid;"><div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #111;padding-bottom:6px;margin-bottom:8px;">${escapeHtml(title)}</div>${content}</section>`;
+  const buildTable=(rows)=>`<table class="pdf-avoid-break" style="font-size:15px;line-height:1.45;">${rows.map(([label,value])=>`<tr style="page-break-inside:avoid;break-inside:avoid;"><td style="width:38%;border:1px solid #111;padding:6px 8px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;vertical-align:top;">${escapeHtml(label)}</td><td style="border:1px solid #111;padding:6px 8px;vertical-align:top;">${value||'—'}</td></tr>`).join('')}</table>`;
+  const buildDataTable=(headers,rows)=>`<table class="pdf-avoid-break" style="font-size:14px;line-height:1.4;"><thead><tr style="page-break-inside:avoid;break-inside:avoid;">${headers.map((header)=>`<th style="border:1px solid #111;padding:6px 8px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;text-align:left;">${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${rows.map((row)=>`<tr style="page-break-inside:avoid;break-inside:avoid;">${row.map((cell)=>`<td style="border:1px solid #111;padding:6px 8px;vertical-align:top;">${escapeHtml(cell||'—')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   const getLocationText=()=>{const sel=document.getElementById('sel-location');if(sel&&sel.value&&sel.value!=='custom'){const opt=sel.options[sel.selectedIndex];if(opt&&opt.textContent.trim())return opt.textContent.trim();}return text('disp-coords');};
   const getAngaRows=()=>Array.from(document.querySelectorAll('#angas-grid .anga-card')).map((card)=>[card.querySelector('.anga-num')?.textContent.trim()||'—',[card.querySelector('.anga-name')?.textContent.trim()||'—',card.querySelector('.anga-detail')?.textContent.trim()||''].filter(Boolean).join(' — ')||'—']);
   const getTableRows=(selector)=>Array.from(document.querySelectorAll(selector)).map((row)=>Array.from(row.children).map((cell)=>cell.textContent.trim()).filter(Boolean));
@@ -1156,10 +1158,10 @@ async function downloadPanchangPDF(){
     template.style.visibility='visible';
 
     const opt={
-      margin:[0.8,0.5,0.5,0.5],
+      margin:[0.8,0.5,0.8,0.5],
       filename:buildFilename(),
       image:{type:'jpeg',quality:0.98},
-      pagebreak:{mode:['css','legacy']},
+      pagebreak:{mode:['css','legacy'],avoid:['tr','thead','tbody']},
       html2canvas:{
         scale:2,
         useCORS:true,
