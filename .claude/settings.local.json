@@ -5,7 +5,8 @@
       "Bash(awk '/const L={/,/^};/' /home/gopalasubramanium/Documents/github/panchang_clock/index.html)",
       "Bash(grep:*)",
       "Bash(git show:*)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(node --input-type=module)"
     ]
   }
 }
