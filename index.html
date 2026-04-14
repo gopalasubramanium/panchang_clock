@@ -143,14 +143,15 @@
 .eksaar-speed-dial{position:fixed;right:20px;bottom:60px;z-index:9999;display:flex;align-items:flex-end;justify-content:flex-end;pointer-events:none}.eksaar-speed-actions{position:absolute;right:0;bottom:calc(100% + 10px);display:flex;flex-direction:column;align-items:flex-end;gap:10px;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(12px) scale(.96);transform-origin:bottom right;transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s}.eksaar-speed-dial.open .eksaar-speed-actions{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1);transition-delay:0s}.eksaar-speed-btn,.eksaar-speed-trigger{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--border);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;background:var(--panel);color:var(--text);box-shadow:var(--shadow),inset 0 0 0 1px var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.eksaar-speed-btn{pointer-events:auto;padding:10px 14px;border-radius:999px;min-width:210px;justify-content:flex-start}.eksaar-speed-trigger{pointer-events:auto;position:relative;width:58px;height:58px;border-radius:50%;padding:0;color:var(--accent);border-color:var(--accent-dim)}.eksaar-speed-trigger:hover,.eksaar-speed-trigger:focus-visible{border-color:var(--accent);color:var(--accent2);transform:translateY(-1px)}.eksaar-speed-btn:hover{transform:translateY(-1px);border-color:var(--accent)}.eksaar-speed-icon{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}.eksaar-speed-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.eksaar-speed-label{display:inline-block;line-height:1.2;white-space:nowrap}.eksaar-speed-share{color:#25D366;border-color:#25D366}.eksaar-speed-share:hover{background:#25D366;color:#fff}.eksaar-speed-image{color:var(--accent2);border-color:var(--accent2)}.eksaar-speed-image:hover{background:var(--accent2);color:#0f0c08}.eksaar-speed-calendar{color:var(--accent);border-color:var(--accent)}.eksaar-speed-calendar:hover{background:var(--accent);color:#0f0c08}@media(max-width:767.98px){.eksaar-speed-dial{right:16px;bottom:max(60px,calc(env(safe-area-inset-bottom) + 20px))}.eksaar-speed-actions{bottom:calc(100% + 8px)}.eksaar-speed-btn{min-width:48px;width:48px;height:48px;padding:0;border-radius:50%;justify-content:center}.eksaar-speed-label{display:none}.eksaar-speed-trigger{width:56px;height:56px}}
 .ics-inline{display:inline-flex;align-items:center;gap:4px;margin-left:8px;font-size:9px;font-family:'Cinzel',serif;font-weight:700;color:var(--text3);cursor:pointer;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border:1px solid var(--border);border-radius:3px;background:var(--panel2);transition:all .2s;vertical-align:middle}
 .ics-inline:hover{border-color:var(--accent);color:var(--accent)}
-#eksaar-pdf-template,#eksaar-pdf-template *{box-sizing:border-box;white-space:normal;overflow-wrap:break-word !important;word-wrap:break-word !important;word-break:break-word;max-width:100%;}
-#eksaar-pdf-sheet{width:794px;min-height:1123px;padding:72px 36px 58px;background:#fff;color:#111;font-family:'Cormorant Garamond',Georgia,serif}
+#eksaar-pdf-template{width:100% !important;max-width:100% !important;box-sizing:border-box !important;overflow:hidden}
+#eksaar-pdf-template,#eksaar-pdf-template *{box-sizing:border-box !important;white-space:normal;overflow-wrap:break-word !important;word-wrap:break-word !important;word-break:break-word;max-width:100%}
+#eksaar-pdf-sheet{width:794px;max-width:100% !important;min-height:1123px;padding:72px 36px 58px;background:#fff;color:#111;font-family:'Cormorant Garamond',Georgia,serif;box-sizing:border-box !important;overflow:hidden}
 #eksaar-pdf-header{text-align:center;font-size:24px;line-height:1.2;margin:0 0 20px;font-weight:700}
-#eksaar-pdf-template table{width:100%;border-collapse:collapse;table-layout:fixed}
-#eksaar-pdf-template th,#eksaar-pdf-template td{white-space:normal !important;overflow-wrap:break-word !important;word-wrap:break-word !important;word-break:break-word;min-width:0;max-width:100%;}
-#eksaar-pdf-template p,#eksaar-pdf-template span{white-space:normal !important;overflow-wrap:break-word !important;word-wrap:break-word !important;word-break:break-word;display:block;width:100%;max-width:100%;}
-#eksaar-pdf-methodology{margin-top:18px;font-size:13px;line-height:1.55;font-style:italic;width:100%;box-sizing:border-box;display:block;}
-#eksaar-pdf-methodology p{width:100%;box-sizing:border-box;display:block;white-space:normal !important;overflow-wrap:break-word !important;word-wrap:break-word !important;}
+#eksaar-pdf-template table{width:100% !important;max-width:100% !important;border-collapse:collapse;table-layout:fixed}
+#eksaar-pdf-template th,#eksaar-pdf-template td{white-space:normal !important;overflow-wrap:break-word !important;word-wrap:break-word !important;word-break:break-word;min-width:0;max-width:100%;width:auto;padding-right:10px}
+#eksaar-pdf-template p,#eksaar-pdf-template span,#eksaar-pdf-summary,#eksaar-pdf-subtitle,#pdf-festivals{white-space:normal !important;overflow-wrap:break-word !important;word-wrap:break-word !important;word-break:break-word;display:block;width:100% !important;max-width:100% !important;padding-right:15px;box-sizing:border-box !important;text-align:justify}
+#eksaar-pdf-methodology{margin-top:18px;font-size:13px;line-height:1.55;font-style:italic;width:100% !important;max-width:100% !important;box-sizing:border-box !important;display:block;padding-right:15px;text-align:justify}
+#eksaar-pdf-methodology p{width:100% !important;max-width:100% !important;box-sizing:border-box !important;display:block;padding-right:15px;text-align:justify;white-space:normal !important;overflow-wrap:break-word !important;word-wrap:break-word !important}
 #eksaar-pdf-chart-wrap{margin-bottom:18px;page-break-inside:avoid;max-width:100%}
 #eksaar-pdf-chart-wrap svg,#eksaar-pdf-chart-wrap img{display:block;max-width:100%;height:auto;margin:0 auto}
 #eksaar-pdf-template img{max-width:100% !important;height:auto !important;object-fit:contain;margin:0 auto;display:block}
@@ -163,7 +164,6 @@
 #eksaar-pdf-template .pdf-kundli-planets{margin-top:6px;font-size:11px;line-height:1.2}
 #eksaar-pdf-template .pdf-kundli-center-title{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 #eksaar-pdf-template .pdf-kundli-center-subtitle{font-size:10px;line-height:1.35;margin-top:4px}
-#eksaar-pdf-methodology{margin-top:18px;font-size:13px;line-height:1.55;font-style:italic}
 #eksaar-pdf-methodology-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;font-style:normal;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #111;padding-bottom:6px;margin-bottom:8px}
 #eksaar-pdf-template .pdf-avoid-break{page-break-inside:avoid;break-inside:avoid;}
 #eksaar-pdf-template .pdf-page-break{page-break-before:always;break-before:page;}
@@ -1193,9 +1193,10 @@ async function downloadPanchangPDF(){
       image:{type:'jpeg',quality:0.98},
       pagebreak:{mode:['css','legacy'],avoid:['tr','thead','tbody']},
       html2canvas:{
-        scale:2,
+        scale:1.8,
         useCORS:true,
-        backgroundColor:'#ffffff'
+        backgroundColor:'#ffffff',
+        windowWidth:800
       },
       jsPDF:{
         unit:'in',
