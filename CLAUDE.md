@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A zero-dependency, single-file HTML/JS Vedic Panchangam (Hindu Astronomical Calendar) dashboard. All astronomical computations run client-side using Jean Meeus's *Astronomical Algorithms*. No build step, no package manager, no external APIs at runtime.
+A single-file HTML/JS Vedic Panchangam (Hindu Astronomical Calendar) dashboard. All astronomical computations run client-side using Jean Meeus's *Astronomical Algorithms*. No build step, no package manager. The only runtime external dependency is `html2pdf.js` (loaded from CDN) used exclusively for PDF export.
 
 There are two HTML files:
 - **`index.html`** — The production version (V6). Full-featured with SEO metadata, fixed header/footer, Cinzel/Cormorant Garamond fonts from Google Fonts, collapsible sections, Kundli chart, and API mode.
@@ -40,15 +40,28 @@ Everything is in one file, structured in clear comment-delimited sections within
 - Kaalam timings (Rahu, Yama, Gulika) split daylight into 8 equal segments
 - Muhurta timings (Abhijit, Brahma, Godhuli), Graha Hora, Amrit Kaalam
 
-**`render()`** updates all DOM elements from `D` and `L[S.lang]`. Uses `t(key)` for single strings and `tArr(key)` for arrays from the language dict.
+**`render()`** is the main entry point that delegates to several specialized sub-renderers:
+- `renderStaticLocalizedUi()` — updates all static labels, lang/theme selects, consent banner, footer
+- `renderTimeQuality()` — updates the "time quality" / muhurta quality section
+- `renderKB()` — updates the Knowledge Base (KB) section dynamic text and its static content
+- `renderFestivalBar()` — shows/hides the festival banner based on `getFestivals()`
+- `renderKundli()` — draws the North-Indian style Kundli SVG chart using `getPlanetLong()`
 
-**`renderKundli()`** draws the North-Indian style Kundli SVG chart using approximate planetary longitudes from `getPlanetLong()`.
+**`getPlanetLong(T)`** returns approximate sidereal longitudes for Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu using single-term Meeus approximations.
 
 ### Clock
 `tickClock()` runs via `requestAnimationFrame`, updating clock hands and digital display. When `S.liveMode` is true, triggers `compute()` + `render()` each minute.
 
 ### Language/i18n
 `setLang(v)` sets `S.lang` and calls `render()`. Urdu (`ur`) sets `dir="rtl"` on `<body>`. All display strings come from the `L` object keyed by language code.
+
+### Share & Export
+- **`shareWhatsApp()`** — builds a localized summary string and opens `wa.me` with it pre-filled.
+- **`downloadICS(type)`** — generates an `.ics` calendar file for `abhijit` or `amrit` muhurta and triggers download.
+- **`downloadPanchangPDF()`** — async function that populates the hidden `#eksaar-pdf-template` DOM element with current computed data, then calls `html2pdf()` to render it as a multi-page PDF. The PDF template (`#eksaar-pdf-sheet`) uses block-flow CSS that overrides all flex/grid layouts to ensure `html2pdf` can measure heights correctly. The function is defined in a separate `<script>` block (after the main script) to allow the main engine to load independently.
+
+### Festival Detection
+`getFestivals(date, masaIdx, ti)` returns an array of festival name strings for the given date based on tithi and masa. `renderFestivalBar()` calls this and shows/hides `#festival-bar`.
 
 ### API Mode
 `checkAPI()` runs on load — if `?api=true` in URL, it hides the UI and outputs JSON to `<pre id="api-output">`.
@@ -71,8 +84,9 @@ Location presets are hardcoded in the `<select id="sel-location">` dropdown cove
 - `t(key)` — single string lookup from `L[S.lang]`, falls back to `L.en`
 - `tArr(key)` — array lookup, falls back to `L.en`
 - `tN(s)` — converts ASCII digits to locale numerals using `LD` lookup table
-- Language preference persists via `localStorage` key `panchangam_lang`; restored in `init()` and synced to `<select id="lang-select">`
-- Urdu sets `dir="rtl"` on `<body>`
+- Language preference persists via `localStorage` key `panchangam_lang`; restored by `restoreSavedLang()` in `init()` and synced to `<select id="lang-select">` and `<select id="mo-lang">`
+- Urdu sets `dir="rtl"` on `<body>` and `<html>`
+- `LANGUAGE_NATIVE_LABELS` maps lang codes to their native-script display names used in the selector UI
 
 ## Accuracy Notes
 - Sun: ~1–2 arcminutes (VSOP87-derived)
