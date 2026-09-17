@@ -30,12 +30,12 @@ jobs:
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/ > /dev/null && break || sleep 1; done
           pnpm test:browser
           node tests/redirect-host.mjs
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: browser-test-results
           path: test-results/
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: web-app
           path: dist/
@@ -58,7 +58,7 @@ jobs:
       - run: pnpm pack:desktop
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: desktop-${{ matrix.os }}-unsigned
           path: |
@@ -89,7 +89,7 @@ jobs:
       - run: pnpm exec cap sync android
       - run: chmod +x gradlew && ./gradlew assembleDebug bundleRelease lintDebug
         working-directory: android
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: android-debug-and-unsigned-bundle
           path: |
@@ -110,7 +110,7 @@ jobs:
       - run: pnpm exec cap sync ios
       - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
       - run: ditto -c -k --sequesterRsrc --keepParent ios/build/Build/Products/Debug-iphonesimulator/App.app ios/Eksaar-Panchang-iOS-Simulator.zip
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: ios-simulator-app-not-device-installable
           path: ios/Eksaar-Panchang-iOS-Simulator.zip
