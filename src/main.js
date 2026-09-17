@@ -107,7 +107,7 @@ function refresh(){
     const instant=live?new Date():fromLocal($('date').value,$('time').value,state.location.zone,state.disambiguation);
     data=daily($('date').value,state.location,state,instant);events=observances(data.date,state.location,state);data.observances=events;
     localize();renderActive();announce(`Panchang updated for ${state.location.name}, ${data.date}.`);
-  }catch(e){error(e.message);}
+  }catch(e){data=null;document.querySelectorAll('.view').forEach(v=>v.replaceChildren());error(e.message);}
 }
 function shareURL(){const u=new URL(!isNative&&(location.protocol==='http:'||location.protocol==='https:')?location.href:'https://gopalasubramanium.github.io/panchang_clock/');u.search='';for(const [k,v]of Object.entries({date:data.date,time:$('time').value,lat:state.location.lat,lon:state.location.lon,zone:state.location.zone,place:state.location.name,convention:state.convention,sunrise:state.sunriseMode}))u.searchParams.set(k,v);return u.href;}
 async function imageCard(){
@@ -157,7 +157,7 @@ async function init(){
   if(q.has('sunrise')){if(!['geometric','apparent'].includes(q.get('sunrise')))throw new Error('Invalid sunrise convention in link.');state.sunriseMode=q.get('sunrise');}
   if(q.has('date')){$('date').value=validDate(q.get('date').replace(/^(\d{2})(\d{2})(\d{4})$/,'$3-$2-$1'));$('time').value=q.get('time')||'12:00';live=false;}
  }catch(e){queryError=e.message;}
- refresh();if(queryError)error(queryError);
+ if(queryError)error(queryError);else refresh();
  if(new URLSearchParams(location.search).get('api')==='true'){
   const pre=document.createElement('pre');pre.id='api-output';pre.textContent=JSON.stringify(queryError||!data?{error:queryError||$('error').textContent}:data,null,2);document.body.replaceChildren(pre);return;
  }
