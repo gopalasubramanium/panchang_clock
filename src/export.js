@@ -1,5 +1,5 @@
 import {formatTime} from './time.js';
-const escapeICS = value => String(value).replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,');
+const escapeICS = value => String(value).replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,');
 const stamp = value => new Date(value).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
 function fold(line) {
   const encoder = new TextEncoder();
@@ -14,7 +14,7 @@ function fold(line) {
 export function calendarFile(events, location, alarmMinutes = 15) {
   const rows=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Eksaar//Panchang 2//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
   for (const event of events) {
-    if (!event.start || !event.end || +new Date(event.end) <= +new Date(event.start)) continue;
+    if (!event.start || !event.end || !Number.isFinite(+new Date(event.start)) || !Number.isFinite(+new Date(event.end)) || +new Date(event.end) <= +new Date(event.start)) continue;
     const uid = `${stamp(event.start)}-${encodeURIComponent(event.name)}-${encodeURIComponent(location.name||'place')}-${encodeURIComponent(location.zone)}@panchang.eksaar.com`;
     rows.push('BEGIN:VEVENT',`UID:${uid}`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(event.start)}`,`DTEND:${stamp(event.end)}`,
       `SUMMARY:${escapeICS(event.name)}`,`LOCATION:${escapeICS(location.name || `${location.lat}, ${location.lon}`)}`,

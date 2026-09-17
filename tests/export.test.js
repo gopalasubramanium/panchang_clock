@@ -8,3 +8,16 @@ test('ICS UTC timestamps survive midnight and DST; alarms and escaped text are v
  assert.ok(s.endsWith('END:VCALENDAR\r\n'));
 });
 test('ICS omits invalid or empty intervals',()=>assert.ok(!calendarFile([{name:'None',start:null,end:null}],{zone:'UTC'}).includes('BEGIN:VEVENT')));
+test('all newline forms stay inside calendar text properties',()=>{
+ const text=calendarFile([{name:'Family\rATTENDEE:someone\nEND:VEVENT\r\nBEGIN:VEVENT',reason:'Note\rURL:example',start:'2026-09-18T00:00Z',end:'2026-09-18T00:01Z'}],{name:'Place\rLOCATION:elsewhere',zone:'UTC'});
+ const rows=text.split('\r\n');
+ assert.equal(rows.filter(row=>row==='BEGIN:VEVENT').length,1);
+ assert.equal(rows.filter(row=>row==='END:VEVENT').length,1);
+ assert.ok(rows.every(row=>!/[\r\n]/.test(row)));
+ assert.ok(!rows.some(row=>/^(ATTENDEE|URL):/.test(row)));
+ assert.match(text,/Family\\nATTENDEE/);
+});
+test('invalid calendar timestamps cannot abort an otherwise valid export',()=>{
+ const s=calendarFile([{name:'Bad',start:'invalid',end:'2026-09-18T00:01Z'},{name:'Good',start:'2026-09-18T00:00Z',end:'2026-09-18T00:01Z'}],{zone:'UTC'});
+ assert.doesNotMatch(s,/SUMMARY:Bad/);assert.match(s,/SUMMARY:Good/);
+});

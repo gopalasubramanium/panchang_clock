@@ -1,6 +1,6 @@
 # Release and publication status
 
-Version: 2.0.0-beta.2. This is a tested development beta with explicit remaining traditional-rule and platform-validation work.
+Version: 2.0.0-beta.3. This is a tested development beta with explicit remaining traditional-rule and platform-validation work.
 
 ## Build outputs
 

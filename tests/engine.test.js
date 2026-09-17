@@ -41,6 +41,22 @@ test('JSON has no NaN/Infinity and events have absolute dates',()=>{const d=dail
 test('sky events distinguish local solar and global lunar visibility',()=>{const d=nextSkyEvents('2026-09-17T12:00Z',delhi);assert.match(d.solarEclipse.peak,/Z$/);assert.equal(typeof d.lunarEclipse.moonAboveHorizonAtPeak,'boolean');});
 test('supported date-range endpoints include adjacent solar days',()=>{for(const date of ['1900-01-01','2100-12-31'])assert.ok(daily(date,delhi).sun.sunrise);});
 test('Vaara before sunrise belongs to previous sunrise day',()=>{assert.equal(daily('2026-09-17',delhi,{},'2026-09-16T21:00Z').currentVaara,3);});
+test('pre-dawn Vaara tithi and date describe the same sunrise',()=>{
+ const d=daily('2026-09-18',delhi,{},'2026-09-17T23:18Z');
+ assert.equal(d.currentVaara,4);assert.equal(d.sunriseDay.date,'2026-09-17');
+ assert.equal(d.sunriseDay.angas.tithi,5); // Shukla Shashthi began this Thursday.
+ assert.equal(d.sunriseAngas.tithi,6); // Friday's upcoming sunrise is Saptami.
+ assert.ok(+new Date(d.sunriseDay.sunrise)<+new Date(d.instant));
+ const atRise=daily('2026-09-18',delhi,{},d.sun.sunrise);
+ assert.equal(atRise.currentVaara,5);assert.equal(atRise.sunriseDay.date,'2026-09-18');
+ assert.equal(atRise.sunriseDay.angas.tithi,6);
+});
+test('sunrise day handles the supported lower date boundary and polar unavailability',()=>{
+ const first=daily('1900-01-01',delhi,{},'1899-12-31T19:00Z');
+ assert.equal(first.sunriseDay.date,'1899-12-31');
+ const polar=daily('2026-06-21',{lat:69.6492,lon:18.9553,zone:'Europe/Oslo'});
+ assert.equal(polar.sunriseDay,null);assert.equal(polar.currentVaara,null);
+});
 const eventRef=JSON.parse(readFileSync(new URL('./events-reference.json',import.meta.url)));
 for(const r of eventRef.transitions)test(`Independent transition ${r.date} ${r.kind}`,()=>{const actual=transition(r.date,r.kind);assert.equal(indices(r.date)[r.kind],r.index);assert.ok(Math.abs(actual-new Date(r.end))<150000,`${actual.toISOString()} vs ${r.end}`);});
 for(const r of eventRef.solar)test(`Independent geometric solar events ${r.location.name} ${r.date}`,()=>{const a=sunDay(r.date,r.location,'geometric');for(const k of ['sunrise','sunset'])assert.ok(Math.abs(new Date(a[k])-new Date(r[k]))<60000,`${k}: ${a[k]} vs ${r[k]}`);});

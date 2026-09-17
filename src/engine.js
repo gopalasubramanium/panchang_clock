@@ -1,7 +1,7 @@
 import * as A from 'astronomy-engine';
 import {DAY, dayBounds, addDays, validDate, validateZone, iso} from './time.js';
 
-export const ENGINE_VERSION = '2.0.0-beta.1';
+export const ENGINE_VERSION = '2.0.0-beta.3';
 export const norm = a => ((a % 360) + 360) % 360;
 export const TITHIS = ['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi','Purnima'];
 export const NAKSHATRAS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
@@ -197,9 +197,14 @@ export function daily(date, location, settings = {}, instant) {
   if (!Number.isFinite(+at)) throw new Error('Invalid calculation instant.');
   const reference = sun.sunrise || iso(at);
   const index = indices(at), weekday = new Date(`${date}T12:00Z`).getUTCDay();
+  // Keep the civil-date sunrise separate from the sunrise that began the current Vaara.
+  const beforeSunrise = sun.sunrise && +at < +new Date(sun.sunrise);
+  const vaaraSun = beforeSunrise ? sunDay(addDays(date, -1), location, sunriseMode) : sun;
+  const sunriseDay = sun.sunrise && vaaraSun.sunrise
+    ? {date:vaaraSun.date, sunrise:vaaraSun.sunrise, angas:indices(vaaraSun.sunrise)} : null;
   const data = {version:ENGINE_VERSION, date, location:{...location}, settings:{sunriseMode,convention}, instant:iso(at),
     sun, nextSunrise:next.sunrise, weekday, weekdayName:WEEKDAYS[weekday],
-    currentVaara:sun.sunrise ? (+at < +new Date(sun.sunrise) ? (weekday + 6) % 7 : weekday) : null,
+    currentVaara:sunriseDay ? (beforeSunrise ? (weekday + 6) % 7 : weekday) : null, sunriseDay,
     sunriseAngas:sun.sunrise ? indices(reference) : null, current:index,
     angas:Object.fromEntries(['tithi','nakshatra','yoga','karana'].map(k => [k,anga(at,k)])),
     timeline:Object.fromEntries(['tithi','nakshatra','yoga','karana'].map(k => [k,timeline(reference,next.sunrise || sun.end,k)])),

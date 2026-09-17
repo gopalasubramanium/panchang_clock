@@ -14,6 +14,10 @@ try{
  await page.goto(base+'/?date=2026-09-17&time=12:00&lat=28.6139&lon=77.209&zone=Asia%2FKolkata&place=New+Delhi');
  await page.locator('.hero h2').waitFor();
  assert.match(await page.locator('.hero h2').innerText(),/Saptami/);
+ await page.locator('#date').fill('2026-09-18');await page.locator('#time').fill('04:48');await page.getByRole('button',{name:'Apply',exact:true}).click();
+ const vaara=await page.locator('.anga-grid .anga').last().innerText();
+ assert.match(vaara,/Thursday/);assert.match(vaara,/2026-09-17/);assert.match(vaara,/Sunrise tithi: Shukla Paksha Shashthi/);
+ await page.locator('#date').fill('2026-09-17');await page.locator('#time').fill('12:00');await page.getByRole('button',{name:'Apply',exact:true}).click();
  const boxes=await Promise.all(['#city','#date','#time','#controls button.primary','#today'].map(selector=>page.locator(selector).boundingBox()));
  for(const box of boxes){assert.ok(Math.abs(box.height-boxes[0].height)<1,'Controls must have equal height');assert.ok(Math.abs(box.y-boxes[0].y)<1,'Controls must align at desktop width');}
  await page.screenshot({path:'test-results/desktop.png',fullPage:true});
