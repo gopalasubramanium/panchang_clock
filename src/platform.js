@@ -8,7 +8,8 @@ export async function download(name,body,type){
   const blob=body instanceof Blob?body:new Blob([body],{type});
   if(isNative){
     const base64=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});
-    const file=await Filesystem.writeFile({path:name,data:base64,directory:Directory.Cache});
+    await clearNativeExports();
+    const file=await Filesystem.writeFile({path:`exports/${name.replace(/[^a-zA-Z0-9._-]/g,'_')}`,data:base64,directory:Directory.Cache,recursive:true});
     await Share.share({title:name,files:[file.uri]});
     return;
   }
@@ -32,5 +33,11 @@ export async function remind(event){
   await LocalNotifications.schedule({notifications:[{id:Math.floor((+new Date(event.start)/60000)%2147483647),title:event.name,body:'Begins in 15 minutes. Times follow your selected location.',schedule:{at},isExactNotification:false,extra:{source:'panchang'}}]});
 }
 export async function clearNativeReminders(){
-  if(isNative){const {notifications}=await LocalNotifications.getPending();await LocalNotifications.cancel({notifications});}
+  if(isNative){const {notifications}=await LocalNotifications.getPending();await LocalNotifications.cancel({notifications});await clearNativeExports();}
+}
+
+export async function clearNativeExports(){
+  if(!isNative)return;
+  try{await Filesystem.rmdir({path:'exports',directory:Directory.Cache,recursive:true});}
+  catch(error){if(!/not exist|not found|no such file/i.test(error.message||''))throw error;}
 }

@@ -7,7 +7,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Keep app-local WebKit data and preferences out of device cloud backups.
+        let library = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
+        for directory in ["WebKit", "Preferences"] {
+            var url = library.appendingPathComponent(directory, isDirectory: true)
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+                var values = URLResourceValues()
+                values.isExcludedFromBackup = true
+                try url.setResourceValues(values)
+            } catch {
+                // No personal data is logged if the platform cannot set this attribute.
+                NSLog("Panchang backup exclusion could not be applied")
+            }
+        }
         return true
     }
 

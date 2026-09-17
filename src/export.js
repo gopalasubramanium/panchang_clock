@@ -15,7 +15,7 @@ export function calendarFile(events, location, alarmMinutes = 15) {
   const rows=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Eksaar//Panchang 2//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
   for (const event of events) {
     if (!event.start || !event.end || +new Date(event.end) <= +new Date(event.start)) continue;
-    const uid = `${stamp(event.start)}-${encodeURIComponent(event.name)}-${location.lat}-${location.lon}@panchang.eksaar.com`;
+    const uid = `${stamp(event.start)}-${encodeURIComponent(event.name)}-${encodeURIComponent(location.name||'place')}-${encodeURIComponent(location.zone)}@panchang.eksaar.com`;
     rows.push('BEGIN:VEVENT',`UID:${uid}`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(event.start)}`,`DTEND:${stamp(event.end)}`,
       `SUMMARY:${escapeICS(event.name)}`,`LOCATION:${escapeICS(location.name || `${location.lat}, ${location.lon}`)}`,
       `DESCRIPTION:${escapeICS(`Panchang calculation for ${location.zone}. Traditional timing; not a personalized muhurta. ${event.reason || ''}`)}`);

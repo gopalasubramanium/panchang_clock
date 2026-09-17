@@ -71,3 +71,11 @@ Native signing identities and developer accounts are not included. CI builds uns
 No account, analytics, advertising or remote calculation service. The app stores settings and personal dates locally. Location access is optional. Sharing a link discloses the chosen coordinates. Web hosts and OS location/share services have their own data handling. Android automatic cloud backup is disabled.
 
 MIT, including the original application. Astronomy Engine is MIT. Dependency notices are in `public/THIRD_PARTY_NOTICES.txt`. Swiss Ephemeris/PySwissEph is used only as a separately installed validation tool; it is not linked into or shipped with this application.
+
+## September 2026 usability and privacy update
+
+Offline city search covers 34,145 city centres. Monthly exports support category filters and advance calendar reminders. Larger text, saved places, explanations and local mismatch reports improve daily use. Sharing coordinates is an explicit choice; new calculation links use URL fragments. See [the review research](docs/USER-RESEARCH-2026-09.md), [creator credits](CREDITS.md), [privacy notice](public/privacy.html), and [security policy](SECURITY.md).
+
+Cloudflare Workers serves the static build using `wrangler.jsonc`; run `pnpm build` before deployment. The canonical address is https://panchang.eksaar.com/. `_headers` is a hosting configuration file and is intentionally excluded from offline precaching.
+
+Build macOS release artifacts outside an iCloud-synced output folder if Finder metadata is reintroduced during signing. A Developer ID signature must be followed by Apple notarization, stapling and Gatekeeper verification before advertising a trusted macOS download. Never commit credentials.
