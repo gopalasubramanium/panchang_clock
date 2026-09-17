@@ -107,7 +107,7 @@ function refresh(){
     const instant=live?new Date():fromLocal($('date').value,$('time').value,state.location.zone,state.disambiguation);
     data=daily($('date').value,state.location,state,instant);events=observances(data.date,state.location,state);data.observances=events;
     localize();renderActive();announce(`Panchang updated for ${state.location.name}, ${data.date}.`);
-  }catch(e){data=null;document.querySelectorAll('.view').forEach(v=>v.replaceChildren());error(e.message);}
+  }catch(e){worker?.terminate();calendarId++;data=null;document.querySelectorAll('.view').forEach(v=>v.replaceChildren());error(e.message);}
 }
 function shareURL(){const u=new URL(!isNative&&(location.protocol==='http:'||location.protocol==='https:')?location.href:'https://gopalasubramanium.github.io/panchang_clock/');u.search='';for(const [k,v]of Object.entries({date:data.date,time:$('time').value,lat:state.location.lat,lon:state.location.lon,zone:state.location.zone,place:state.location.name,convention:state.convention,sunrise:state.sunriseMode}))u.searchParams.set(k,v);return u.href;}
 async function imageCard(){
