@@ -1,6 +1,6 @@
 const PREFIX='eksaar-panchang-'+btoa(self.registration.scope)+'-';
-const CACHE=PREFIX+'2cf2efd59cbf432a';
-const ASSETS=["THIRD_PARTY_NOTICES.txt","assets/calendar-worker-CLzZnQXk.js","assets/index-Bq51y_rv.js","assets/index-HX1KnHej.css","assets/web-CTvwTOpx.js","assets/web-DBbW9FBN.js","assets/web-FBAZcQh4.js","assets/web-T0lPcO0w.js","icon-192.png","icon-512.png","icon-maskable.png","icon.svg","index.html","manifest.webmanifest"];
+const CACHE=PREFIX+'2a785b016b62d796';
+const ASSETS=["THIRD_PARTY_NOTICES.txt","assets/calendar-worker-CLzZnQXk.js","assets/index-CT6woi2w.js","assets/index-HX1KnHej.css","assets/web-BbzhXRHo.js","assets/web-C7nRR0H2.js","assets/web-CwQzygW9.js","assets/web-HsB9lQ1W.js","icon-192.png","icon-512.png","icon-maskable.png","icon.svg","index.html","manifest.webmanifest"];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(p=>new URL(p,self.registration.scope).href)))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;event.respondWith(caches.open(CACHE).then(async cache=>{if(event.request.mode==='navigate'){return (await cache.match(new URL('index.html',self.registration.scope).href,{ignoreVary:true}))||fetch(event.request);}return (await cache.match(event.request,{ignoreVary:true}))||fetch(event.request);}));});
