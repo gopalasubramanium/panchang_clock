@@ -1,0 +1,15 @@
+Eksaar Panchang · Gopala Subramanium · https://me.sgopala.com
+Free to use, without ads, paywalls or unnecessary clutter.
+Source and license: https://github.com/gopalasubramanium/panchang_clock
+
+Offline city names, coordinates and IANA zones: GeoNames cities15000,
+https://www.geonames.org/ · https://download.geonames.org/export/dump/
+CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+Retrieved 18 September 2026. Transformed into compact JSON; original and ASCII
+names retained, other fields omitted, population used only to sort results.
+These are city centres, not street addresses; elevation defaults to sea level.
+The data is supplied without warranty. Smaller places may need manual coordinates.
+See cities-world.json for source archive SHA-256 and exact retrieval date.
+
+Astronomy Engine 2.1.19: Don Cross, MIT license.
+Other software notices are included in source licenses and native distributions.
