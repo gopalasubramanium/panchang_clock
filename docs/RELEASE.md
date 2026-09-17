@@ -1,6 +1,6 @@
 # Release and publication status
 
-Version: 2.0.0-beta.1. This is a tested development beta with explicit remaining traditional-rule and platform-validation work.
+Version: 2.0.0-beta.2. This is a tested development beta with explicit remaining traditional-rule and platform-validation work.
 
 ## Build outputs
 
@@ -19,7 +19,7 @@ The `Verify and build all platforms` GitHub workflow first runs numerical and br
 
 ## Account-dependent steps
 
-The owner confirmed no developer accounts. Apple enrollment, identity verification and membership terms require the owner's participation. Google Play enrollment also requires owner details. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
+Existing Apple Developer ID and Mac App Store signing identities were found on the owner’s Mac. No notarization Keychain profile was found under the supplied name, and this repository has no signing secrets configured. Store access, provisioning and notarization setup still need verification. Google Play and Microsoft Store account access has not been provided; enrollment and any identity, legal or payment steps require the owner’s participation. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
 
 - [Apple enrollment](https://developer.apple.com/programs/enroll/)
 - [Google testing requirements](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
@@ -50,3 +50,9 @@ Start with a transparent beta and a readable methods page. Recruit regional revi
 The web beta is published at https://gopalasubramanium.github.io/panchang_clock/ and passed the Chromium production-URL browser suite, including offline reload. The local Electron app also passed a launch/calendar/sandbox smoke check. Initial GitHub CI successfully produced Windows, Linux, macOS and iOS Simulator outputs. The Android setup step initially failed because a setup action requested the retired SDK `tools` package; it was updated to request `platform-tools` explicitly. Final build results are recorded in the delivery report.
 
 WebKit passed desktop/mobile UI, automated accessibility, calendar, export, language/RTL and offline calculations. Its automated offline reload returned a browser-internal error, so that capability is not claimed as verified in WebKit. Local Playwright Firefox could not start because of a profile-directory error; no Firefox pass is claimed. These limitations do not invalidate the successful Chromium tests, and remain explicit validation gaps.
+
+## Beta 2 signing and research
+
+The privacy and usability changes are documented in USER-RESEARCH-2026-09.md. CI prerelease publication is opt-in through the workflow’s publish_release input, depends on every platform job, identifies unsigned/test packages explicitly, and includes checksums and GitHub build attestations. The macOS local signing path uses the existing Developer ID; it must complete notarization and Gatekeeper checks before being advertised as trusted.
+
+Public metadata for store submissions: name Eksaar Panchang; bundle/application ID com.eksaar.panchang; privacy URL https://panchang.eksaar.com/privacy.html; support URL https://panchang.eksaar.com/support.html; publisher Gopala Subramanium. Screenshots must match the final build and each store’s required dimensions. Declare optional location/notifications and no app-operated collection accurately; account-specific disclosures must be reviewed during submission.
