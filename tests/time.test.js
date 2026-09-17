@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {fromLocal,dateKey,dayBounds,formatTime,offsetMinutes,validDate} from '../src/time.js';
+test('zero longitude and UTC are valid',()=>assert.equal(fromLocal('2026-01-01','00:00','UTC').toISOString(),'2026-01-01T00:00:00.000Z'));
+test('quarter-hour time zones round trip',()=>assert.equal(fromLocal('2026-01-01','12:00','Asia/Kathmandu').toISOString(),'2026-01-01T06:15:00.000Z'));
+test('New York offsets follow date, not device zone',()=>{assert.equal(offsetMinutes('2026-01-01T12:00Z','America/New_York'),-300);assert.equal(offsetMinutes('2026-07-01T12:00Z','America/New_York'),-240);});
+test('spring DST day has 23 hours and missing times are rejected',()=>{const {start,end}=dayBounds('2026-03-08','America/New_York');assert.equal((end-start)/3600000,23);assert.throws(()=>fromLocal('2026-03-08','02:30','America/New_York'),/does not exist/);});
+test('fall DST day has 25 hours and repeated time supports explicit choice',()=>{const {start,end}=dayBounds('2026-11-01','America/New_York');assert.equal((end-start)/3600000,25);const earlier=fromLocal('2026-11-01','01:30','America/New_York','earlier');const later=fromLocal('2026-11-01','01:30','America/New_York','later');assert.equal(later-earlier,3600000);});
+test('Sydney DST is southern hemisphere',()=>{assert.equal(offsetMinutes('2026-01-01T12:00Z','Australia/Sydney'),660);assert.equal(offsetMinutes('2026-07-01T12:00Z','Australia/Sydney'),600);});
+test('invalid civil dates, zones, and times are rejected',()=>{for(const d of ['2026-02-29','2026-04-31','2026-99-99','1890-01-01'])assert.throws(()=>validDate(d));assert.throws(()=>fromLocal('2026-01-01','24:30','UTC'));assert.throws(()=>fromLocal('2026-01-01','12:00','Not/AZone'));});
+test('after-midnight display names the actual local date',()=>{assert.match(formatTime('2026-09-17T21:00Z','Asia/Kolkata','2026-09-17'),/2026-09-18/);assert.equal(dateKey('2026-09-17T23:00Z','Pacific/Auckland'),'2026-09-18');});
+test('legacy fractional UTC offsets are explicit fixed zones',()=>{assert.equal(fromLocal('2026-09-17','12:00','UTC+05:30').toISOString(),'2026-09-17T06:30:00.000Z');assert.equal(formatTime('2026-09-17T06:30Z','UTC+05:30','2026-09-17'),'12:00');});

@@ -1,144 +1,73 @@
-# Vedic Panchangam Dashboard
+# Eksaar Panchang 2.0 — public beta
 
-A high-precision, browser-native Panchangam for the global Hindu diaspora — no app to install, no account to create, no server ever touches your data. Open the page, and the sky is calculated for your city, in your language, right now.
+An offline-first Panchang for worldwide locations: daily and monthly views, 12-language traditional names, explicit calculation conventions, and shared web/desktop/mobile source.
 
-Live at **[panchang.eksaar.com](https://panchang.eksaar.com)**
+**This is a beta, not a claim to be the most accurate or comprehensive Panchang.** Astronomical calculations have independent numerical comparisons. Festival rules are previews, and several regional/sectarian observance systems still require expert validation. See [research and scope](docs/RESEARCH.md), [accuracy](docs/ACCURACY.md), and [release status](docs/RELEASE.md).
 
----
+## Run
 
-## What is a Panchangam?
+Node 24+ and pnpm 11.19.0:
 
-The Panchangam (Sanskrit: *pañcāṅgam*, "five limbs") is the Vedic almanac that has governed auspicious timing for millennia. Every ritual, every journey, every new beginning is rooted in the same five elements:
-
-| Anga | Meaning | What it tells you |
-|---|---|---|
-| **Tithi** | Lunar day (1–30) | Phase of the Moon relative to the Sun; governs daily rites |
-| **Nakshatra** | Lunar mansion (1–27) | Which star cluster the Moon occupies; guides muhurta selection |
-| **Yoga** | Sun–Moon combination (1–27) | Energetic quality of the day; auspicious or to be avoided |
-| **Karana** | Half-tithi (1–11) | Half-day quality used for precise muhurta |
-| **Vaara** | Weekday | Planetary ruler of the day |
-
-This dashboard computes all five — live, for any date, any city on Earth.
-
----
-
-## Why this Panchangam is Different
-
-Most digital Panchangams copy data from printed tables computed years in advance. This one uses **Drik Ganita** (Thirukanitha) — the same modern astronomical approach used by India's National Calendar Reform Committee — computing planetary positions from first principles every time you load it.
-
-**What that means in practice:**
-
-- Tithi and Nakshatra end-times are found by a bisection search on the actual Moon–Sun geometry, not read off a table
-- Rahu Kaalam, Yamagandam, and Gulika Kaalam are sliced from your *actual* sunrise-to-sunset span for today at your exact coordinates — not from a fixed 6 AM baseline
-- Abhijit Muhurta is the true local solar noon window, not an approximation
-- Amrit Kaalam follows the Vedic Moon–weekday rule applied to the dynamically computed day/night length
-
-Printed calendars often use the ancient **Vakya system** with fixed polynomial tables. If you notice small differences in end-times, that is why — and Drik Ganita is the astronomically correct result.
-
----
-
-## Features
-
-### Astronomical Calculations
-- **All five Pancha Anga** with end-times and the next anga queued up
-- **Vikram Samvat** year, **Masa** (lunar month), **Paksha** (fortnight), **Ritu** (season)
-- **Sunrise, Sunset, and Local Noon** using the NOAA −0.833° atmospheric refraction correction
-- **Moon phase** visualized as a live SVG crescent/disk
-- **Ayanamsa**: Lahiri / Chitra Paksha — the standard adopted by the Indian Government in 1957
-
-### Timings
-- **Rahu Kaalam · Yamagandam · Gulika Kaalam** — the three inauspicious periods, computed from exact daily sunrise/sunset
-- **Abhijit Muhurta** — the universally auspicious midday window
-- **Brahma Muhurta** — the sacred pre-dawn period for meditation
-- **Godhuli Lagna** — the auspicious dusk window
-- **Pratah Sandhya · Sayam Sandhya** — dawn and dusk twilight windows
-- **Amrit Kaalam** — the lunar nectar period computed from day/night horas
-- **Graha Hora** — all 24 planetary hours for day and night, with the ruling planet for each
-
-### Kundli Chart
-North-Indian style birth chart (SVG) showing all nine Grahas — Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, and Ketu — with their Rashi and degree positions. Uses the Lahiri Ayanamsa for sidereal placement.
-
-### Festival Recognition
-The dashboard automatically detects and announces 27+ major Hindu festivals, covering both solar (fixed Gregorian date) and lunar (Tithi + Masa) events: Diwali, Holi, Janmashtami, Navratri, Ganesh Chaturthi, Dussehra, Rama Navami, Maha Shivaratri, Ugadi, Baisakhi, Raksha Bandhan, Makar Sankranti, and more.
-
-### Time Quality Indicator
-A real-time at-a-glance indicator — green for auspicious periods, amber for neutral, red for inauspicious — tells you the muhurta quality of the current moment without having to read the full timing table.
-
----
-
-## Supported Languages
-
-All display text — Tithi names, Nakshatra names, Yoga names, Weekdays, Months, planet names, UI labels — is rendered in the selected language. Numeral glyphs are localized too.
-
-| Language | Script |
-|---|---|
-| English | Latin |
-| हिन्दी Hindi | Devanagari |
-| বাংলা Bengali | Bengali |
-| मराठी Marathi | Devanagari |
-| తెలుగు Telugu | Telugu |
-| தமிழ் Tamil | Tamil |
-| ગુજરાતી Gujarati | Gujarati |
-| ಕನ್ನಡ Kannada | Kannada |
-| മലയാളം Malayalam | Malayalam |
-| ਪੰਜਾਬੀ Punjabi | Gurmukhi |
-| ଓଡ଼ିଆ Odia | Odia |
-| اردو Urdu | Nastaliq (RTL) |
-
----
-
-## Cities & Custom Coordinates
-
-49 cities are pre-configured across India, Nepal, Sri Lanka, Southeast Asia, the Middle East, UK, USA, Canada, Australia, Fiji, Mauritius, Trinidad, and South Africa. Or enter any latitude, longitude, and UTC offset manually.
-
----
-
-## Sharing & Export
-
-- **Share via WhatsApp** — sends a localized summary (in the selected language) with today's Tithi, Nakshatra, Yoga, Rahu Kaalam, and Abhijit timings
-- **Share as Image** — generates a shareable image card of today's Panchang
-- **Add to Calendar** — downloads an `.ics` file for Abhijit Muhurta or Amrit Kaalam that opens in Google Calendar, Apple Calendar, or Outlook
-- **Download as PDF** — exports a full multi-page Panchangam report including all timings, Graha Hora table, and Kundli chart (uses `html2pdf.js` loaded from CDN)
-
----
-
-## JSON API
-
-Append `?api=true` to any URL to receive a machine-readable JSON response instead of the UI. Useful for integrating Panchangam data into other applications.
-
-```
-https://panchang.eksaar.com/?api=true&date=15042026&time=06:00:00&lat=13.0827&lon=80.2707&tz=5.5
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-Parameters: `date` (DDMMYYYY or YYYY-MM-DD), `time` (HH:MM:SS), `lat`, `lon`, `tz` (UTC offset).
+```sh
+pnpm test
+pnpm build
+pnpm preview
+# In another terminal; first install a Playwright browser on Linux:
+pnpm exec playwright install chromium
+pnpm test:browser
+```
 
----
+On macOS browser tests use installed Google Chrome. Set `CHROME_PATH` to override. `TEST_URL` selects another preview URL. Open `dist/` through an HTTP server; the modular app is not intended for `file://` loading.
 
-## Scientific Foundation
+## What changed
 
-| Element | Method | Accuracy |
-|---|---|---|
-| Solar longitude | VSOP87-derived series | ~1–2 arcminutes |
-| Lunar longitude | 22-term ELP-2000/82 | ~5–10 arcminutes |
-| Planetary positions | Single-term Meeus approximations | Lower (visual reference only) |
-| Ayanamsa | Lahiri / Chitra Paksha | Standard IAU-adopted value |
-| Sunrise/Sunset | Iterative solar hour-angle with −0.833° refraction | < 1 minute |
-| Tithi / Nakshatra end | Bisection search on live Moon–Sun geometry | Accurate to the computation step |
+- Astronomy Engine 2.1.19 replaces truncated solar/lunar and single-term planetary approximations.
+- IANA time zones include historical offsets and DST. Ambiguous times have an explicit earlier/later setting; nonexistent times are rejected. Coordinates of zero remain valid.
+- Tithi, Nakshatra, Yoga, and Karana have dated start/end timestamps and sunrise-day transitions. Pre-sunrise Vaara belongs to the preceding sunrise day.
+- Amanta and Purnimanta month names, intercalary-month detection, a rare skipped-month warning, Chaitradi Vikram/lunisolar Shaka years, and Tamil solar-month references.
+- Geometric-centre and observed-upper-limb sunrise settings; moonrise/moonset; no fabricated polar events.
+- Day/night Choghadiya with Rahu/Yama/Gulika overlap notes and 24 horas ending at the next actual sunrise. Wednesday Abhijit is omitted under the stated convention.
+- Preview festival rules use named local observation windows and astronomical Sankranti. The previous incorrect Amrit Kalam label is removed; Amrita Choghadiya is named distinctly.
+- Actual ascendant/whole-sign reference chart, mean lunar nodes, lunar phases and eclipse lookup.
+- Worker-based monthly calendar, personal lunar dates and JSON backup/restore.
+- Offline PWA, light/dark modes, Urdu RTL, mobile layouts and accessible controls.
+- Share text/link/image, UTC calendar exports with reminders, JSON export, and browser print/PDF without a CDN.
+- Electron desktop and Capacitor Android/iOS projects; optional native sharing, location and notifications.
 
-All calculations run entirely in your browser. No data ever leaves your device.
+Traditional labels are carried over from the original twelve-language dictionary. New explanations remain English; full translation review is pending. The original implementation is preserved in `legacy/index-v1.html` and Git history, excluded from the production build.
 
----
+## Calculation interface
 
-## Usage
+```js
+import { daily } from './src/engine.js';
+const result = daily('2026-09-17',
+  {name:'Singapore', lat:1.3521, lon:103.8198, zone:'Asia/Singapore', elevation:0},
+  {convention:'amanta', sunriseMode:'geometric'},
+  '2026-09-17T04:00:00Z');
+```
 
-No installation required. Open `index.html` in any modern browser — or visit [panchang.eksaar.com](https://panchang.eksaar.com).
+All event timestamps are UTC ISO 8601 instants. Render them in the result's location zone. `?api=true&date=2026-09-17&time=12:00&lat=0&lon=0&zone=UTC` displays browser-generated JSON. It is **not an HTTP JSON API**. Legacy DDMMYYYY and numeric `tz` links are accepted as fixed-offset zones; use `zone` for DST.
 
-To compute for a past or future date, set the Date and Time fields and press **Apply**. To return to live mode, press **Now ↻**.
+## Platform builds
 
-To change location, select a city from the dropdown or choose **Custom…** and enter coordinates.
+```sh
+pnpm build
+node node_modules/electron/install.js
+pnpm pack:desktop
+pnpm exec cap sync
+pnpm exec cap open android
+pnpm exec cap open ios
+```
 
----
+Native signing identities and developer accounts are not included. CI builds unsigned desktop packages, a debug Android APK/unsigned Android App Bundle, and an iOS Simulator app. A Simulator app cannot be installed on an iPhone. See `docs/RELEASE.md` before distribution.
 
-## License
+## Privacy and licensing
 
-Open source. See [LICENSE](LICENSE).
+No account, analytics, advertising or remote calculation service. The app stores settings and personal dates locally. Location access is optional. Sharing a link discloses the chosen coordinates. Web hosts and OS location/share services have their own data handling. Android automatic cloud backup is disabled.
+
+MIT, including the original application. Astronomy Engine is MIT. Dependency notices are in `public/THIRD_PARTY_NOTICES.txt`. Swiss Ephemeris/PySwissEph is used only as a separately installed validation tool; it is not linked into or shipped with this application.

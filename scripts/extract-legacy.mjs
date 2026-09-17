@@ -1,0 +1,14 @@
+import {readFileSync, writeFileSync} from 'node:fs';
+import vm from 'node:vm';
+const html=readFileSync('legacy/index-v1.html','utf8');
+const data=vm.runInNewContext(html.slice(html.indexOf('const L={'),html.indexOf('const LOCALIZATION_PATCHES='))+';L',{}, {timeout:1000});
+const keys=['tithis','nakshatras','masa','weekdays','months','planets','yogas','karanas','rashis','paksha','rituNames'];
+const labels=['mainTitle','lblDate','lblTime','lblLocation','applyBtn','nowBtn','lblSunrise','lblSunset','angaVaara','angaTithi','angaNakshatra','angaYoga','angaKarana','ttHora','tlRahu','tlYama','tlGulika','tlAbhijit','tlBrahma','lblMasa','upto','next'];
+for(const lang of Object.keys(data)) data[lang]=Object.fromEntries([...keys,...labels].map(k=>[k,data[lang][k]||data.en[k]]));
+writeFileSync('src/locales.json',JSON.stringify(data,null,2)+'\n');
+const groups=[...html.matchAll(/<optgroup label="([^"]+)">([\s\S]*?)<\/optgroup>/g)];
+const zones={'India':'Asia/Kolkata','United Kingdom':'Europe/London','Nepal & Sri Lanka':'Asia/Kathmandu','Southeast Asia':'Asia/Singapore','Middle East':'Asia/Dubai','United States':'America/New_York','Canada':'America/Toronto','Australia & Pacific':'Australia/Sydney','Africa & Caribbean':'Indian/Mauritius'};
+const overrides={'Colombo':'Asia/Colombo','Jaffna':'Asia/Colombo','Kuala Lumpur':'Asia/Kuala_Lumpur','Bali':'Asia/Makassar','Muscat':'Asia/Muscat','Doha':'Asia/Qatar','Bahrain':'Asia/Bahrain','Chicago':'America/Chicago','Houston':'America/Chicago','San Jose CA':'America/Los_Angeles','Vancouver':'America/Vancouver','Melbourne':'Australia/Melbourne','Suva (Fiji)':'Pacific/Fiji','Port of Spain':'America/Port_of_Spain','Durban':'Africa/Johannesburg'};
+const cities=groups.flatMap(([,group,s])=>[...s.matchAll(/<option value="([^"]+)">([^<]+)<\/option>/g)].map(([,value,name])=>{const [lat,lon]=value.split(',').map(Number);return{name,lat,lon,zone:overrides[name]||zones[group]};})).filter(c=>Number.isFinite(c.lat));
+cities.push({name:'Tromsø',lat:69.6492,lon:18.9553,zone:'Europe/Oslo'},{name:'Auckland',lat:-36.8485,lon:174.7633,zone:'Pacific/Auckland'});
+writeFileSync('src/cities.json',JSON.stringify(cities,null,2)+'\n');

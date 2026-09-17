@@ -1,0 +1,308 @@
+[
+  {
+    "name": "New Delhi",
+    "lat": 28.6139,
+    "lon": 77.209,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Noida / NCR",
+    "lat": 28.5355,
+    "lon": 77.391,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Mumbai",
+    "lat": 19.076,
+    "lon": 72.8777,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Chennai",
+    "lat": 13.0827,
+    "lon": 80.2707,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Bengaluru",
+    "lat": 12.9716,
+    "lon": 77.5946,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Kolkata",
+    "lat": 22.5726,
+    "lon": 88.3639,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Hyderabad",
+    "lat": 17.385,
+    "lon": 78.4867,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Ahmedabad",
+    "lat": 23.0225,
+    "lon": 72.5714,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Pune",
+    "lat": 18.5204,
+    "lon": 73.8567,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Jaipur",
+    "lat": 26.9124,
+    "lon": 75.7873,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Varanasi",
+    "lat": 25.3176,
+    "lon": 82.9739,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Lucknow",
+    "lat": 26.8467,
+    "lon": 80.9462,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Kochi",
+    "lat": 9.9312,
+    "lon": 76.2673,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Coimbatore",
+    "lat": 11.0168,
+    "lon": 76.9558,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Chandigarh",
+    "lat": 30.7333,
+    "lon": 76.7794,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Patna",
+    "lat": 25.6093,
+    "lon": 85.1376,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Bhubaneswar",
+    "lat": 20.2961,
+    "lon": 85.8245,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Guwahati",
+    "lat": 26.1445,
+    "lon": 91.7362,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Ujjain",
+    "lat": 23.1765,
+    "lon": 75.7885,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Tirupati",
+    "lat": 13.6288,
+    "lon": 79.4192,
+    "zone": "Asia/Kolkata"
+  },
+  {
+    "name": "Kathmandu",
+    "lat": 27.7172,
+    "lon": 85.324,
+    "zone": "Asia/Kathmandu"
+  },
+  {
+    "name": "Janakpur",
+    "lat": 26.7271,
+    "lon": 85.9407,
+    "zone": "Asia/Kathmandu"
+  },
+  {
+    "name": "Colombo",
+    "lat": 6.9271,
+    "lon": 79.8612,
+    "zone": "Asia/Colombo"
+  },
+  {
+    "name": "Jaffna",
+    "lat": 9.6615,
+    "lon": 80.0255,
+    "zone": "Asia/Colombo"
+  },
+  {
+    "name": "Singapore",
+    "lat": 1.3521,
+    "lon": 103.8198,
+    "zone": "Asia/Singapore"
+  },
+  {
+    "name": "Kuala Lumpur",
+    "lat": 3.139,
+    "lon": 101.6869,
+    "zone": "Asia/Kuala_Lumpur"
+  },
+  {
+    "name": "Bali",
+    "lat": -8.3405,
+    "lon": 115.092,
+    "zone": "Asia/Makassar"
+  },
+  {
+    "name": "Dubai",
+    "lat": 25.2048,
+    "lon": 55.2708,
+    "zone": "Asia/Dubai"
+  },
+  {
+    "name": "Muscat",
+    "lat": 23.588,
+    "lon": 58.3829,
+    "zone": "Asia/Muscat"
+  },
+  {
+    "name": "Doha",
+    "lat": 25.2854,
+    "lon": 51.531,
+    "zone": "Asia/Qatar"
+  },
+  {
+    "name": "Bahrain",
+    "lat": 26.0667,
+    "lon": 50.5577,
+    "zone": "Asia/Bahrain"
+  },
+  {
+    "name": "London",
+    "lat": 51.5074,
+    "lon": -0.1278,
+    "zone": "Europe/London"
+  },
+  {
+    "name": "Leicester",
+    "lat": 52.6369,
+    "lon": -1.1398,
+    "zone": "Europe/London"
+  },
+  {
+    "name": "Birmingham",
+    "lat": 52.4862,
+    "lon": -1.8904,
+    "zone": "Europe/London"
+  },
+  {
+    "name": "New York",
+    "lat": 40.7128,
+    "lon": -74.006,
+    "zone": "America/New_York"
+  },
+  {
+    "name": "Edison NJ",
+    "lat": 40.5187,
+    "lon": -74.4121,
+    "zone": "America/New_York"
+  },
+  {
+    "name": "Chicago",
+    "lat": 41.8781,
+    "lon": -87.6298,
+    "zone": "America/Chicago"
+  },
+  {
+    "name": "Houston",
+    "lat": 29.7604,
+    "lon": -95.3698,
+    "zone": "America/Chicago"
+  },
+  {
+    "name": "San Jose CA",
+    "lat": 37.3382,
+    "lon": -121.8863,
+    "zone": "America/Los_Angeles"
+  },
+  {
+    "name": "Atlanta",
+    "lat": 33.749,
+    "lon": -84.388,
+    "zone": "America/New_York"
+  },
+  {
+    "name": "Toronto",
+    "lat": 43.6532,
+    "lon": -79.3832,
+    "zone": "America/Toronto"
+  },
+  {
+    "name": "Vancouver",
+    "lat": 49.2827,
+    "lon": -123.1207,
+    "zone": "America/Vancouver"
+  },
+  {
+    "name": "Brampton",
+    "lat": 43.7315,
+    "lon": -79.7624,
+    "zone": "America/Toronto"
+  },
+  {
+    "name": "Sydney",
+    "lat": -33.8688,
+    "lon": 151.2093,
+    "zone": "Australia/Sydney"
+  },
+  {
+    "name": "Melbourne",
+    "lat": -37.8136,
+    "lon": 144.9631,
+    "zone": "Australia/Melbourne"
+  },
+  {
+    "name": "Suva (Fiji)",
+    "lat": -18.1416,
+    "lon": 178.4419,
+    "zone": "Pacific/Fiji"
+  },
+  {
+    "name": "Port Louis",
+    "lat": -20.1609,
+    "lon": 57.5012,
+    "zone": "Indian/Mauritius"
+  },
+  {
+    "name": "Port of Spain",
+    "lat": 10.6918,
+    "lon": -61.2225,
+    "zone": "America/Port_of_Spain"
+  },
+  {
+    "name": "Durban",
+    "lat": -29.8587,
+    "lon": 31.0218,
+    "zone": "Africa/Johannesburg"
+  },
+  {
+    "name": "Tromsø",
+    "lat": 69.6492,
+    "lon": 18.9553,
+    "zone": "Europe/Oslo"
+  },
+  {
+    "name": "Auckland",
+    "lat": -36.8485,
+    "lon": 174.7633,
+    "zone": "Pacific/Auckland"
+  }
+]
