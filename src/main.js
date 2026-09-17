@@ -162,9 +162,9 @@ async function init(){
   const pre=document.createElement('pre');pre.id='api-output';pre.textContent=JSON.stringify(queryError||!data?{error:queryError||$('error').textContent}:data,null,2);document.body.replaceChildren(pre);return;
  }
  updateClock();setInterval(updateClock,1000);setInterval(()=>{if(live&&!document.hidden){setNowFields();if(activeTab!=='calendar')refresh();}},60000);
- if('serviceWorker'in navigator&&!isNative&&import.meta.env.PROD){
+ if('serviceWorker'in navigator&&!isNative&&location.protocol!=='panchang:'&&import.meta.env.PROD){
   try{await navigator.serviceWorker.register('./sw.js');await navigator.serviceWorker.ready;$('connection').textContent=navigator.onLine?'Offline ready':'Offline';}catch{$('connection').textContent='Online only';}
- }else $('connection').textContent=isNative?'On-device':'Development preview';
+ }else $('connection').textContent=(isNative||location.protocol==='panchang:')?'On-device':'Development preview';
  window.addEventListener('offline',()=>{$('connection').textContent='Offline';});window.addEventListener('online',()=>{$('connection').textContent=navigator.serviceWorker?.controller?'Offline ready':'Online';});
 }
 init();

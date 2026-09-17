@@ -44,3 +44,9 @@ Beta limitations: festival dates are previews; advanced regional and fasting rul
 ## Growth plan
 
 Start with a transparent beta and a readable methods page. Recruit regional reviewers and an opt-in group of diaspora families. Use their mismatch reports to improve rule packs before promotion. Shareable cards and persistent date/location links support organic discovery. No claim of guaranteed virality, no purchased reviews, no unsolicited bulk outreach.
+
+## Verified during this implementation
+
+The web beta is published at https://gopalasubramanium.github.io/panchang_clock/ and passed the Chromium production-URL browser suite, including offline reload. The local Electron app also passed a launch/calendar/sandbox smoke check. Initial GitHub CI successfully produced Windows, Linux, macOS and iOS Simulator outputs. The Android setup step initially failed because a setup action requested the retired SDK `tools` package; it was updated to request `platform-tools` explicitly. Final build results are recorded in the delivery report.
+
+WebKit passed desktop/mobile UI, automated accessibility, calendar, export, language/RTL and offline calculations. Its automated offline reload returned a browser-internal error, so that capability is not claimed as verified in WebKit. Local Playwright Firefox could not start because of a profile-directory error; no Firefox pass is claimed. These limitations do not invalidate the successful Chromium tests, and remain explicit validation gaps.
