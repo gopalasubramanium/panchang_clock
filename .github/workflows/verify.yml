@@ -142,6 +142,6 @@ jobs:
             echo "Release already exists; refusing to replace public binaries."
             exit 1
           fi
-          gh release create "$TAG" --target "$GITHUB_SHA" --draft --prerelease --title "Eksaar Panchang $TAG" --notes-file docs/RELEASE-NOTES-beta2.md
+          gh release create "$TAG" --target "$GITHUB_SHA" --draft --prerelease --title "Eksaar Panchang $TAG" --notes-file docs/RELEASE-NOTES-beta3.md
           gh release upload "$TAG" public-release/*
           gh release edit "$TAG" --draft=false
