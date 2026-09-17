@@ -1,6 +1,6 @@
 const PREFIX='eksaar-panchang-'+btoa(self.registration.scope)+'-';
-const CACHE=PREFIX+'820c606d3dc8013e';
-const ASSETS=["THIRD_PARTY_NOTICES.txt","assets/calendar-worker-CLzZnQXk.js","assets/index-CrSBMvSE.css","assets/index-s2LGUM8Z.js","assets/web-BQBqJU6S.js","assets/web-Cl3GX-jR.js","assets/web-D4bDodg3.js","assets/web-DmIDhsLU.js","cities-world.json","credits.txt","icon-192.png","icon-512.png","icon-maskable.png","icon.svg","index.html","information.css","manifest.webmanifest","privacy.html","support.html"];
+const CACHE=PREFIX+'8433585b7eeafef3';
+const ASSETS=["THIRD_PARTY_NOTICES.txt","assets/calendar-worker-CLzZnQXk.js","assets/index-B0q8u-Mn.js","assets/index-CrSBMvSE.css","assets/web-Bm8jUBPO.js","assets/web-CCce_qeE.js","assets/web-CataYSP-.js","assets/web-Cm77CZNy.js","cities-world.json","credits.txt","icon-192.png","icon-512.png","icon-maskable.png","icon.svg","index.html","information.css","manifest.webmanifest","privacy.html","support.html"];
 // A cached HTML response may have followed a host's /index.html redirect.
 // Reconstruct it so a navigation with redirect mode 'manual' can use it safely.
 const usable=response=>response?.redirected?new Response(response.body,{status:response.status,statusText:response.statusText,headers:response.headers}):response;
