@@ -42,3 +42,7 @@ Searches stop when a bracket is under 0.5 seconds. Reporting that search toleran
 The rule engine is a preview, not a general Dharmashastra engine. It applies named day windows and chooses maximum overlap, later day on equal overlap. That is not universally correct for all festivals/traditions. Diwali 2026 and Rama Navami 2026 have date regressions for Delhi, not an exhaustive festival certification. Skipped/repeated tithis, Rohini/Ashtami precedence, Smarta/Vaishnava rules, fasting/Parana and regional differences need further work.
 
 All reference metadata, tests and preview status must remain visible as the product evolves. Do not remove qualifiers merely to market the app as “most accurate”.
+
+Measured 2026 endpoint differences in this sample were at most 8.60 seconds for Tithi/Karana, 6.84 for Nakshatra and 7.06 for Yoga. The geometric solar-event sample differed by at most 0.16 seconds. These very small sample maxima do not supersede the broader error limits or atmospheric/convention qualifications. See `event-validation.json`.
+
+Sixteen independent ascendant checks span four locations and four UTC times, with a 0.03° threshold. The broad location sweep exercises all 51 presets through twelve months (612 calculated days), plus both geographic poles. The local numerical suite currently has 349 passing tests.

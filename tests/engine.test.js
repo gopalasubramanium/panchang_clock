@@ -44,3 +44,4 @@ test('Vaara before sunrise belongs to previous sunrise day',()=>{assert.equal(da
 const eventRef=JSON.parse(readFileSync(new URL('./events-reference.json',import.meta.url)));
 for(const r of eventRef.transitions)test(`Independent transition ${r.date} ${r.kind}`,()=>{const actual=transition(r.date,r.kind);assert.equal(indices(r.date)[r.kind],r.index);assert.ok(Math.abs(actual-new Date(r.end))<150000,`${actual.toISOString()} vs ${r.end}`);});
 for(const r of eventRef.solar)test(`Independent geometric solar events ${r.location.name} ${r.date}`,()=>{const a=sunDay(r.date,r.location,'geometric');for(const k of ['sunrise','sunset'])assert.ok(Math.abs(new Date(a[k])-new Date(r[k]))<60000,`${k}: ${a[k]} vs ${r[k]}`);});
+for(const r of JSON.parse(readFileSync(new URL('./ascendant-reference.json',import.meta.url))))test(`Independent ascendant ${r.date} ${r.lat}`,()=>{const p=planetsAt(r.date,r);assert.ok(Math.abs(norm(p.ascendant-r.ascendant+180)-180)<.03);});
