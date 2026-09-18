@@ -5,12 +5,14 @@ from pathlib import Path
 sdk=Path(os.environ['ANDROID_HOME'])
 adb=str(sdk/'platform-tools/adb')
 out=Path('store-release/android-screenshots');out.mkdir(parents=True,exist_ok=True)
+avd_home=Path('android/.store-avd').resolve();avd_home.mkdir(parents=True,exist_ok=True)
+emulator_env={**os.environ,'ANDROID_AVD_HOME':str(avd_home)}
 def run(*args,timeout=60):
     return subprocess.check_output(args,text=True,timeout=timeout).strip()
 
-subprocess.run(['avdmanager','create','avd','--force','--name','EksaarStore','--package','system-images;android-36;google_apis;x86_64'],input='no\n',text=True,check=True,timeout=60)
+subprocess.run(['avdmanager','create','avd','--force','--name','EksaarStore','--path',str(avd_home/'EksaarStore.avd'),'--package','system-images;android-36;google_apis;x86_64'],input='no\n',text=True,check=True,timeout=60,env=emulator_env)
 with (out/'emulator.log').open('w') as log:
-    emulator=subprocess.Popen([str(sdk/'emulator/emulator'),'-avd','EksaarStore','-no-window','-no-audio','-no-boot-anim','-no-snapshot','-gpu','software','-accel','on'],stdout=log,stderr=subprocess.STDOUT)
+    emulator=subprocess.Popen([str(sdk/'emulator/emulator'),'-avd','EksaarStore','-no-window','-no-audio','-no-boot-anim','-no-snapshot','-gpu','software','-accel','on'],stdout=log,stderr=subprocess.STDOUT,env=emulator_env)
     try:
         for _ in range(90):
             if emulator.poll() is not None:raise RuntimeError('Emulator exited before connecting.')
