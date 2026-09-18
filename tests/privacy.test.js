@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
+import path from 'node:path';
 import {preferences,personalDates} from '../src/preferences.js';
 import {calculationLink,linkParameters} from '../src/sharing.js';
 import {searchCities} from '../src/city-search.js';
@@ -26,7 +27,7 @@ test('desktop URL boundary denies scripts, deceptive hosts and path escapes',()=
  for(const url of ['javascript:alert(1)','file:///etc/passwd','https://github.com/attacker/project','https://github.com.evil.test/','https://user@me.sgopala.com/'])assert.equal(isExternalURL(url),false);
  assert.equal(isExternalURL('https://github.com/gopalasubramanium/panchang_clock/issues'),true);
  for(const url of ['panchang://app/%2e%2e%2fsecret.json','panchang://app/a%5c..%5csecret.json','panchang://app/%00.json','panchang://app/.env','panchang://other/index.html'])assert.equal(assetPath('/safe/dist',url),null);
- assert.equal(assetPath('/safe/dist','panchang://app/'),'/safe/dist/index.html');
+ assert.equal(assetPath('/safe/dist','panchang://app/'),path.resolve('/safe/dist/index.html'));
 });
 test('city search is accent-insensitive and bounded',()=>{
  const rows=[['São Paulo','Sao Paulo','BR',-23.5,-46.6,'America/Sao_Paulo'],['London','London','GB',51.5,0,'Europe/London']];
