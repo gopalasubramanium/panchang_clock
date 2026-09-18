@@ -1,0 +1,68 @@
+name: Prepare store packages and screenshots
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Store preparation task
+        required: true
+        type: choice
+        options: [windows, ios-screenshots]
+      windows_identity:
+        description: Exact Package/Identity/Name from Microsoft Partner Center
+        type: string
+      windows_publisher:
+        description: Exact Package/Identity/Publisher from Microsoft Partner Center
+        type: string
+      windows_publisher_name:
+        description: Exact publisher display name from Microsoft Partner Center
+        type: string
+permissions:
+  contents: read
+jobs:
+  windows:
+    if: inputs.target == 'windows'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level low
+      - run: pnpm test
+      - run: node node_modules/electron/install.js
+      - run: pnpm build
+      - run: pnpm exec electron-builder --config build/windows-store.cjs --win --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+          WINDOWS_STORE_IDENTITY: ${{ inputs.windows_identity }}
+          WINDOWS_STORE_PUBLISHER: ${{ inputs.windows_publisher }}
+          WINDOWS_STORE_PUBLISHER_NAME: ${{ inputs.windows_publisher_name }}
+      - name: Record package checksums
+        shell: pwsh
+        run: Get-ChildItem store-release/windows/*.appx | Get-FileHash -Algorithm SHA256 | Select-Object Path,Hash | ConvertTo-Json | Set-Content store-release/windows/SHA256.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: microsoft-store-upload-packages
+          path: |
+            store-release/windows/*.appx
+            store-release/windows/SHA256.json
+  ios-screenshots:
+    if: inputs.target == 'ios-screenshots'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec cap sync ios
+      - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
+      - run: python3 scripts/ios-store-screenshots.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ios-store-screenshots
+          path: store-release/ios-screenshots/
