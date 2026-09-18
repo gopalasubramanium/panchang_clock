@@ -1,5 +1,5 @@
 """Capture the real Android app on fresh virtual phone/tablet displays in CI."""
-import json, os, subprocess, time
+import json, os, re, subprocess, time
 from pathlib import Path
 
 sdk=Path(os.environ['ANDROID_HOME'])
@@ -43,6 +43,14 @@ with (out/'emulator.log').open('w') as log:
                     time.sleep(5)
                     file.write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=30))
                     check=json.loads(run('node','scripts/check-native-capture.mjs',str(file)))
+                    if not check['hasAppContent']:
+                        # Light content panels have no large green card. Confirm
+                        # actual app text in Android's accessibility hierarchy.
+                        run(adb,'shell','uiautomator','dump','/sdcard/eksaar-capture.xml')
+                        hierarchy=run(adb,'shell','cat','/sdcard/eksaar-capture.xml')
+                        (out/f'{label}-{frame}-accessibility.xml').write_text(hierarchy)
+                        check['hasAccessibleAppText']=bool(re.search(r'Panchang|Paksha|Muhurta|NAKSHATRA|Sunrise',hierarchy))
+                        check['hasAppContent']=check['hasAccessibleAppText']
                     if check['hasAppContent']:break
                     # A loaded header can still occupy a short landscape view.
                     if attempt==2:
