@@ -36,6 +36,16 @@ try{
  await page.getByRole('button',{name:'Share Panchang',exact:true}).click();assert.equal(await page.locator('#share-options').isVisible(),true);assert.match(await page.locator('#share-options').innerText(),/coordinates/);await page.locator('#share-close').click();
  await page.getByRole('button',{name:'Report a difference',exact:true}).click();assert.doesNotMatch(await page.locator('#report-text').inputValue(),/-23\.|-46\.|Family birthday/);await page.locator('#report-close').click();
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:'test-results/mobile.png',fullPage:true});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ for(const width of [320,390,1024]){
+  await page.setViewportSize({width,height:844});
+  const controlBoxes=await Promise.all(['#city','#date','#time'].map(selector=>page.locator(selector).boundingBox()));
+  for(const [index,selector] of ['#city','#date','#time'].entries()){
+   const parent=await page.locator(selector).locator('..').boundingBox();const box=controlBoxes[index];
+   assert.ok(box.x>=parent.x-1&&box.x+box.width<=parent.x+parent.width+1,`${selector} must fit its column at ${width}px`);
+   assert.ok(Math.abs(box.height-controlBoxes[0].height)<1,`Control heights must match at ${width}px`);
+  }
+ }
+ await page.setViewportSize({width:390,height:844});
  axe=await new AxeBuilder({page}).analyze();results.push({check:'mobile accessibility',violations:axe.violations});assert.equal(axe.violations.length,0);
  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await context.setOffline(true);if(browserName==='chromium'){await page.reload();await page.locator('.hero h2').waitFor();}else{await page.locator('#date').fill('2026-09-24');await page.getByRole('button',{name:'Apply',exact:true}).click();}assert.match(await page.locator('.hero h2').innerText(),/Shukla|Krishna/);await page.getByRole('button',{name:'Open settings'}).click();await page.locator('#city-search').fill('London GB');await page.locator('#city-results button').first().waitFor();assert.match(await page.locator('#city-results button').first().innerText(),/London/);await page.locator('#settings-close').click();await context.setOffline(false);
  const api=await context.newPage();await api.goto(base+'/?api=true&date=2026-09-17&time=12:00&lat=0&lon=0&zone=UTC');await api.locator('#api-output').waitFor();const payload=JSON.parse(await api.locator('#api-output').innerText());assert.equal(payload.location.lat,0);assert.equal(payload.location.lon,0);

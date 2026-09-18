@@ -28,10 +28,17 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
         # runtime-specific status-bar date parsing.
         run('xcrun','simctl','install',udid,app)
         run('xcrun','simctl','launch',udid,'com.eksaar.panchang')
-        time.sleep(15)  # Allow native WebKit and the first offline calculation to render in CI.
         file=out/f'{label}-daily.png'
-        run('xcrun','simctl','io',udid,'screenshot',str(file))
-        evidence.append({'file':file.name,'device':device['name'],'source':'Actual iOS Simulator build; fresh app storage','xcode':version.strip()})
+        # Cold iPad simulators can render after the old fixed 15-second delay.
+        # Reject blank/splash captures; keep the original pixels for store upload.
+        for attempt in range(12):
+            time.sleep(10)
+            run('xcrun','simctl','io',udid,'screenshot',str(file))
+            capture=json.loads(run('node','scripts/check-native-capture.mjs',str(file)))
+            if capture['hasAppContent']:
+                break
+        assert capture['hasAppContent'], f'{label} did not render app content within 120 seconds.'
+        evidence.append({'file':file.name,'device':device['name'],'source':'Actual iOS Simulator build; fresh app storage','xcode':version.strip(),'contentCheck':capture,'renderWaitSeconds':10*(attempt+1)})
     finally:
         subprocess.run(['xcrun','simctl','shutdown',udid],check=False)
 (out/'capture-evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')
