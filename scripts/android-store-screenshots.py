@@ -32,14 +32,24 @@ with (out/'emulator.log').open('w') as log:
             run(adb,'shell','wm','density',density)
             run(adb,'shell','am','force-stop','com.eksaar.panchang')
             run(adb,'shell','am','start','-W','-n','com.eksaar.panchang/.MainActivity')
-            file=out/f'{label}.png'
-            for attempt in range(12):
-                time.sleep(5)
-                file.write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=30))
-                check=json.loads(run('node','scripts/check-native-capture.mjs',str(file)))
-                if check['hasAppContent']:break
-            assert check['hasAppContent'],f'{label} never displayed app content.'
-            evidence.append({'file':file.name,'displaySize':size,'density':density,'androidAPI':36,'source':'Actual native Android app on a fresh emulator; original pixels','contentCheck':check})
+            width,height=map(int,size.split('x'))
+            # Scroll the real app to its calendar content; a landscape screen at
+            # the page top otherwise shows only the tall introductory header.
+            time.sleep(10)
+            run(adb,'shell','input','swipe',str(width//2),str(int(height*.85)),str(width//2),str(int(height*.22)),'550')
+            for frame in range(1,4 if label=='phone-portrait' else 2):
+                file=out/f'{label}-{frame}.png'
+                for attempt in range(12):
+                    time.sleep(5)
+                    file.write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=30))
+                    check=json.loads(run('node','scripts/check-native-capture.mjs',str(file)))
+                    if check['hasAppContent']:break
+                    # A loaded header can still occupy a short landscape view.
+                    if attempt==2:
+                        run(adb,'shell','input','swipe',str(width//2),str(int(height*.85)),str(width//2),str(int(height*.22)),'550')
+                assert check['hasAppContent'],f'{label} frame {frame} never displayed app content.'
+                evidence.append({'file':file.name,'displaySize':size,'density':density,'androidAPI':36,'source':'Actual native Android app, scrolled in a fresh emulator; original pixels','contentCheck':check})
+                run(adb,'shell','input','swipe',str(width//2),str(int(height*.78)),str(width//2),str(int(height*.48)),'500')
         (out/'capture-evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')
     except Exception:
         log.flush()
