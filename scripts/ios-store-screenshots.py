@@ -24,7 +24,8 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
     try:
         if device['state']!='Booted':run('xcrun','simctl','boot',udid)
         run('xcrun','simctl','bootstatus',udid,'-b')
-        run('xcrun','simctl','status_bar',udid,'override','--time','2026-09-18T12:00:00+00:00','--dataNetwork','wifi','--wifiMode','active','--wifiBars','3','--batteryState','charged','--batteryLevel','100')
+        # Preserve the simulator's actual clock; capture must not depend on
+        # runtime-specific status-bar date parsing.
         run('xcrun','simctl','install',udid,app)
         run('xcrun','simctl','launch',udid,'com.eksaar.panchang')
         time.sleep(15)  # Allow native WebKit and the first offline calculation to render in CI.
