@@ -4,6 +4,9 @@ import {mkdir} from 'node:fs/promises';
 const app=await _electron.launch({args:['.']});
 try{
  const window=await app.firstWindow();await window.locator('.hero h2').waitFor({timeout:30000});
+ await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].setSize(1600,1000));
+ await mkdir('test-results',{recursive:true});
+ await window.screenshot({path:'test-results/desktop-native-daily.png'});
  assert.match(window.url(),/^panchang:\/\/app\//);
  const prefs=await app.evaluate(({BrowserWindow})=>{const p=BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences();return {sandbox:p.sandbox,contextIsolation:p.contextIsolation,nodeIntegration:p.nodeIntegration};});
  assert.deepEqual(prefs,{sandbox:true,contextIsolation:true,nodeIntegration:false});

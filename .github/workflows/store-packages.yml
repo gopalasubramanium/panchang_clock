@@ -33,6 +33,7 @@ jobs:
       - run: pnpm test
       - run: node node_modules/electron/install.js
       - run: pnpm build
+      - run: pnpm test:desktop
       - run: pnpm exec electron-builder --config build/windows-store.cjs --win --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
@@ -48,6 +49,7 @@ jobs:
           path: |
             store-release/windows/*.appx
             store-release/windows/SHA256.json
+            test-results/desktop-native*.png
   ios-screenshots:
     if: inputs.target == 'ios-screenshots'
     runs-on: macos-latest
