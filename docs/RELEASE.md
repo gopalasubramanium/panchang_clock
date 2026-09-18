@@ -9,7 +9,7 @@ Version: 2.0.0-beta.3. This is a tested development beta with explicit remaining
 | Web | Static offline PWA | HTTPS host; browser installation |
 | Windows | Electron NSIS installer and portable executable | Unsigned beta; Authenticode certificate recommended before broad release |
 | Linux | Electron AppImage and Debian package | Distribution testing on supported distros |
-| macOS | Electron DMG and ZIP | Developer ID signing and notarization for normal public distribution |
+| macOS | Apple Silicon DMG, macOS 13+ | Developer ID signed, Apple notarized, stapled and Gatekeeper verified; direct download, not App Store |
 | Android | Capacitor debug APK and unsigned release AAB | Google Play account, upload key, Play App Signing and store submission |
 | iOS/iPadOS | Capacitor project and Simulator build | Apple Developer Program, team/provisioning, archive, TestFlight and App Review |
 
@@ -19,7 +19,7 @@ The `Verify and build all platforms` GitHub workflow first runs numerical and br
 
 ## Account-dependent steps
 
-Existing Apple Developer ID and Mac App Store signing identities were found on the owner’s Mac. No notarization Keychain profile was found under the supplied name, and this repository has no signing secrets configured. Store access, provisioning and notarization setup still need verification. Google Play and Microsoft Store account access has not been provided; enrollment and any identity, legal or payment steps require the owner’s participation. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
+The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. App Store Connect access and iOS/device distribution provisioning remain separate submission requirements. Google Play and Microsoft Store account access has not been provided; enrollment and any identity, legal or payment steps require the owner’s participation. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
 
 - [Apple enrollment](https://developer.apple.com/programs/enroll/)
 - [Google testing requirements](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
@@ -53,6 +53,12 @@ WebKit passed desktop/mobile UI, automated accessibility, calendar, export, lang
 
 ## Beta 2 signing and research
 
-The privacy and usability changes are documented in USER-RESEARCH-2026-09.md. CI prerelease publication is opt-in through the workflow’s publish_release input, depends on every platform job, identifies unsigned/test packages explicitly, and includes checksums and GitHub build attestations. The macOS local signing path uses the existing Developer ID; it must complete notarization and Gatekeeper checks before being advertised as trusted.
+The privacy and usability changes are documented in USER-RESEARCH-2026-09.md. CI prerelease publication is opt-in through the workflow’s publish_release input, depends on every platform job, identifies unsigned/test packages explicitly, and includes checksums and GitHub build attestations. The macOS local signing path uses the existing Developer ID. Apple accepted beta 3 submission `917b9752-e698-424c-b100-82b420c6a744`; the app and final installer pass strict signature verification, validated ticket stapling and Gatekeeper assessment as Notarized Developer ID. The app inside the final mounted installer was also verified. This locally signed addition has its own checksum and notarization metadata; it is separate from the original CI build attestations.
 
 Public metadata for store submissions: name Eksaar Panchang; bundle/application ID com.eksaar.panchang; privacy URL https://panchang.eksaar.com/privacy.html; support URL https://panchang.eksaar.com/support.html; publisher Gopala Subramanium. Screenshots must match the final build and each store’s required dimensions. Declare optional location/notifications and no app-operated collection accurately; account-specific disclosures must be reviewed during submission.
+
+## Notarized Mac download
+
+[Download beta 3 for Apple Silicon Macs, macOS 13 or later](https://github.com/gopalasubramanium/panchang_clock/releases/download/v2.0.0-beta.3/Eksaar-Panchang-2.0.0-beta.3-macOS-AppleSilicon-NOTARIZED.dmg). This is a direct-download beta, not a Mac App Store release or an Intel build. The release includes `MACOS-NOTARIZATION.json` and `MACOS-NOTARIZED-SHA256.txt`.
+
+Installer SHA-256: `690e5fd3f1a381ad02bd89129046c97df4050d67ed14d71d5519823b02b7d548`. Source commit: `05a419aad233999d997d5ac9f9826574f3654949`. Earlier unsigned Mac assets remain available as original CI artifacts; use the explicitly NOTARIZED installer for direct installation. Windows and mobile publication statuses above are unchanged.
