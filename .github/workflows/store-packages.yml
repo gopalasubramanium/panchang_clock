@@ -40,7 +40,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm exec cap sync android
-      - run: ./gradlew assembleDebug
+      - run: bash ./gradlew assembleDebug
         working-directory: android
       - name: Enable emulator acceleration on the disposable runner
         run: sudo chmod a+rw /dev/kvm
