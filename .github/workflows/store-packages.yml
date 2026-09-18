@@ -6,7 +6,7 @@ on:
         description: Store preparation task
         required: true
         type: choice
-        options: [windows, ios-screenshots, android-screenshots, ios-device-archive]
+        options: [windows, ios-screenshots, android-screenshots, ios-device-archive, mac-store-unsigned]
       windows_identity:
         description: Exact Package/Identity/Name from Microsoft Partner Center
         type: string
@@ -19,6 +19,34 @@ on:
 permissions:
   contents: read
 jobs:
+  mac-store-unsigned:
+    if: inputs.target == 'mac-store-unsigned'
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec electron-builder --config build/mac-store.cjs --mac --publish never
+        env:
+          MAS_UNSIGNED: '1'
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+      - name: Preserve unsigned universal MAS app for local signing
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent 'store-release/mac-app-store/mas-universal/Eksaar Panchang.app' store-release/Eksaar-Panchang-Mac-App-Store-UNSIGNED.zip
+          shasum -a 256 store-release/Eksaar-Panchang-Mac-App-Store-UNSIGNED.zip > store-release/MAS-archive-SHA256.txt
+          git rev-parse HEAD > store-release/MAS-source-commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mac-app-store-unsigned-not-installable
+          path: |
+            store-release/Eksaar-Panchang-Mac-App-Store-UNSIGNED.zip
+            store-release/MAS-archive-SHA256.txt
+            store-release/MAS-source-commit.txt
   ios-device-archive:
     if: inputs.target == 'ios-device-archive'
     runs-on: macos-latest
