@@ -4,7 +4,11 @@ import {mkdir} from 'node:fs/promises';
 const app=await _electron.launch({args:['.']});
 try{
  const window=await app.firstWindow();await window.locator('.hero h2').waitFor({timeout:30000});
- await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].setSize(1600,1000));
+ await app.evaluate(({BrowserWindow})=>{
+  const window=BrowserWindow.getAllWindows()[0];
+  if(process.platform==='darwin')window.setContentSize(1280,800);
+  else window.setSize(1600,1000);
+ });
  await mkdir('test-results',{recursive:true});
  await window.screenshot({path:'test-results/desktop-native-daily.png'});
  assert.match(window.url(),/^panchang:\/\/app\//);
