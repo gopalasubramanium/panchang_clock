@@ -2,6 +2,7 @@ node_modules/
 dist/
 release/
 store-release/
+build/appx/
 test-results/
 .DS_Store
 *.log

@@ -7,7 +7,10 @@ function required(name,pattern){
 }
 module.exports={
  ...base,extends:null,
- directories:{output:'store-release/windows'},
+ directories:{output:'store-release/windows',buildResources:'build'},
+ // Advance only the Windows Store package; other submitted platforms retain their versions.
+ extraMetadata:{version:'2.0.1'},
+ beforePack:require('./windows-icons.cjs'),
  win:{...base.win,target:[{target:'appx',arch:['x64','arm64']}]},
  appx:{
   identityName:required('WINDOWS_STORE_IDENTITY',/^[A-Za-z0-9][A-Za-z0-9.-]{2,49}$/),
