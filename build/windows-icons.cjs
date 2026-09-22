@@ -7,7 +7,8 @@ module.exports=async()=>{
   const output=path.join(__dirname,'appx');
   const svg=await readFile(path.join(__dirname,'../public/icon.svg'));
   await mkdir(output,{recursive:true});
-  const tiles={StoreLogo:[50,50],Square44x44Logo:[44,44],Square71x71Logo:[71,71],Square150x150Logo:[150,150],Wide310x150Logo:[310,150],Square310x310Logo:[310,310]};
+  // SmallTile/LargeTile are electron-builder's filenames for the 71/310 manifest slots.
+  const tiles={StoreLogo:[50,50],Square44x44Logo:[44,44],SmallTile:[71,71],Square150x150Logo:[150,150],Wide310x150Logo:[310,150],LargeTile:[310,310]};
   async function render(name,width,height){
     // Centre the established brand mark; never stretch it on the wide tile.
     const image=sharp(svg).resize(width,height,{fit:'contain',background:'#183d35'});
