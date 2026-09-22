@@ -128,6 +128,8 @@ jobs:
           WINDOWS_STORE_IDENTITY: ${{ inputs.windows_identity }}
           WINDOWS_STORE_PUBLISHER: ${{ inputs.windows_publisher }}
           WINDOWS_STORE_PUBLISHER_NAME: ${{ inputs.windows_publisher_name }}
+      - name: Verify the actual AppX icons and manifest before upload
+        run: python scripts/verify-windows-store.py
       - name: Record package checksums
         shell: pwsh
         run: Get-ChildItem store-release/windows/*.appx | Get-FileHash -Algorithm SHA256 | Select-Object Path,Hash | ConvertTo-Json | Set-Content store-release/windows/SHA256.json
@@ -137,6 +139,7 @@ jobs:
           path: |
             store-release/windows/*.appx
             store-release/windows/SHA256.json
+            store-release/windows/Tile-Verification.json
             test-results/desktop-native*.png
   ios-screenshots:
     if: inputs.target == 'ios-screenshots'
