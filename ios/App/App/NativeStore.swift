@@ -31,9 +31,7 @@ final class PanchangStore: ObservableObject {
     var selectedKey: String { NativeDates.key(selectedDate,zone:zone) }
     var todayKey: String { NativeDates.key(Date(),zone:zone) }
     var calendar: Calendar { NativeDates.calendar(zone) }
-    var dateRange: ClosedRange<Date> {
-        NativeDates.date("1900-01-01",zone:zone)!...NativeDates.date("2100-12-31",zone:zone)!
-    }
+    var dateRange: ClosedRange<Date> { NativeDates.supportedRange(zone) }
     var appearance: ColorScheme? { settings.appearance == "dark" ? .dark : settings.appearance == "light" ? .light : nil }
 
     init() {
@@ -88,7 +86,14 @@ final class PanchangStore: ObservableObject {
         guard place.valid else { error = "Check the coordinates and IANA time zone."; return }
         let key = selectedKey
         location = place
-        selectedDate = NativeDates.date(key,zone:zone) ?? Date()
+        if live { selectedDate = Date() }
+        else if !chosenTime { selectedDate = NativeDates.date(key,zone:zone) ?? Date() }
+        // A chosen instant remains the same instant and is displayed in the new zone.
+        if !dateRange.contains(selectedDate) {
+            selectedDate = min(max(selectedDate,dateRange.lowerBound),dateRange.upperBound)
+            live = false; chosenTime = false
+            notice = "This place moved the selection beyond 1900–2100. The nearest supported day is shown at sunrise."
+        }
         monthAnchor = selectedDate
         places = [place] + places.filter { $0.id != place.id }.prefix(11)
         persist(); refresh()
@@ -103,7 +108,7 @@ final class PanchangStore: ObservableObject {
         loadDay(); loadMonth()
     }
     func today() { selectDate(Date(),live:true) }
-    func selectTime(_ date: Date) { selectedDate = date;live = false;chosenTime = true;loadDay() }
+    func selectTime(_ date: Date) { selectedDate = NativeDates.minute(date,zone:zone);live = false;chosenTime = true;loadDay() }
     func atSunrise() { chosenTime = false;live = false;loadDay() }
     func moveDay(_ delta: Int) {
         if let date = calendar.date(byAdding:.day,value:delta,to:selectedDate) { selectDate(date) }

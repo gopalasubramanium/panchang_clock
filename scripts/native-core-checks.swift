@@ -26,3 +26,17 @@ let restored = try JSONDecoder().decode(NativeSavedState.self,from:JSONEncoder()
 state.personal[0].month = 12
 do { try state.validate();fatalError("Invalid backup accepted") } catch {}
 print("JavaScriptCore: day, 30-day month, upcoming match, Swift decoding and backup validation passed in \(Date().timeIntervalSince(start)) seconds")
+let kolkata = TimeZone(identifier:"Asia/Kolkata")!
+let limits = NativeDates.supportedRange(kolkata)
+assert(NativeDates.key(limits.lowerBound,zone:kolkata) == "1900-01-01")
+assert(NativeDates.key(limits.upperBound,zone:kolkata) == "2100-12-31")
+assert(NativeDates.calendar(kolkata).component(.hour,from:limits.lowerBound) == 0)
+assert(NativeDates.calendar(kolkata).component(.hour,from:limits.upperBound) == 23)
+let lateFold = NativeDates.parse("2026-11-01T06:30:42.500Z")!
+let roundedFold = NativeDates.minute(lateFold,zone:TimeZone(identifier:"America/New_York")!)
+assert(roundedFold == NativeDates.parse("2026-11-01T06:30:00Z"))
+let historic = NativeDates.parse("1900-01-01T03:13:24.125Z")!
+let roundedHistoric = NativeDates.minute(historic,zone:kolkata)
+assert(NativeDates.calendar(kolkata).component(.second,from:roundedHistoric) == 0)
+assert(historic.timeIntervalSince(roundedHistoric) >= 0 && historic.timeIntervalSince(roundedHistoric) < 60)
+print("Native date endpoints, historical local-minute normalization and repeated-hour selection passed")

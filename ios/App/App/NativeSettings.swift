@@ -170,11 +170,6 @@ struct NativeBackupDocument: FileDocument {
     init(configuration: ReadConfiguration) throws { data = configuration.file.regularFileContents ?? Data() }
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper { FileWrapper(regularFileWithContents:data) }
 }
-struct NativeShare: UIViewControllerRepresentable {
-    var items: [Any]
-    func makeUIViewController(context: Context) -> UIActivityViewController { UIActivityViewController(activityItems:items,applicationActivities:nil) }
-    func updateUIViewController(_ controller: UIActivityViewController,context: Context) {}
-}
 struct NativeCalendarEditor: UIViewControllerRepresentable {
     var event: NativeEvent
     var place: PanchangPlace

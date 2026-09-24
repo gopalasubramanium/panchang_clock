@@ -93,6 +93,18 @@ enum NativeDates {
         return f.date(from: string) ?? ISO8601DateFormatter().date(from: string)
     }
     static func calendar(_ zone: TimeZone) -> Calendar { var c = Calendar(identifier: .gregorian); c.timeZone = zone; return c }
+    static func supportedRange(_ zone: TimeZone) -> ClosedRange<Date> {
+        let c = calendar(zone)
+        let first = c.startOfDay(for:date("1900-01-01",zone:zone)!)
+        let last = c.startOfDay(for:date("2100-12-31",zone:zone)!)
+        return first...c.date(byAdding:.day,value:1,to:last)!.addingTimeInterval(-0.001)
+    }
+    static func minute(_ date: Date, zone: TimeZone) -> Date {
+        // Clear local seconds without changing the selected occurrence of a DST fold.
+        let seconds = calendar(zone).component(.second,from:date)
+        let fraction = date.timeIntervalSince1970 - date.timeIntervalSince1970.rounded(.down)
+        return date.addingTimeInterval(-Double(seconds)-fraction)
+    }
     static func key(_ date: Date, zone: TimeZone) -> String {
         let f = DateFormatter(); f.locale = Locale(identifier:"en_US_POSIX"); f.calendar = calendar(zone); f.timeZone = zone; f.dateFormat = "yyyy-MM-dd"; return f.string(from: date)
     }

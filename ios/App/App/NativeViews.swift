@@ -55,7 +55,10 @@ struct NativeDateControls: View {
 struct NativeTodayView: View {
     @EnvironmentObject var store: PanchangStore
     @State private var saving = false
-    @State private var sharing = false
+    func summary(_ day: NativeDay) -> String {
+        let elements = day.angas.map { "\($0.kind.capitalized): \($0.name), until \(store.time($0.end))" }.joined(separator:"\n")
+        return "\(store.location.name) · \(day.date) · \(store.location.zone)\n\(elements)\nSunrise \(store.time(day.sun.sunrise)); sunset \(store.time(day.sun.sunset)).\n\(day.convention.capitalized); \(day.sunriseMode) sunrise. Eksaar Panchang — free and offline.\nhttps://panchang.eksaar.com/"
+    }
     var body: some View {
         List {
             Section { NativeDateControls() }
@@ -95,7 +98,7 @@ struct NativeTodayView: View {
                 Section {
                     Button { saving = true } label: { Label("Remember this lunar date",systemImage:"heart.badge.plus") }
                         .accessibilityIdentifier("rememberLunarDate")
-                    Button { sharing = true } label: { Label("Share today's Panchang",systemImage:"square.and.arrow.up") }
+                    ShareLink(item:summary(day)) { Label("Share today's Panchang",systemImage:"square.and.arrow.up") }.accessibilityIdentifier("shareDaily")
                 } footer: { Text("Personal dates use the Amanta month and the tithi at the displayed moment. Upcoming matches are checked at local sunrise.") }
                 if !day.events.isEmpty {
                     Section("Observance previews") { ForEach(day.events) { e in NavigationLink { NativeEventDetail(event:e) } label: { NativeEventLabel(event:e) } } }
@@ -116,9 +119,7 @@ struct NativeTodayView: View {
         .navigationTitle("Eksaar Panchang").navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement:.topBarTrailing) { NativeLocationToolbar() } }
         .sheet(isPresented:$saving) { NavigationStack { NativePersonalEditor(month:store.day?.monthIndex ?? 0,tithi:store.day?.tithiIndex ?? 0) } }
-        .sheet(isPresented:$sharing) { if let day = store.day {
-            NativeShare(items:["\(store.location.name) · \(day.date) · \(store.location.zone)\n\(day.angas.map {"\($0.kind.capitalized): \($0.name), until \(store.time($0.end))"}.joined(separator:"\n"))\nSunrise \(store.time(day.sun.sunrise)); sunset \(store.time(day.sun.sunset)).\n\(day.convention.capitalized); \(day.sunriseMode) sunrise. Eksaar Panchang — free and offline.\nhttps://panchang.eksaar.com/"])
-        } }
+
     }
 }
 struct NativeAngaDetail: View {
