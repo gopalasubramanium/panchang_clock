@@ -26,7 +26,7 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
     try:
         print(f"Preparing {label}: {device['name']}",flush=True)
         if device['state']!='Booted':output('xcrun','simctl','boot',udid)
-        subprocess.run(['xcrun','simctl','bootstatus',udid,'-b'],check=True)
+        subprocess.run(['xcrun','simctl','bootstatus',udid,'-b'],check=True,timeout=600)
         subprocess.run(['xcrun','simctl','status_bar',udid,'override','--time','9:41','--batteryState','charged','--batteryLevel','100'],check=False)
         print(f'Running native UI tests on {label}',flush=True)
         with (folder/'test.log').open('w') as log:
