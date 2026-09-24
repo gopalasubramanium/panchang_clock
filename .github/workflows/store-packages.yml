@@ -58,10 +58,9 @@ jobs:
           node-version: 24
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm exec cap sync ios
+      - run: pnpm build:ios-native
       - name: Archive the device release without uploading signing credentials
-        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath store-release/Eksaar-Panchang-UNSIGNED.xcarchive CODE_SIGNING_ALLOWED=NO MARKETING_VERSION=2.0.0 CURRENT_PROJECT_VERSION=4 archive
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath store-release/Eksaar-Panchang-UNSIGNED.xcarchive CODE_SIGNING_ALLOWED=NO MARKETING_VERSION=2.0.0 CURRENT_PROJECT_VERSION=5 archive
       - name: Preserve archive permissions and provenance
         run: |
           xcodebuild -version > store-release/Xcode-version.txt
@@ -151,11 +150,10 @@ jobs:
           node-version: 24
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm exec cap sync ios
+      - run: pnpm build:ios-native
       - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
-      - run: python3 scripts/ios-store-screenshots.py
+      - run: python3 scripts/ios-native-tests.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: ios-store-screenshots
-          path: store-release/ios-screenshots/
+          path: store-release/ios-native/
