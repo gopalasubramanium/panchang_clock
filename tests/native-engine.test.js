@@ -32,3 +32,18 @@ test('native bridge rejects invalid inputs and unsupported dates',()=>{
  assert.ok(call('upcoming',{personal:[{name:'Bad',month:12,tithi:0}]}).error);
  assert.ok(call('unknown').error);assert.ok(JSON.parse(request('bad json')).error);
 });
+test('chosen-time lunar month advances after a new moon within the civil day',async()=>{
+ const A=await import('astronomy-engine');const {dateKey}=await import('../src/time.js');
+ let checked=false;
+ for(let m=1;m<=12&&!checked;m++) {
+  const moon=A.SearchMoonPhase(0,new Date(`2026-${String(m).padStart(2,'0')}-01T00:00Z`),35).date;
+  const instant=new Date(+moon+60000).toISOString(),date=dateKey(instant,location.zone);
+  const atSunrise=daily(date,location,settings);
+  if(+new Date(atSunrise.sun.sunrise)>=+moon)continue;
+  const at=call('day',{date,instant}).value;
+  assert.notEqual(at.month,atSunrise.calendar.chosen.name);
+  assert.equal(at.month,calendarAt(instant).chosen.name);
+  assert.equal(at.monthIndex,calendarAt(instant).amanta.index);checked=true;
+ }
+ assert.ok(checked,'A post-sunrise new moon must be exercised');
+});

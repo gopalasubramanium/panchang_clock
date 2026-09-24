@@ -74,7 +74,7 @@ final class NativeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["importBackup"].exists)
         XCTAssertEqual(app.webViews.count,0)
     }
-    func testOfflineLocationAndAccessibleMonth() throws {
+    func testOfflineLocationAndMonth() throws {
         app.buttons["chooseLocation"].tap()
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout:10));search.tap();search.typeText("Singapore")

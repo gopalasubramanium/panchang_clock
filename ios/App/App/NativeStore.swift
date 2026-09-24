@@ -71,7 +71,10 @@ final class PanchangStore: ObservableObject {
     }
     var savedState: NativeSavedState { NativeSavedState(location:location,settings:settings,places:places,personal:personal) }
     func persist() {
-        guard canPersist else { return }
+        guard canPersist else {
+            error = "Your original saved data could not be read and has been kept intact. These changes are only in memory. Export a backup before closing the app, or import a valid backup to restore saving."
+            return
+        }
         do {
             try savedState.validate()
             var directory = storageURL.deletingLastPathComponent()
@@ -208,7 +211,7 @@ final class PanchangStore: ObservableObject {
                 let content = UNMutableNotificationContent(); content.title = event.name; content.body = "Your saved Panchang event. Open the app to see the calculation and location."; content.sound = .default
                 var utcCalendar = Calendar(identifier:.gregorian); utcCalendar.timeZone = .gmt
                 var components = utcCalendar.dateComponents([.year,.month,.day,.hour,.minute,.second],from:date)
-                components.timeZone = .gmt
+                components.calendar = utcCalendar;components.timeZone = .gmt
                 let request = UNNotificationRequest(identifier:id,content:content,trigger:UNCalendarNotificationTrigger(dateMatching:components,repeats:false))
                 center.add(request) { error in DispatchQueue.main.async {
                     if error != nil { self.error = "This reminder could not be scheduled." }

@@ -36,9 +36,9 @@ export function request(input) {
     if(p.kind==='day') {
       const d=daily(p.date,location,prefs,p.instant),atCal=calendarAt(d.instant,prefs.convention);
       value={date:d.date,instant:d.instant,weekday:d.currentVaara===null?'Sunrise weekday unavailable':WEEKDAYS[d.currentVaara],
-        month:d.calendar.chosen.name,adhika:d.calendar.chosen.adhika,solarMonth:d.calendar.tamilSolarMonth,
+        month:atCal.chosen.name,adhika:atCal.chosen.adhika,solarMonth:atCal.tamilSolarMonth,
         tithiIndex:d.current.tithi,monthIndex:atCal.amanta.index,illumination:d.illumination,sun:d.sun,
-        angas:Object.entries(d.angas).map(([kind,a])=>({...a,name:name(kind,a.index,prefs.lang)})),
+        angas:Object.entries(d.angas).map(([kind,a])=>({...a,name:name(kind,a.index,prefs.lang),next:name(kind,(a.index+1)%({tithi:30,nakshatra:27,yoga:27,karana:60}[kind]),prefs.lang)})),
         timings:d.periods.windows,horas:d.periods.horas,choghadiya:d.periods.choghadiya,
         planets:planetsAt(d.instant,location).planets,events:events(p.date,location,prefs),warnings:d.warnings,
         convention:d.settings.convention,sunriseMode:d.settings.sunriseMode};

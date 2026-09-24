@@ -14,7 +14,7 @@ struct PanchangRootView: View {
             NavigationStack { NativePersonalView() }.tabItem { Label("My dates",systemImage:"heart.text.square") }.tag(3)
             NavigationStack { NativeSettingsView() }.tabItem { Label("Settings",systemImage:"slider.horizontal.3") }.tag(4)
         }
-        .environmentObject(store).environment(\.timeZone,store.zone).preferredColorScheme(store.appearance)
+        .environmentObject(store).environment(\.timeZone,store.zone).environment(\.calendar,store.calendar).preferredColorScheme(store.appearance)
         .tint(Color("AccentColor"))
         .alert("Panchang",isPresented:Binding(get:{store.error != nil || store.notice != nil},set:{ if !$0 {store.error = nil;store.notice = nil} })) {
             Button("OK") { store.error = nil; store.notice = nil }
@@ -81,7 +81,7 @@ struct NativeTodayView: View {
                             }.padding(.vertical,3)
                         }.accessibilityIdentifier("anga.\(anga.kind)")
                     }
-                    LabeledContent("Vaara",value:day.weekday)
+                    LabeledContent("Vaara (sunrise day)",value:day.weekday)
                 }
                 Section("Sun & Moon") {
                     LabeledContent { Text(store.time(day.sun.sunrise)) } label: { Label("Sunrise",systemImage:"sunrise") }
@@ -117,7 +117,7 @@ struct NativeTodayView: View {
         .toolbar { ToolbarItem(placement:.topBarTrailing) { NativeLocationToolbar() } }
         .sheet(isPresented:$saving) { NavigationStack { NativePersonalEditor(month:store.day?.monthIndex ?? 0,tithi:store.day?.tithiIndex ?? 0) } }
         .sheet(isPresented:$sharing) { if let day = store.day {
-            NativeShare(items:["\(store.location.name) · \(day.date) · \(store.location.zone)\n\(day.angas.map {"\($0.kind.capitalized): \($0.name), until \(store.time($0.end))"}.joined(separator:"\n"))\nSunrise \(store.time(day.sun.sunrise)); sunset \(store.time(day.sun.sunset)).\n\(day.convention.capitalized); \(day.sunriseMode) sunrise. Eksaar Panchang — free and offline."])
+            NativeShare(items:["\(store.location.name) · \(day.date) · \(store.location.zone)\n\(day.angas.map {"\($0.kind.capitalized): \($0.name), until \(store.time($0.end))"}.joined(separator:"\n"))\nSunrise \(store.time(day.sun.sunrise)); sunset \(store.time(day.sun.sunset)).\n\(day.convention.capitalized); \(day.sunriseMode) sunrise. Eksaar Panchang — free and offline.\nhttps://panchang.eksaar.com/"])
         } }
     }
 }
