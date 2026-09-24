@@ -262,6 +262,7 @@ struct NativePersonalView: View {
     @EnvironmentObject var store: PanchangStore
     @State private var adding = false
     @State private var deleting: LunarDate?
+    @State private var editing: LunarDate?
     var body: some View {
         List {
             if store.personal.isEmpty {
@@ -283,7 +284,10 @@ struct NativePersonalView: View {
                             Text(item.name).font(.headline)
                             Text("\(NativeDates.months[item.month]) · \(NativeDates.tithi(item.tithi))").font(.subheadline).foregroundStyle(.secondary)
                             if item.includeAdhika { Text("Includes Adhika months").font(.caption) }
-                        }.swipeActions { Button("Delete",role:.destructive) { deleting = item } }
+                        }.swipeActions {
+                            Button("Edit") { editing = item }.tint(.blue)
+                            Button("Delete",role:.destructive) { deleting = item }
+                        }
                     }
                 }
             }
@@ -291,6 +295,7 @@ struct NativePersonalView: View {
         }.navigationTitle("My lunar dates")
             .toolbar { ToolbarItem(placement:.topBarTrailing) { Button { adding = true } label:{Image(systemName:"plus")}.accessibilityLabel("Add lunar date") } }
             .sheet(isPresented:$adding) { NavigationStack { NativePersonalEditor(month:0,tithi:0) } }
+            .sheet(item:$editing) { item in NavigationStack { NativePersonalEditor(month:item.month,tithi:item.tithi,existing:item) } }
             .confirmationDialog("Delete this saved lunar date?",isPresented:Binding(get:{deleting != nil},set:{if !$0 {deleting = nil}})) {
                 Button("Delete lunar date",role:.destructive) { if let deleting {store.deletePersonal(deleting)};deleting = nil }
             }
@@ -303,6 +308,12 @@ struct NativePersonalEditor: View {
     @State var month: Int
     @State var tithi: Int
     @State private var adhika = false
+    private let editingID: String?
+    init(month: Int,tithi: Int,existing: LunarDate? = nil) {
+        _month = State(initialValue:month);_tithi = State(initialValue:tithi)
+        _name = State(initialValue:existing?.name ?? "");_adhika = State(initialValue:existing?.includeAdhika ?? false)
+        editingID = existing?.id
+    }
     var body: some View {
         Form {
             Section {
@@ -310,13 +321,15 @@ struct NativePersonalEditor: View {
                 Picker("Amanta month",selection:$month) { ForEach(0..<12) { Text(NativeDates.months[$0]).tag($0) } }
                 Picker("Tithi",selection:$tithi) { ForEach(0..<30) { Text(NativeDates.tithi($0)).tag($0) } }
                 Toggle("Include Adhika months",isOn:$adhika)
-            } footer:{Text("A lunar date repeats by the Hindu lunar calendar, not on the same Gregorian date each year. Choose the rule your family follows.")}
-        }.navigationTitle("Remember a date").navigationBarTitleDisplayMode(.inline)
+            } footer:{Text("A lunar date repeats by the Hindu lunar calendar, not on the same Gregorian date each year. Choose the rule your family follows. When editing a rule, its old reminder is removed; schedule the new occurrence if needed.")}
+        }.navigationTitle(editingID == nil ? "Remember a date" : "Edit lunar date").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement:.cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement:.confirmationAction) { Button("Save") {
-                    store.addPersonal(LunarDate(name:name.trimmingCharacters(in:.whitespacesAndNewlines),month:month,tithi:tithi,includeAdhika:adhika));dismiss()
-                }.disabled(name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty || name.count > 80).accessibilityIdentifier("saveLunarDate") }
+                    var value = LunarDate(name:name.trimmingCharacters(in:.whitespacesAndNewlines),month:month,tithi:tithi,includeAdhika:adhika)
+                    if let editingID { value.id = editingID }
+                    store.addPersonal(value);dismiss()
+                }.disabled(name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty || name.utf16.count > 80).accessibilityIdentifier("saveLunarDate") }
             }
     }
 }

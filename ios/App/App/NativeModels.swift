@@ -10,7 +10,7 @@ struct PanchangPlace: Codable, Hashable, Identifiable, Sendable {
     var id: String { "\(lat),\(lon),\(zone)" }
     static let delhi = PanchangPlace(name: "New Delhi", lat: 28.6139, lon: 77.209, zone: "Asia/Kolkata")
     var timeZone: TimeZone { TimeZone(identifier: zone) ?? .gmt }
-    var valid: Bool { !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.count <= 80 && lat.isFinite && lon.isFinite && (-90...90).contains(lat) && (-180...180).contains(lon) && TimeZone(identifier: zone) != nil && (-500...9000).contains(elevation ?? 0) }
+    var valid: Bool { !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.utf16.count <= 80 && lat.isFinite && lon.isFinite && (-90...90).contains(lat) && (-180...180).contains(lon) && TimeZone(identifier: zone) != nil && (-500...9000).contains(elevation ?? 0) }
 }
 struct PanchangPreferences: Codable, Equatable, Sendable {
     var convention = "amanta"
@@ -30,7 +30,7 @@ struct LunarDate: Codable, Identifiable, Equatable, Sendable {
     var month: Int
     var tithi: Int
     var includeAdhika = false
-    var valid: Bool { UUID(uuidString: id) != nil && !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.count <= 80 && (0...11).contains(month) && (0...29).contains(tithi) }
+    var valid: Bool { UUID(uuidString: id) != nil && !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.utf16.count <= 80 && (0...11).contains(month) && (0...29).contains(tithi) }
 }
 struct NativeSavedState: Codable, Sendable {
     var schema = 1

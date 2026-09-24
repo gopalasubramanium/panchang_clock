@@ -3,6 +3,11 @@ import json,subprocess,re,shutil
 from pathlib import Path
 
 def output(*args):return subprocess.check_output(args,text=True).strip()
+# Verify the native decoder, backup validation and scientific engine in JavaScriptCore.
+core=Path('ios/native-core-checks');core.mkdir(parents=True,exist_ok=True)
+shutil.copyfile('scripts/native-core-checks.swift',core/'main.swift')
+subprocess.run(['xcrun','swiftc','ios/App/App/NativeModels.swift',str(core/'main.swift'),'-o',str(core/'check')],check=True)
+subprocess.run([str(core/'check')],check=True)
 version=output('xcodebuild','-version')
 assert int(re.search(r'Xcode (\d+)',version).group(1))>=26
 catalog=json.loads(output('xcrun','simctl','list','devices','available','--json'))['devices']

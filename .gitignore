@@ -17,3 +17,5 @@ ios/App/build/
 *.mobileprovision
 ios/build/
 ios/App/App/NativeResources/
+
+ios/native-core-checks/

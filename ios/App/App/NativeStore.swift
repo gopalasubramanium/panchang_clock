@@ -147,9 +147,16 @@ final class PanchangStore: ObservableObject {
         }
     }
     func addPersonal(_ value: LunarDate) {
-        guard value.valid,personal.count < 200 else { error = "Enter a name of up to 80 characters. You can save up to 200 lunar dates."; return }
-        if personal.contains(where:{ $0.name == value.name && $0.month == value.month && $0.tithi == value.tithi && $0.includeAdhika == value.includeAdhika }) { notice = "This lunar date is already saved."; return }
-        personal.append(value); persist(); loadUpcoming()
+        guard value.valid,(personal.count < 200 || personal.contains(where:{$0.id == value.id})) else { error = "Enter a name of up to 80 characters. You can save up to 200 lunar dates."; return }
+        if personal.contains(where:{ $0.id != value.id && $0.name == value.name && $0.month == value.month && $0.tithi == value.tithi && $0.includeAdhika == value.includeAdhika }) { notice = "This lunar date is already saved."; return }
+        if let index = personal.firstIndex(where:{$0.id == value.id}) {
+            if personal[index] != value {
+                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers:["eksaar-\(value.id)"])
+                refreshReminders()
+            }
+            personal[index] = value
+        } else { personal.append(value) }
+        persist(); loadUpcoming()
     }
     func deletePersonal(_ value: LunarDate) {
         personal.removeAll { $0.id == value.id }

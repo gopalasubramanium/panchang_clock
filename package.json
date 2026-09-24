@@ -16,7 +16,7 @@
     "test:browser": "node tests/browser.mjs",
     "desktop": "electron .",
     "pack:desktop": "electron-builder --publish never",
-    "mobile:sync": "cap sync",
+    "mobile:sync": "cap sync android",
     "check": "npm run test && npm run build && npm run test:browser",
     "icons": "node scripts/icons.mjs",
     "test:reference": "node scripts/compare.mjs",
