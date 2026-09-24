@@ -32,32 +32,46 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
         subprocess.run(['xcrun','simctl','bootstatus',udid,'-b'],check=True,timeout=600)
         subprocess.run(['xcrun','simctl','status_bar',udid,'override','--time','9:41','--batteryState','charged','--batteryLevel','100'],check=False)
         print(f'Running native UI tests on {label}',flush=True)
-        with (folder/'test.log').open('w') as log:
-            result=subprocess.Popen(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/'NativeTests.xcresult'),'-parallel-testing-enabled','NO','-test-timeouts-enabled','YES','-default-test-execution-time-allowance','600','-maximum-test-execution-time-allowance','600','CODE_SIGNING_ALLOWED=NO','test-without-building'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
-            finished=threading.Event()
-            def bound_runner(result=result,finished=finished,label=label,folder=folder):
-                if finished.wait(900):return
-                print(f'{label}: Xcode exceeded 15 minutes; preserving diagnostics.',flush=True)
-                # A stalled accessibility call can outlive XCTest's own timeout.
-                # Sample only this disposable test app before stopping the runner.
-                pids=subprocess.run(['pgrep','-x','App'],capture_output=True,text=True).stdout.split()
-                for pid in pids:
-                    try:subprocess.run(['sample',pid,'3','-file',str(folder/f'app-hang-{pid}.txt')],timeout=15,check=False,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-                    except subprocess.TimeoutExpired:pass
-                try:os.killpg(result.pid,signal.SIGINT)
-                except ProcessLookupError:return
-                if not finished.wait(45):
-                    try:os.killpg(result.pid,signal.SIGKILL)
-                    except ProcessLookupError:pass
-            threading.Thread(target=bound_runner,daemon=True).start()
-            for line in result.stdout:
-                log.write(line);log.flush()
-                if any(s in line for s in ['Test Case','Test Suite','Start Test','error:','XCTAssert','notification not received','TEST SUCCEEDED','TEST FAILED']):print(line.rstrip(),flush=True)
-            result.wait();finished.set()
-        print(label,device['name'],'test exit',result.returncode,flush=True)
-        if result.returncode:
+        def run_tests(log_name,result_name):
+            with (folder/log_name).open('w') as log:
+                result=subprocess.Popen(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/result_name),'-parallel-testing-enabled','NO','-test-timeouts-enabled','YES','-default-test-execution-time-allowance','600','-maximum-test-execution-time-allowance','600','CODE_SIGNING_ALLOWED=NO','test-without-building'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
+                finished=threading.Event()
+                def bound_runner(result=result,finished=finished,label=label,folder=folder):
+                    if finished.wait(900):return
+                    print(f'{label}: Xcode exceeded 15 minutes; preserving diagnostics.',flush=True)
+                    # A stalled accessibility call can outlive XCTest's own timeout.
+                    # Sample only this disposable test app before stopping the runner.
+                    pids=subprocess.run(['pgrep','-x','App'],capture_output=True,text=True).stdout.split()
+                    for pid in pids:
+                        try:subprocess.run(['sample',pid,'3','-file',str(folder/f'app-hang-{pid}.txt')],timeout=15,check=False,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                        except subprocess.TimeoutExpired:pass
+                    try:os.killpg(result.pid,signal.SIGINT)
+                    except ProcessLookupError:return
+                    if not finished.wait(45):
+                        try:os.killpg(result.pid,signal.SIGKILL)
+                        except ProcessLookupError:pass
+                threading.Thread(target=bound_runner,daemon=True).start()
+                for line in result.stdout:
+                    log.write(line);log.flush()
+                    if any(s in line for s in ['Test Case','Test Suite','Start Test','error:','XCTAssert','notification not received','TEST SUCCEEDED','TEST FAILED']):print(line.rstrip(),flush=True)
+                result.wait();finished.set()
+            return result.returncode
+        attempts=[]
+        log_name='test.log'
+        exit_code=run_tests(log_name,'NativeTests.xcresult')
+        attempts.append({'log':log_name,'exitCode':exit_code})
+        text=(folder/log_name).read_text()
+        # Retry only a simulator accessibility startup failure before any test ran.
+        # Preserve both attempts; never retry or hide an app assertion failure here.
+        if exit_code and 'Timed out waiting for AX loaded notification' in text and 'Test Case' not in text:
+            print(f'{label}: XCTest accessibility did not initialize; retrying once on the warmed simulator.',flush=True)
+            log_name='test-startup-retry.log'
+            exit_code=run_tests(log_name,'NativeTests-startup-retry.xcresult')
+            attempts.append({'log':log_name,'exitCode':exit_code})
+        print(label,device['name'],'test exit',exit_code,flush=True)
+        if exit_code:
             failed=True
-            text=(folder/'test.log').read_text();print('\n'.join(line for line in text.splitlines() if any(s in line for s in ['error:','failed','Failure','XCTAssert'])),flush=True)
+            text=(folder/log_name).read_text();print('\n'.join(line for line in text.splitlines() if any(s in line for s in ['error:','failed','Failure','XCTAssert'])),flush=True)
             try:subprocess.run(['xcrun','simctl','io',udid,'screenshot',str(folder/'failure-screen.png')],timeout=20,check=False)
             except subprocess.TimeoutExpired:pass
         try:
@@ -65,7 +79,7 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
             source=data/'Documents/StoreScreenshots'
             if source.exists():shutil.copytree(source,folder/'screenshots',dirs_exist_ok=True)
         except (subprocess.CalledProcessError,subprocess.TimeoutExpired):pass
-        evidence.append({'device':device['name'],'source':'Actual native SwiftUI app and XCTest UI tests','xcode':version,'exitCode':result.returncode,'screenshots':sorted(p.name for p in (folder/'screenshots').glob('*.png'))})
+        evidence.append({'device':device['name'],'source':'Actual native SwiftUI app and XCTest UI tests','xcode':version,'exitCode':exit_code,'attempts':attempts,'screenshots':sorted(p.name for p in (folder/'screenshots').glob('*.png'))})
     except (subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
         failed=True
         evidence.append({'device':device['name'],'error':str(error),'exitCode':1})
