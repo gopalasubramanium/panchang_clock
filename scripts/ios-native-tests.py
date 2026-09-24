@@ -24,11 +24,13 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
     assert device,f'No {label} simulator installed'
     udid=device['udid'];folder=out/label;folder.mkdir(exist_ok=True)
     try:
+        print(f"Preparing {label}: {device['name']}",flush=True)
         if device['state']!='Booted':output('xcrun','simctl','boot',udid)
         output('xcrun','simctl','bootstatus',udid,'-b')
         subprocess.run(['xcrun','simctl','status_bar',udid,'override','--time','9:41','--batteryState','charged','--batteryLevel','100'],check=False)
+        print(f'Running native UI tests on {label}',flush=True)
         with (folder/'test.log').open('w') as log:
-            result=subprocess.run(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/'NativeTests.xcresult'),'-parallel-testing-enabled','NO','CODE_SIGNING_ALLOWED=NO','test'],stdout=log,stderr=subprocess.STDOUT)
+            result=subprocess.run(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/'NativeTests.xcresult'),'-parallel-testing-enabled','NO','-test-timeouts-enabled','YES','-default-test-execution-time-allowance','240','-maximum-test-execution-time-allowance','300','CODE_SIGNING_ALLOWED=NO','test-without-building'],stdout=log,stderr=subprocess.STDOUT)
         print(label,device['name'],'test exit',result.returncode,flush=True)
         if result.returncode:
             failed=True
