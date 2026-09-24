@@ -12,6 +12,7 @@ final class PanchangStore: ObservableObject {
     @Published var live = true
     @Published var chosenTime = false
     @Published var tab = 0
+    @Published var dailyNavigationRevision = UUID()
     @Published var day: NativeDay?
     @Published var month: [NativeMonthDay] = []
     @Published var upcoming: [NativeEvent] = []
@@ -120,11 +121,13 @@ final class PanchangStore: ObservableObject {
     func refresh() { loadDay(); loadMonth(force:true); loadUpcoming() }
     func refreshLive() {
         guard live else { return }
-        if selectedKey != todayKey { selectedDate = Date();monthAnchor = selectedDate;loadMonth();loadUpcoming() }
-        loadDay()
+        let changedDay = selectedKey != todayKey
+        if changedDay { selectedDate = Date();monthAnchor = selectedDate;loadMonth();loadUpcoming() }
+        loadDay(preservingDay:!changedDay)
     }
-    func loadDay() {
-        let token = UUID(); dayRevision = token; loadingDay = true; day = nil
+    func loadDay(preservingDay: Bool = false) {
+        let token = UUID(); dayRevision = token; loadingDay = true
+        if !preservingDay { day = nil }
         let instant = live && selectedKey == todayKey ? ISO8601DateFormatter().string(from:Date()) : chosenTime ? ISO8601DateFormatter().string(from:selectedDate) : nil
         calculator.run("day",date:selectedKey,place:location,settings:settings,instant:instant,as:NativeDay.self) { [weak self] result in
             guard let self,self.dayRevision == token else { return }

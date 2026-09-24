@@ -8,7 +8,7 @@ struct PanchangRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     var body: some View {
         TabView(selection:$store.tab) {
-            NavigationStack { NativeTodayView() }.id(store.selectedKey).tabItem { Label("Today",systemImage:"sun.max") }.tag(0)
+            NavigationStack { NativeTodayView() }.id(store.selectedKey + store.dailyNavigationRevision.uuidString).tabItem { Label("Today",systemImage:"sun.max") }.tag(0)
             NavigationStack { NativeMonthView() }.tabItem { Label("Month",systemImage:"calendar") }.tag(1)
             NavigationStack { NativeTimingsView() }.tabItem { Label("Timings",systemImage:"clock") }.tag(2)
             NavigationStack { NativePersonalView() }.tabItem { Label("My dates",systemImage:"heart.text.square") }.tag(3)
@@ -124,8 +124,10 @@ struct NativeTodayView: View {
     }
 }
 struct NativeAngaDetail: View {
-    let anga: NativeAnga
+    let original: NativeAnga
     @EnvironmentObject var store: PanchangStore
+    init(anga: NativeAnga) { original = anga }
+    private var anga: NativeAnga { store.day?.angas.first(where:{$0.kind == original.kind}) ?? original }
     private var explanation: String {
         switch anga.kind {
         case "tithi": return "A lunar day measures each 12° of angular separation between the Sun and Moon. It can start or end at any clock time."
@@ -155,7 +157,7 @@ struct NativeMonthView: View {
         guard let date = NativeDates.date(String(NativeDates.key(store.monthAnchor,zone:store.zone).prefix(7))+"-01",zone:store.zone) else { return 0 }
         return store.calendar.component(.weekday,from:date)-1
     }
-    func open(_ day: NativeMonthDay) { if let date = NativeDates.date(day.date,zone:store.zone) { store.selectDate(date);store.tab = 0 } }
+    func open(_ day: NativeMonthDay) { if let date = NativeDates.date(day.date,zone:store.zone) { store.dailyNavigationRevision = UUID();store.selectDate(date);store.tab = 0 } }
     var body: some View {
         List {
             Section {

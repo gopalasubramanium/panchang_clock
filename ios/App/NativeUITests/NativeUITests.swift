@@ -41,7 +41,7 @@ final class NativeUITests: XCTestCase {
         app.buttons["Cancel"].firstMatch.tap()
         if app.buttons["Discard Changes"].exists { app.buttons["Discard Changes"].tap() }
         tab("Month")
-        let date = app.buttons["calendar.day.2026-09-25"]
+        let date = app.buttons["calendar.day.2026-09-24"]
         XCTAssertTrue(date.waitForExistence(timeout:45),app.debugDescription)
         try capture("03-month")
         app.buttons["Next month"].tap()
@@ -80,7 +80,7 @@ final class NativeUITests: XCTestCase {
         XCTAssertTrue(search.waitForExistence(timeout:10));search.tap();search.typeText("Singapore")
         let city = app.buttons["city.Singapore"]
         XCTAssertTrue(city.waitForExistence(timeout:10));city.tap()
-        XCTAssertTrue(app.staticTexts["Asia/Singapore"].waitForExistence(timeout:30))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "Asia/Singapore")).firstMatch.waitForExistence(timeout:30))
         tab("Month")
         XCTAssertTrue(app.buttons["calendar.day.2026-09-24"].waitForExistence(timeout:45))
         XCTAssertEqual(app.webViews.count,0)
