@@ -43,6 +43,11 @@ struct NativeDateControls: View {
                 Button { store.moveDay(1) } label: { Image(systemName:"chevron.right").frame(minWidth:40,minHeight:44) }.accessibilityLabel("Next day")
                 Button("Today") { store.today() }.buttonStyle(.bordered)
             }
+            HStack {
+                DatePicker("Panchang at",selection:Binding(get:{NativeDates.parse(store.day?.instant) ?? store.selectedDate},set:{store.selectTime($0)}),displayedComponents:.hourAndMinute)
+                    .accessibilityIdentifier("selectedTime")
+                Button("Sunrise") { store.atSunrise() }.buttonStyle(.bordered).accessibilityIdentifier("useSunrise")
+            }
             Text(store.location.zone.replacingOccurrences(of:"_",with:" ")).font(.caption).foregroundStyle(.secondary)
         }
     }
@@ -60,7 +65,7 @@ struct NativeTodayView: View {
                         Label("YOUR DAY, IN RHYTHM",systemImage:"sun.max.fill").font(.caption.weight(.semibold)).foregroundStyle(Color("AccentColor"))
                         Text(day.weekday).font(.system(.largeTitle,design:.serif).weight(.semibold))
                         Text("\(day.adhika ? "Adhika " : "")\(day.month) · \(day.convention.capitalized)")
-                        Text(store.live && store.selectedKey == store.todayKey ? "At this moment · \(store.time(day.instant))" : (day.sun.sunrise == nil ? "No sunrise · local-noon snapshot" : "Snapshot at local sunrise"))
+                        Text(store.live && store.selectedKey == store.todayKey ? "At this moment · \(store.time(day.instant))" : store.chosenTime ? "At your chosen time · \(store.time(day.instant))" : (day.sun.sunrise == nil ? "No sunrise · local-noon snapshot" : "Snapshot at local sunrise"))
                             .font(.subheadline).foregroundStyle(.secondary)
                     }.padding(.vertical,8).accessibilityElement(children:.contain).accessibilityIdentifier("nativeDailySummary")
                 }

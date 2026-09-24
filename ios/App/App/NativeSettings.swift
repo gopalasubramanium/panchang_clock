@@ -57,13 +57,13 @@ struct NativeCustomPlace: View {
                     .disabled(locator.reading)
                 if let message = locator.message { Text(message).foregroundStyle(.secondary) }
             } footer:{Text("Optional. Coordinates stay on this device. Check the time zone below; it starts with your device's time zone.")}
-            Section("Location") {
+            Section {
                 TextField("Place name",text:$name)
                 TextField("Latitude (−90 to 90)",text:$latitude).keyboardType(.numbersAndPunctuation)
                 TextField("Longitude (−180 to 180)",text:$longitude).keyboardType(.numbersAndPunctuation)
                 TextField("Elevation in metres",text:$elevation).keyboardType(.numbersAndPunctuation)
                 TextField("IANA time zone",text:$zone).textInputAutocapitalization(.never).autocorrectionDisabled()
-            } footer:{Text("For example: Asia/Kolkata, Europe/London, or America/New_York. Daylight saving changes are handled by the selected zone.")}
+            } header:{Text("Location")} footer:{Text("For example: Asia/Kolkata, Europe/London, or America/New_York. Daylight saving changes are handled by the selected zone.")}
         }.navigationTitle("Custom location").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement:.cancellationAction) { Button("Cancel") { dismiss() } }
@@ -135,6 +135,10 @@ struct NativeSettingsView: View {
     }
 }
 struct NativeAboutView: View {
+    private var nativeNotices: String {
+        guard let url = Bundle.main.url(forResource:"Notices",withExtension:"txt",subdirectory:"NativeResources"),let text = try? String(contentsOf:url,encoding:.utf8) else { return "Licenses are available in the source repository." }
+        return text
+    }
     var body: some View {
         List {
             Section {
@@ -151,6 +155,9 @@ struct NativeAboutView: View {
             Section("Credits & sources") {
                 Link("Gopala Subramanium",destination:URL(string:"https://me.sgopala.com")!)
                 Link("Source code and accuracy notes",destination:URL(string:"https://github.com/gopalasubramanium/panchang_clock")!)
+                NavigationLink("Open-source acknowledgements") {
+                    ScrollView { Text(nativeNotices).font(.footnote).textSelection(.enabled).padding() }.navigationTitle("Acknowledgements")
+                }
                 Text("Built to make a daily essential freely available, without ads, fees or unnecessary clutter.").font(.footnote)
             }
         }.navigationTitle("About Panchang")

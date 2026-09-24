@@ -10,6 +10,7 @@ final class PanchangStore: ObservableObject {
     @Published var selectedDate = Date()
     @Published var monthAnchor = Date()
     @Published var live = true
+    @Published var chosenTime = false
     @Published var tab = 0
     @Published var day: NativeDay?
     @Published var month: [NativeMonthDay] = []
@@ -95,10 +96,12 @@ final class PanchangStore: ObservableObject {
     }
     func selectDate(_ date: Date, live: Bool = false) {
         guard dateRange.contains(date) else { error = "Choose a date between 1900 and 2100."; return }
-        selectedDate = date; monthAnchor = date; self.live = live
+        selectedDate = date; monthAnchor = date; self.live = live; chosenTime = false
         loadDay(); loadMonth()
     }
     func today() { selectDate(Date(),live:true) }
+    func selectTime(_ date: Date) { selectedDate = date;live = false;chosenTime = true;loadDay() }
+    func atSunrise() { chosenTime = false;live = false;loadDay() }
     func moveDay(_ delta: Int) {
         if let date = calendar.date(byAdding:.day,value:delta,to:selectedDate) { selectDate(date) }
     }
@@ -114,7 +117,7 @@ final class PanchangStore: ObservableObject {
     }
     func loadDay() {
         let token = UUID(); dayRevision = token; loadingDay = true; day = nil
-        let instant = live && selectedKey == todayKey ? ISO8601DateFormatter().string(from:Date()) : nil
+        let instant = live && selectedKey == todayKey ? ISO8601DateFormatter().string(from:Date()) : chosenTime ? ISO8601DateFormatter().string(from:selectedDate) : nil
         calculator.run("day",date:selectedKey,place:location,settings:settings,instant:instant,as:NativeDay.self) { [weak self] result in
             guard let self,self.dayRevision == token else { return }
             self.loadingDay = false

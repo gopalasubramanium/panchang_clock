@@ -1,7 +1,7 @@
 import Foundation
 import JavaScriptCore
 
-struct PanchangPlace: Codable, Hashable, Identifiable {
+struct PanchangPlace: Codable, Hashable, Identifiable, Sendable {
     var name: String
     var lat: Double
     var lon: Double
@@ -12,7 +12,7 @@ struct PanchangPlace: Codable, Hashable, Identifiable {
     var timeZone: TimeZone { TimeZone(identifier: zone) ?? .gmt }
     var valid: Bool { !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.count <= 80 && lat.isFinite && lon.isFinite && (-90...90).contains(lat) && (-180...180).contains(lon) && TimeZone(identifier: zone) != nil && (-500...9000).contains(elevation ?? 0) }
 }
-struct PanchangPreferences: Codable, Equatable {
+struct PanchangPreferences: Codable, Equatable, Sendable {
     var convention = "amanta"
     var sunriseMode = "geometric"
     var lang = "en"
@@ -24,7 +24,7 @@ struct PanchangPreferences: Codable, Equatable {
         && ["system","light","dark"].contains(appearance)
     }
 }
-struct LunarDate: Codable, Identifiable, Equatable {
+struct LunarDate: Codable, Identifiable, Equatable, Sendable {
     var id = UUID().uuidString
     var name: String
     var month: Int
@@ -32,7 +32,7 @@ struct LunarDate: Codable, Identifiable, Equatable {
     var includeAdhika = false
     var valid: Bool { UUID(uuidString: id) != nil && !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.count <= 80 && (0...11).contains(month) && (0...29).contains(tithi) }
 }
-struct NativeSavedState: Codable {
+struct NativeSavedState: Codable, Sendable {
     var schema = 1
     var location = PanchangPlace.delhi
     var settings = PanchangPreferences()
@@ -50,35 +50,35 @@ enum NativeError: LocalizedError {
     case message(String)
     var errorDescription: String? { if case let .message(text) = self { return text }; return nil }
 }
-struct NativeAnga: Decodable, Identifiable {
+struct NativeAnga: Decodable, Identifiable, Sendable {
     var kind: String; var index: Int; var name: String; var start: String; var end: String; var next: String
     var id: String { kind }
 }
-struct NativeSun: Decodable {
+struct NativeSun: Decodable, Sendable {
     var sunrise: String?; var sunset: String?; var moonrise: String?; var moonset: String?
     var start: String; var end: String
 }
-struct NativePeriod: Decodable, Identifiable {
+struct NativePeriod: Decodable, Identifiable, Sendable {
     var name: String; var start: String; var end: String
     var quality: String?
     var id: String { "\(name)-\(start)" }
 }
-struct NativeEvent: Codable, Identifiable {
+struct NativeEvent: Codable, Identifiable, Sendable {
     var id: String; var name: String; var date: String?
     var start: String?; var end: String?; var reason: String; var status: String
 }
-struct NativePlanet: Decodable, Identifiable {
+struct NativePlanet: Decodable, Identifiable, Sendable {
     var name: String; var longitude: Double; var rashi: String; var degree: Double
     var id: String { name }
 }
-struct NativeDay: Decodable {
+struct NativeDay: Decodable, Sendable {
     var date: String; var instant: String; var weekday: String; var month: String; var adhika: Bool
     var solarMonth: String; var tithiIndex: Int; var monthIndex: Int; var illumination: Double
     var sun: NativeSun; var angas: [NativeAnga]; var timings: [NativePeriod]; var horas: [NativePeriod]
     var choghadiya: [NativePeriod]; var planets: [NativePlanet]; var events: [NativeEvent]; var warnings: [String]
     var convention: String; var sunriseMode: String
 }
-struct NativeMonthDay: Decodable, Identifiable {
+struct NativeMonthDay: Decodable, Identifiable, Sendable {
     var date: String; var day: Int; var tithiIndex: Int; var tithi: String
     var month: String; var monthIndex: Int; var adhika: Bool; var sunrise: String?; var events: [NativeEvent]
     var id: String { date }
@@ -110,7 +110,7 @@ enum NativeDates {
 final class NativeCalculator {
     private let queue = DispatchQueue(label:"com.eksaar.panchang.calculations", qos:.userInitiated)
     private var context: JSContext?
-    private func calculate<T: Decodable>(_ input: Data, as type: T.Type) throws -> T {
+    private func calculate<T: Decodable & Sendable>(_ input: Data, as type: T.Type) throws -> T {
         if context == nil {
             guard let url = Bundle.main.url(forResource:"native-engine",withExtension:"js",subdirectory:"NativeResources"),
                   let c = JSContext() else { throw NativeError.message("The offline calculation resources are unavailable.") }
@@ -127,7 +127,7 @@ final class NativeCalculator {
         guard let value = envelope["value"] else { throw NativeError.message("The calculation returned no result.") }
         return try JSONDecoder().decode(type,from:JSONSerialization.data(withJSONObject:value))
     }
-    func run<T: Decodable>(_ kind: String, date: String, place: PanchangPlace, settings: PanchangPreferences,
+    func run<T: Decodable & Sendable>(_ kind: String, date: String, place: PanchangPlace, settings: PanchangPreferences,
                            personal: [LunarDate] = [], instant: String? = nil, as type: T.Type,
                            completion: @escaping (Result<T,Error>) -> Void) {
         do {
