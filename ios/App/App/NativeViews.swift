@@ -45,11 +45,12 @@ struct NativeDateControls: View {
             }
             HStack {
                 DatePicker("Panchang at",selection:Binding(get:{NativeDates.parse(store.day?.instant) ?? store.selectedDate},set:{store.selectTime($0)}),displayedComponents:.hourAndMinute)
+                    .environment(\.locale,Locale(identifier:store.settings.hour12 ? "en_US" : "en_GB"))
                     .accessibilityIdentifier("selectedTime")
                 Button("Sunrise") { store.atSunrise() }.buttonStyle(.bordered).accessibilityIdentifier("useSunrise")
             }
-            Text(store.location.zone.replacingOccurrences(of:"_",with:" ")).font(.caption).foregroundStyle(.secondary)
-        }
+            Text("\(store.location.name) · \(store.location.zone.replacingOccurrences(of:"_",with:" "))").font(.caption).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
+        }.buttonStyle(.borderless)
     }
 }
 struct NativeTodayView: View {
@@ -162,7 +163,8 @@ struct NativeMonthView: View {
                     Button { store.moveMonth(-1) } label:{Image(systemName:"chevron.left").frame(minWidth:44,minHeight:44)}.accessibilityLabel("Previous month")
                     Text(NativeDates.format(store.monthAnchor,zone:store.zone,pattern:"MMMM yyyy")).font(.headline).frame(maxWidth:.infinity)
                     Button { store.moveMonth(1) } label:{Image(systemName:"chevron.right").frame(minWidth:44,minHeight:44)}.accessibilityLabel("Next month")
-                }
+                }.buttonStyle(.borderless)
+                Text("\(store.location.name) · \(store.location.zone)").font(.caption).foregroundStyle(.secondary)
                 if store.loadingMonth { ProgressView("Calculating this month offline…") }
                 else if textSize.isAccessibilitySize {
                     ForEach(store.month) { day in Button { open(day) } label:{VStack(alignment:.leading){Text(day.date);Text(day.tithi).font(.headline)}}.accessibilityIdentifier("calendar.day.\(day.date)") }

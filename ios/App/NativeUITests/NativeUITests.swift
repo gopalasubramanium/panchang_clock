@@ -45,7 +45,7 @@ final class NativeUITests: XCTestCase {
         XCTAssertTrue(date.waitForExistence(timeout:45),app.debugDescription)
         try capture("03-month")
         app.buttons["Next month"].tap()
-        XCTAssertTrue(app.buttons["calendar.day.2026-10-01"].waitForExistence(timeout:45))
+        XCTAssertTrue(app.buttons["calendar.day.2026-10-01"].waitForExistence(timeout:45),app.debugDescription)
         app.buttons["Previous month"].tap()
         XCTAssertTrue(date.waitForExistence(timeout:45)); date.tap()
         XCTAssertTrue(app.otherElements["nativeDailySummary"].waitForExistence(timeout:45))

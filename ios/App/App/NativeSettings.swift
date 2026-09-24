@@ -113,7 +113,7 @@ struct NativeSettingsView: View {
             if !store.reminders.isEmpty {
                 Section("Scheduled on this device") {
                     ForEach(store.reminders.keys.sorted(),id:\.self) { id in
-                        HStack { Text(store.reminders[id] ?? "Reminder");Spacer();Button("Cancel") {store.removeReminder(id)} }
+                        HStack { Text(store.reminders[id] ?? "Reminder");Spacer();Button("Cancel") {store.removeReminder(id)}.buttonStyle(.borderless) }
                     }
                 }
             }
