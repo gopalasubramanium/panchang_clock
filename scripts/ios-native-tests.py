@@ -2,7 +2,7 @@
 import json,subprocess,re,shutil,os,signal,threading
 from pathlib import Path
 
-def output(*args):return subprocess.check_output(args,text=True).strip()
+def output(*args):return subprocess.check_output(args,text=True,timeout=60).strip()
 # Verify the native decoder, backup validation and scientific engine in JavaScriptCore.
 core=Path('ios/native-core-checks');core.mkdir(parents=True,exist_ok=True)
 shutil.copyfile('scripts/native-core-checks.swift',core/'main.swift')
@@ -61,10 +61,16 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
             data=Path(output('xcrun','simctl','get_app_container',udid,'com.eksaar.panchang.uitests.xctrunner','data'))
             source=data/'Documents/StoreScreenshots'
             if source.exists():shutil.copytree(source,folder/'screenshots',dirs_exist_ok=True)
-        except subprocess.CalledProcessError:pass
+        except (subprocess.CalledProcessError,subprocess.TimeoutExpired):pass
         evidence.append({'device':device['name'],'source':'Actual native SwiftUI app and XCTest UI tests','xcode':version,'exitCode':result.returncode,'screenshots':sorted(p.name for p in (folder/'screenshots').glob('*.png'))})
+    except (subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
+        failed=True
+        evidence.append({'device':device['name'],'error':str(error),'exitCode':1})
+        print(f'{label}: simulator operation failed: {error}',flush=True)
     finally:
-        subprocess.run(['xcrun','simctl','shutdown',udid],check=False)
+        (out/'evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')
+        try:subprocess.run(['xcrun','simctl','shutdown',udid],check=False,timeout=30)
+        except subprocess.TimeoutExpired:print(f'{label}: simulator shutdown timed out',flush=True)
     if failed:break
 (out/'evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')
 assert not failed,'Native UI tests failed; see test.log and xcresult'
