@@ -1,5 +1,5 @@
 const PREFIX='eksaar-panchang-'+btoa(self.registration.scope)+'-';
-const CACHE=PREFIX+'bee3ce1b188e53ce';
+const CACHE=PREFIX+'491e36a57ca6e9d0';
 const ASSETS=["THIRD_PARTY_NOTICES.txt","assets/calendar-worker-CLzZnQXk.js","assets/index-BKmDHCSH.css","assets/index-CioVBPyd.js","assets/web-BUi-7jBF.js","assets/web-BtIeHLP_.js","assets/web-DmeKgjkn.js","assets/web-uHhY32Tt.js","cities-world.json","credits.txt","icon-192.png","icon-512.png","icon-maskable.png","icon.svg","index.html","information.css","manifest.webmanifest","privacy.html","support.html"];
 // A cached HTML response may have followed a host's /index.html redirect.
 // Reconstruct it so a navigation with redirect mode 'manual' can use it safely.
