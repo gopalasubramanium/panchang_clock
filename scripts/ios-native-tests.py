@@ -32,9 +32,15 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
         with (folder/'test.log').open('w') as log:
             result=subprocess.Popen(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/'NativeTests.xcresult'),'-parallel-testing-enabled','NO','-test-timeouts-enabled','YES','-default-test-execution-time-allowance','240','-maximum-test-execution-time-allowance','300','CODE_SIGNING_ALLOWED=NO','test-without-building'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
             finished=threading.Event()
-            def bound_runner(result=result,finished=finished,label=label):
+            def bound_runner(result=result,finished=finished,label=label,folder=folder):
                 if finished.wait(900):return
                 print(f'{label}: Xcode exceeded 15 minutes; preserving diagnostics.',flush=True)
+                # A stalled accessibility call can outlive XCTest's own timeout.
+                # Sample only this disposable test app before stopping the runner.
+                pids=subprocess.run(['pgrep','-x','App'],capture_output=True,text=True).stdout.split()
+                for pid in pids:
+                    try:subprocess.run(['sample',pid,'3','-file',str(folder/f'app-hang-{pid}.txt')],timeout=15,check=False,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                    except subprocess.TimeoutExpired:pass
                 try:os.killpg(result.pid,signal.SIGINT)
                 except ProcessLookupError:return
                 if not finished.wait(45):
