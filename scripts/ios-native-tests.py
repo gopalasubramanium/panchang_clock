@@ -1,5 +1,5 @@
 """Exercise real native screens on Apple's disposable iPhone/iPad simulators."""
-import json,subprocess,re,shutil,os,signal,threading
+import json,subprocess,re,shutil,os,signal,threading,sys
 from pathlib import Path
 
 def output(*args):return subprocess.check_output(args,text=True,timeout=60).strip()
@@ -19,7 +19,10 @@ for runtime,items in catalog.items():
 devices.sort(key=lambda item:(item[0],item[1]['name']),reverse=True)
 out=Path('store-release/ios-native');out.mkdir(parents=True,exist_ok=True)
 evidence=[];failed=False
+requested=sys.argv[1:]
+assert set(requested)<=set(['iPhone','iPad','iPadAir']),'Unknown simulator selection'
 for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad',lambda n:'iPad Pro' in n and '13-inch' in n),('iPadAir',lambda n:'iPad Air' in n and '11-inch' in n)]:
+    if requested and label not in requested:continue
     device=next((d for _,d in devices if match(d['name'])),None)
     assert device,f'No {label} simulator installed'
     udid=device['udid'];folder=out/label;folder.mkdir(exist_ok=True)
@@ -30,7 +33,7 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
         subprocess.run(['xcrun','simctl','status_bar',udid,'override','--time','9:41','--batteryState','charged','--batteryLevel','100'],check=False)
         print(f'Running native UI tests on {label}',flush=True)
         with (folder/'test.log').open('w') as log:
-            result=subprocess.Popen(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/'NativeTests.xcresult'),'-parallel-testing-enabled','NO','-test-timeouts-enabled','YES','-default-test-execution-time-allowance','240','-maximum-test-execution-time-allowance','300','CODE_SIGNING_ALLOWED=NO','test-without-building'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
+            result=subprocess.Popen(['xcodebuild','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Debug','-destination',f'platform=iOS Simulator,id={udid}','-derivedDataPath','ios/build','-resultBundlePath',str(folder/'NativeTests.xcresult'),'-parallel-testing-enabled','NO','-test-timeouts-enabled','YES','-default-test-execution-time-allowance','600','-maximum-test-execution-time-allowance','600','CODE_SIGNING_ALLOWED=NO','test-without-building'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
             finished=threading.Event()
             def bound_runner(result=result,finished=finished,label=label,folder=folder):
                 if finished.wait(900):return

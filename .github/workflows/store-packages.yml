@@ -7,6 +7,11 @@ on:
         required: true
         type: choice
         options: [windows, ios-screenshots, android-screenshots, ios-device-archive, mac-store-unsigned]
+      ios_devices:
+        description: Native iOS simulator coverage
+        type: choice
+        default: all
+        options: [all, tablets, iPhone, iPad, iPadAir]
       windows_identity:
         description: Exact Package/Identity/Name from Microsoft Partner Center
         type: string
@@ -142,9 +147,13 @@ jobs:
             test-results/desktop-native*.png
   ios-screenshots:
     if: inputs.target == 'ios-screenshots'
+    strategy:
+      fail-fast: false
+      matrix:
+        device: ${{ fromJSON(inputs.ios_devices == 'tablets' && '["iPad","iPadAir"]' || inputs.ios_devices == 'iPhone' && '["iPhone"]' || inputs.ios_devices == 'iPad' && '["iPad"]' || inputs.ios_devices == 'iPadAir' && '["iPadAir"]' || '["iPhone","iPad","iPadAir"]') }}
     # Standard Intel runners provide 14 GB RAM for simulator startup.
     runs-on: macos-15-intel
-    timeout-minutes: 50
+    timeout-minutes: 30
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     steps:
@@ -156,9 +165,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:ios-native
       - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build-for-testing
-      - run: python3 scripts/ios-native-tests.py
+      - run: python3 scripts/ios-native-tests.py "${{ matrix.device }}"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: ios-store-screenshots
+          name: ios-store-screenshots-${{ matrix.device }}
           path: store-release/ios-native/
