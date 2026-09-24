@@ -74,6 +74,12 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
             text=(folder/log_name).read_text();print('\n'.join(line for line in text.splitlines() if any(s in line for s in ['error:','failed','Failure','XCTAssert'])),flush=True)
             try:subprocess.run(['xcrun','simctl','io',udid,'screenshot',str(folder/'failure-screen.png')],timeout=20,check=False)
             except subprocess.TimeoutExpired:pass
+        # Keep exact failure screenshots and logs from the moment of assertion,
+        # rather than only the simulator home screen after XCTest terminates.
+        for bundle in folder.glob('*.xcresult'):
+            try:
+                subprocess.run(['xcrun','xcresulttool','export','attachments','--path',str(bundle),'--output-path',str(folder/(bundle.stem+'-attachments'))],check=False,timeout=90,stdout=subprocess.DEVNULL)
+            except subprocess.TimeoutExpired:pass
         try:
             data=Path(output('xcrun','simctl','get_app_container',udid,'com.eksaar.panchang.uitests.xctrunner','data'))
             source=data/'Documents/StoreScreenshots'

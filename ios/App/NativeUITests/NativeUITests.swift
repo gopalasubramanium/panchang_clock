@@ -11,7 +11,20 @@ final class NativeUITests: XCTestCase {
     }
     func tab(_ name: String) {
         let item = app.tabBars.buttons[name]
-        if item.exists { item.tap() } else { app.buttons[name].firstMatch.tap() }
+        if item.exists { item.tap() } else {
+            // iPadOS exposes duplicate parent/leaf buttons for its floating tab bar.
+            let matches = app.buttons.matching(NSPredicate(format:"label == %@",name)).allElementsBoundByIndex
+            guard let button = matches.last else { XCTFail("Missing tab: \(name)");return }
+            tapVisibleButton(button)
+        }
+    }
+    func tapVisibleButton(_ button: XCUIElement) {
+        if button.isHittable { button.tap();return }
+        // Use the visible control's frame when XCTest cannot resolve its hit point.
+        let frame = button.frame
+        XCTAssertFalse(frame.isEmpty,app.debugDescription)
+        XCTAssertTrue(app.frame.contains(CGPoint(x:frame.midX,y:frame.midY)),app.debugDescription)
+        button.coordinate(withNormalizedOffset:CGVector(dx:0.5,dy:0.5)).tap()
     }
     func reveal(_ element: XCUIElement) {
         for _ in 0..<7 {
@@ -75,9 +88,15 @@ final class NativeUITests: XCTestCase {
         XCTAssertEqual(app.webViews.count,0)
     }
     func testOfflineLocationAndMonth() throws {
-        app.buttons["chooseLocation"].tap()
+        tapVisibleButton(app.buttons["chooseLocation"])
+        try capture("qa-location-picker")
         let search = app.searchFields.firstMatch
-        XCTAssertTrue(search.waitForExistence(timeout:10));search.tap();search.typeText("Singapore")
+        if !search.waitForExistence(timeout:10) {
+            let activateSearch = app.buttons["Search"].firstMatch
+            if activateSearch.exists { tapVisibleButton(activateSearch) }
+        }
+        XCTAssertTrue(search.waitForExistence(timeout:30),app.debugDescription)
+        search.tap();search.typeText("Singapore")
         let city = app.buttons["city.Singapore"]
         XCTAssertTrue(city.waitForExistence(timeout:10));city.tap()
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "Asia/Singapore")).firstMatch.waitForExistence(timeout:30))
