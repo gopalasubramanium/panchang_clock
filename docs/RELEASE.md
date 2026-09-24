@@ -1,17 +1,17 @@
 # Release and publication status
 
-Version: 2.0.0-beta.3. This is a tested development beta with explicit remaining traditional-rule and platform-validation work.
+Status checked 25 September 2026. The direct-download beta is 2.0.0-beta.3; store build numbers and review states are separate. Traditional-rule and physical-device validation limitations remain explicit.
 
 ## Build outputs
 
 | Platform | Delivery | Signing/account requirement |
 |---|---|---|
 | Web | Static offline PWA | HTTPS host; browser installation |
-| Windows | Electron NSIS installer and portable executable | Unsigned beta; Authenticode certificate recommended before broad release |
+| Windows | Microsoft Store x64/ARM64 packages 2.0.1.0; separate direct-download beta | Tile-art correction resubmitted 22 September; still in certification on 25 September |
 | Linux | Electron AppImage and Debian package | Distribution testing on supported distros |
-| macOS | Apple Silicon DMG, macOS 13+ | Developer ID signed, Apple notarized, stapled and Gatekeeper verified; direct download, not App Store |
-| Android | Capacitor debug APK and unsigned release AAB | Google Play account, upload key, Play App Signing and store submission |
-| iOS/iPadOS | Capacitor project and Simulator build | Apple Developer Program, team/provisioning, archive, TestFlight and App Review |
+| macOS | Mac App Store 2.0.0; separate notarized Apple Silicon beta DMG | App Store version approved and publicly listed; France excluded pending documentation |
+| Android | Capacitor APK and signed Play bundle | Closed-test release prepared/submitted; production eligibility still needs the required consenting testers |
+| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | 2.0.0 build 5 delivered and attached to the draft; guideline 4.2 remediation testing before resubmission |
 
 A Simulator app is not installable on a physical iPhone. An unsigned Android bundle is not ready for Play upload. Unsigned desktop packages can trigger OS trust prompts. Build success is not equivalent to real-device acceptance.
 
@@ -19,7 +19,7 @@ The `Verify and build all platforms` GitHub workflow first runs numerical and br
 
 ## Account-dependent steps
 
-The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. App Store Connect access and iOS/device distribution provisioning remain separate submission requirements. Google Play and Microsoft Store account access has not been provided; enrollment and any identity, legal or payment steps require the owner’s participation. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
+The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. App Store Connect has processed native iOS build 5. Microsoft certification and Google Play production eligibility remain separate steps; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
 
 - [Apple enrollment](https://developer.apple.com/programs/enroll/)
 - [Google testing requirements](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
@@ -47,7 +47,7 @@ Start with a transparent beta and a readable methods page. Recruit regional revi
 
 ## Verified during this implementation
 
-The web beta is published at https://gopalasubramanium.github.io/panchang_clock/ and passed the Chromium production-URL browser suite, including offline reload. The local Electron app also passed a launch/calendar/sandbox smoke check. Initial GitHub CI successfully produced Windows, Linux, macOS and iOS Simulator outputs. The Android setup step initially failed because a setup action requested the retired SDK `tools` package; it was updated to request `platform-tools` explicitly. Final build results are recorded in the delivery report.
+The web app is published at https://panchang.eksaar.com/ with an alternate at https://gopalasubramanium.github.io/panchang_clock/ and passed the Chromium production-URL browser suite, including offline reload. The local Electron app also passed a launch/calendar/sandbox smoke check. Initial GitHub CI successfully produced Windows, Linux, macOS and iOS Simulator outputs. The Android setup step initially failed because a setup action requested the retired SDK `tools` package; it was updated to request `platform-tools` explicitly. Final build results are recorded in the delivery report.
 
 WebKit passed desktop/mobile UI, automated accessibility, calendar, export, language/RTL and offline calculations. Its automated offline reload returned a browser-internal error, so that capability is not claimed as verified in WebKit. Local Playwright Firefox could not start because of a profile-directory error; no Firefox pass is claimed. These limitations do not invalidate the successful Chromium tests, and remain explicit validation gaps.
 
@@ -61,4 +61,4 @@ Public metadata for store submissions: name Eksaar Panchang; bundle/application 
 
 [Download beta 3 for Apple Silicon Macs, macOS 13 or later](https://github.com/gopalasubramanium/panchang_clock/releases/download/v2.0.0-beta.3/Eksaar-Panchang-2.0.0-beta.3-macOS-AppleSilicon-NOTARIZED.dmg). This is a direct-download beta, not a Mac App Store release or an Intel build. The release includes `MACOS-NOTARIZATION.json` and `MACOS-NOTARIZED-SHA256.txt`.
 
-Installer SHA-256: `690e5fd3f1a381ad02bd89129046c97df4050d67ed14d71d5519823b02b7d548`. Source commit: `05a419aad233999d997d5ac9f9826574f3654949`. Earlier unsigned Mac assets remain available as original CI artifacts; use the explicitly NOTARIZED installer for direct installation. Windows and mobile publication statuses above are unchanged.
+Installer SHA-256: `690e5fd3f1a381ad02bd89129046c97df4050d67ed14d71d5519823b02b7d548`. Source commit: `05a419aad233999d997d5ac9f9826574f3654949`. Earlier unsigned Mac assets remain available as original CI artifacts; use the explicitly NOTARIZED installer for direct installation. The current store status is recorded separately in the table above.

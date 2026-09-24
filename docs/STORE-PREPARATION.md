@@ -3,8 +3,8 @@
 Use the **Prepare store packages and screenshots** workflow. These tasks never publish an app-store release and never receive private signing keys.
 
 - `android-screenshots`: build the app and capture original pixels on an API 36 emulator in phone and tablet layouts. Inspect every image before uploading it; passing a content check alone is not visual approval.
-- `ios-screenshots`: capture the native app in iPhone and iPad simulators, rejecting blank launch screens.
-- `ios-device-archive`: build an unsigned Release archive for a physical iOS device, version 2.0.0/build 4. It is not installable and must be provisioned, signed, validated and uploaded through Apple’s supported tools.
+- `ios-screenshots`: run the SwiftUI workflow and offline-city tests on iPhone Pro Max, iPad Pro 13-inch and iPad Air 11-inch simulators; preserve XCTest results and genuine screenshots. The `ios_devices` input can target one device or both tablets. Inspect every image and use only captures from the submitted app code.
+- `ios-device-archive`: build an unsigned Release archive for a physical iOS device, version 2.0.0/build 5. It is not installable and must be provisioned, signed, validated and uploaded through Apple’s supported tools.
 - `mac-store-unsigned`: assemble Electron’s MAS runtime for Apple Silicon and Intel, with store-specific App Sandbox entitlements. The unsigned archive is not a distributable app and still needs a matching profile, distribution signing, installer signing and store testing.
 - `windows`: create x64 and ARM64 packages using the exact identity supplied by Microsoft Partner Center. Check the package validation and restricted-capability declaration before submission.
 
