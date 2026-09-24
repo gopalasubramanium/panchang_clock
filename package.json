@@ -39,7 +39,7 @@
     "playwright": "^1.55.0",
     "sharp": "0.35.4",
     "vite": "^7.0.0",
-    "wrangler": "4.134.0"
+    "wrangler": "4.136.0"
   },
   "build": {
     "appId": "com.eksaar.panchang",
