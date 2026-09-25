@@ -45,7 +45,7 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent 'store-release/mac-app-store/mas-universal/Eksaar Panchang.app' store-release/Eksaar-Panchang-Mac-App-Store-UNSIGNED.zip
           shasum -a 256 store-release/Eksaar-Panchang-Mac-App-Store-UNSIGNED.zip > store-release/MAS-archive-SHA256.txt
           git rev-parse HEAD > store-release/MAS-source-commit.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: mac-app-store-unsigned-not-installable
           path: |
@@ -72,7 +72,7 @@ jobs:
           git rev-parse HEAD > store-release/Source-commit.txt
           ditto -c -k --sequesterRsrc --keepParent store-release/Eksaar-Panchang-UNSIGNED.xcarchive store-release/Eksaar-Panchang-iOS-Device-UNSIGNED.zip
           shasum -a 256 store-release/Eksaar-Panchang-iOS-Device-UNSIGNED.zip > store-release/Device-archive-SHA256.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: ios-device-archive-unsigned-not-installable
           path: |
@@ -106,7 +106,7 @@ jobs:
       - name: Enable emulator acceleration on the disposable runner
         run: sudo chmod a+rw /dev/kvm
       - run: python3 scripts/android-store-screenshots.py
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: android-store-screenshots
@@ -137,7 +137,7 @@ jobs:
       - name: Record package checksums
         shell: pwsh
         run: Get-ChildItem store-release/windows/*.appx | Get-FileHash -Algorithm SHA256 | Select-Object Path,Hash | ConvertTo-Json | Set-Content store-release/windows/SHA256.json
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: microsoft-store-upload-packages
           path: |
@@ -167,7 +167,7 @@ jobs:
       - run: pnpm build:ios-native
       - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build-for-testing
       - run: python3 scripts/ios-native-tests.py "${{ matrix.device }}"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: ios-store-screenshots-${{ matrix.device }}
