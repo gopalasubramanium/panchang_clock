@@ -37,7 +37,8 @@ On macOS browser tests use installed Google Chrome. Set `CHROME_PATH` to overrid
 - Worker-based monthly calendar, personal lunar dates and JSON backup/restore.
 - Offline PWA, light/dark modes, Urdu RTL, mobile layouts and accessible controls.
 - Share text/link/image, UTC calendar exports with reminders, JSON export, and browser print/PDF without a CDN.
-- Electron desktop and Capacitor Android/iOS projects; optional native sharing, location and notifications.
+- Electron desktop and Capacitor Android projects; optional native sharing, location and notifications.
+- A native SwiftUI iPhone/iPad target with daily and month views, saved lunar rules, Apple Calendar event editing, protected local storage and offline JavaScriptCore calculations. See [iOS workflows and scope](docs/IOS-NATIVE.md); the native target does not embed the web UI.
 
 Traditional labels are carried over from the original twelve-language dictionary. New explanations remain English; full translation review is pending. The original implementation is preserved in `legacy/index-v1.html` and Git history, excluded from the production build.
 
@@ -59,9 +60,11 @@ All event timestamps are UTC ISO 8601 instants. Render them in the result's loca
 pnpm build
 node node_modules/electron/install.js
 pnpm pack:desktop
-pnpm exec cap sync
+pnpm exec cap sync android
 pnpm exec cap open android
-pnpm exec cap open ios
+# Native iPhone/iPad (requires Xcode 26+):
+pnpm build:ios-native
+open ios/App/App.xcodeproj
 ```
 
 Native signing identities and developer accounts are not included. CI builds unsigned desktop packages, a debug Android APK/unsigned Android App Bundle, and an iOS Simulator app. A Simulator app cannot be installed on an iPhone. See `docs/RELEASE.md` before distribution.
