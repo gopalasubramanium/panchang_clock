@@ -65,7 +65,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:ios-native
       - name: Archive the device release without uploading signing credentials
-        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath store-release/Eksaar-Panchang-UNSIGNED.xcarchive CODE_SIGNING_ALLOWED=NO MARKETING_VERSION=2.0.0 CURRENT_PROJECT_VERSION=6 archive
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath store-release/Eksaar-Panchang-UNSIGNED.xcarchive CODE_SIGNING_ALLOWED=NO MARKETING_VERSION=2.0.0 CURRENT_PROJECT_VERSION=7 archive
       - name: Preserve archive permissions and provenance
         run: |
           xcodebuild -version > store-release/Xcode-version.txt
@@ -153,7 +153,8 @@ jobs:
         device: ${{ fromJSON(inputs.ios_devices == 'tablets' && '["iPad","iPadAir"]' || inputs.ios_devices == 'iPhone' && '["iPhone"]' || inputs.ios_devices == 'iPad' && '["iPad"]' || inputs.ios_devices == 'iPadAir' && '["iPadAir"]' || '["iPhone","iPad","iPadAir"]') }}
     # Standard Intel runners provide 14 GB RAM for simulator startup.
     runs-on: macos-15-intel
-    timeout-minutes: 30
+    # Allow the bounded pre-test accessibility retry plus diagnostic upload.
+    timeout-minutes: 45
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     steps:

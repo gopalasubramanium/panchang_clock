@@ -172,7 +172,9 @@ struct NativeMonthView: View {
                     ForEach(store.month) { day in Button { open(day) } label:{VStack(alignment:.leading){Text(day.date);Text(day.tithi).font(.headline)}}.accessibilityIdentifier("calendar.day.\(day.date)") }
                 } else {
                     LazyVGrid(columns:Array(repeating:GridItem(.flexible(),spacing:4),count:7),spacing:10) {
-                        ForEach(Array(["S","M","T","W","T","F","S"].enumerated()),id:\.offset) { _,s in Text(s).font(.caption).foregroundStyle(.secondary).accessibilityHidden(true) }
+                        // LazyVGrid flattens these groups into one identity space.
+                        // Weekday names cannot collide with integer gaps or ISO dates.
+                        ForEach(["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],id:\.self) { name in Text(String(name.prefix(1))).font(.caption).foregroundStyle(.secondary).accessibilityHidden(true) }
                         ForEach(0..<leading,id:\.self) { _ in Color.clear.frame(height:54).accessibilityHidden(true) }
                         ForEach(store.month) { day in
                             Button { open(day) } label: {
