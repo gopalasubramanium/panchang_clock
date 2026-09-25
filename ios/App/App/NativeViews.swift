@@ -82,7 +82,7 @@ struct NativeTodayView: View {
                                 Text(anga.kind.capitalized).font(.caption).foregroundStyle(.secondary)
                                 Text(anga.name).font(.headline).fixedSize(horizontal:false,vertical:true)
                                 Text("Until \(store.time(anga.end))").font(.subheadline).foregroundStyle(.secondary)
-                            }.padding(.vertical,3)
+                            }.frame(maxWidth:.infinity,alignment:.leading).contentShape(Rectangle()).padding(.vertical,3)
                         }.accessibilityIdentifier("anga.\(anga.kind)")
                     }
                     LabeledContent("Vaara (sunrise day)",value:day.weekday)
@@ -171,24 +171,27 @@ struct NativeMonthView: View {
                 else if textSize.isAccessibilitySize {
                     ForEach(store.month) { day in Button { open(day) } label:{VStack(alignment:.leading){Text(day.date);Text(day.tithi).font(.headline)}}.accessibilityIdentifier("calendar.day.\(day.date)") }
                 } else {
-                    LazyVGrid(columns:Array(repeating:GridItem(.flexible(),spacing:4),count:7),spacing:10) {
-                        // LazyVGrid flattens these groups into one identity space.
-                        // Weekday names cannot collide with integer gaps or ISO dates.
-                        ForEach(["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],id:\.self) { name in Text(String(name.prefix(1))).font(.caption).foregroundStyle(.secondary).accessibilityHidden(true) }
-                        ForEach(0..<leading,id:\.self) { _ in Color.clear.frame(height:54).accessibilityHidden(true) }
-                        ForEach(store.month) { day in
-                            Button { open(day) } label: {
-                                VStack(spacing:4) {
-                                    Text("\(day.day)").font(.headline).monospacedDigit()
-                                    Text(day.tithi.components(separatedBy:" ").dropFirst().joined(separator:" ")).font(.system(size:9)).lineLimit(1).minimumScaleFactor(0.8)
-                                    HStack(spacing:3) {
-                                        Circle().fill(day.events.isEmpty ? Color.clear : Color.orange).frame(width:4,height:4)
-                                        Circle().fill(store.matches(day).isEmpty ? Color.clear : Color("AccentColor")).frame(width:4,height:4)
+                    // A month has at most six rows. Eager rows give the List cell
+                    // a stable height and avoid nested lazy-layout invalidation.
+                    VStack(spacing:10) {
+                        HStack(spacing:4) {
+                            ForEach(["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],id:\.self) { name in
+                                Text(String(name.prefix(1))).font(.caption).foregroundStyle(.secondary)
+                                    .frame(maxWidth:.infinity).accessibilityHidden(true)
+                            }
+                        }
+                        ForEach(0..<((leading + store.month.count + 6)/7),id:\.self) { row in
+                            HStack(spacing:4) {
+                                ForEach(0..<7,id:\.self) { column in
+                                    let index = row*7 + column - leading
+                                    if store.month.indices.contains(index) {
+                                        let day = store.month[index]
+                                        NativeMonthCell(day:day) { open(day) }
+                                    } else {
+                                        Color.clear.frame(maxWidth:.infinity).frame(height:54).accessibilityHidden(true)
                                     }
-                                }.frame(maxWidth:.infinity,minHeight:54)
-                                    .background(day.date == store.selectedKey ? Color("AccentColor").opacity(0.17) : Color.secondary.opacity(0.045),in:RoundedRectangle(cornerRadius:10))
-                            }.buttonStyle(.plain).accessibilityLabel("\(day.date), \(day.tithi), \(day.events.count) observance previews, \(store.matches(day).count) personal dates")
-                                .accessibilityIdentifier("calendar.day.\(day.date)")
+                                }
+                            }
                         }
                     }.padding(.vertical,5).accessibilityIdentifier("nativeMonthGrid")
                 }
@@ -205,6 +208,26 @@ struct NativeMonthView: View {
             Section { Text("Festival previews use documented rules. Advanced regional fasting and Parana decisions require an appropriate local tradition.").font(.footnote).foregroundStyle(.secondary) }
         }.navigationTitle("Your month")
             .toolbar { ToolbarItem(placement:.topBarTrailing) { NativeLocationToolbar() } }
+    }
+}
+struct NativeMonthCell: View {
+    @EnvironmentObject var store: PanchangStore
+    let day: NativeMonthDay
+    var open: () -> Void
+    var body: some View {
+        Button(action:open) {
+            VStack(spacing:4) {
+                Text("\(day.day)").font(.headline).monospacedDigit()
+                Text(day.tithi.components(separatedBy:" ").dropFirst().joined(separator:" ")).font(.system(size:9)).lineLimit(1).minimumScaleFactor(0.8)
+                HStack(spacing:3) {
+                    Circle().fill(day.events.isEmpty ? Color.clear : Color.orange).frame(width:4,height:4)
+                    Circle().fill(store.matches(day).isEmpty ? Color.clear : Color("AccentColor")).frame(width:4,height:4)
+                }
+            }.frame(minWidth:0,maxWidth:.infinity).frame(height:54)
+                .background(day.date == store.selectedKey ? Color("AccentColor").opacity(0.17) : Color.secondary.opacity(0.045),in:RoundedRectangle(cornerRadius:10))
+                .contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityLabel("\(day.date), \(day.tithi), \(day.events.count) observance previews, \(store.matches(day).count) personal dates")
+            .accessibilityIdentifier("calendar.day.\(day.date)")
     }
 }
 struct NativeTimingsView: View {

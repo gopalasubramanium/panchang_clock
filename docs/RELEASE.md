@@ -7,19 +7,21 @@ Status checked 25 September 2026. The direct-download beta is 2.0.0-beta.3; stor
 | Platform | Delivery | Signing/account requirement |
 |---|---|---|
 | Web | Static offline PWA | HTTPS host; browser installation |
-| Windows | Microsoft Store x64/ARM64 packages 2.0.1.0; separate direct-download beta | Tile-art correction resubmitted 22 September; still in certification on 25 September |
+| Windows | Microsoft Store x64/ARM64 packages 2.0.1.0; separate direct-download beta | Published in Microsoft Store; public listing verified 25 September |
 | Linux | Electron AppImage and Debian package | Distribution testing on supported distros |
 | macOS | Mac App Store 2.0.0; separate notarized Apple Silicon beta DMG | App Store version approved and publicly listed; France excluded pending documentation |
 | Android | Capacitor APK and signed Play bundle | Closed-test release prepared/submitted; production eligibility still needs the required consenting testers |
-| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | 2.0.0 build 5 delivered and attached to the draft; guideline 4.2 remediation testing before resubmission |
+| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | Native 2.0.0 build 8 corrects the remaining iPad Pro layout crash; tests and review resubmission pending |
 
 A Simulator app is not installable on a physical iPhone. An unsigned Android bundle is not ready for Play upload. Unsigned desktop packages can trigger OS trust prompts. Build success is not equivalent to real-device acceptance.
 
 The `Verify and build all platforms` GitHub workflow first runs numerical and browser tests, then builds each native target on its own OS. Results and packages appear as workflow artifacts. No signing credentials are stored in the repository.
 
+Published store listings: [Mac App Store](https://apps.apple.com/sg/app/eksaar-panchang/id6813494538?mt=12) and [Microsoft Store](https://apps.microsoft.com/detail/9n70c3rzmchv).
+
 ## Account-dependent steps
 
-The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. App Store Connect has processed native iOS build 5. Microsoft certification and Google Play production eligibility remain separate steps; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
+The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. App Store Connect has processed native iOS build 5; build 8 is the intended replacement after native device tests. Microsoft Store publication is confirmed. Google Play production eligibility remains a separate step; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
 
 - [Apple enrollment](https://developer.apple.com/programs/enroll/)
 - [Google testing requirements](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
