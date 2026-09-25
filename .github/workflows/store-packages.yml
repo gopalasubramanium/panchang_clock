@@ -151,12 +151,12 @@ jobs:
       fail-fast: false
       matrix:
         device: ${{ fromJSON(inputs.ios_devices == 'tablets' && '["iPad","iPadAir"]' || inputs.ios_devices == 'iPhone' && '["iPhone"]' || inputs.ios_devices == 'iPad' && '["iPad"]' || inputs.ios_devices == 'iPadAir' && '["iPadAir"]' || '["iPhone","iPad","iPadAir"]') }}
-    # Standard Intel runners provide 14 GB RAM for simulator startup.
-    runs-on: macos-15-intel
+    # Match the release archive's Apple Silicon architecture and stable toolchain.
+    runs-on: macos-26
     # Allow the bounded pre-test accessibility retry plus diagnostic upload.
     timeout-minutes: 45
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020

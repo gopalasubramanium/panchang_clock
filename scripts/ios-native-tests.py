@@ -1,5 +1,5 @@
 """Exercise real native screens on Apple's disposable iPhone/iPad simulators."""
-import json,subprocess,re,shutil,os,signal,threading,sys
+import json,subprocess,re,shutil,os,signal,threading,sys,platform
 from pathlib import Path
 
 def output(*args):return subprocess.check_output(args,text=True,timeout=60).strip()
@@ -9,6 +9,7 @@ shutil.copyfile('scripts/native-core-checks.swift',core/'main.swift')
 subprocess.run(['xcrun','swiftc','ios/App/App/NativeModels.swift',str(core/'main.swift'),'-o',str(core/'check')],check=True)
 subprocess.run([str(core/'check')],check=True)
 version=output('xcodebuild','-version')
+print(f'Test host: {platform.machine()}; {version}',flush=True)
 assert int(re.search(r'Xcode (\d+)',version).group(1))>=26
 catalog=json.loads(output('xcrun','simctl','list','devices','available','--json'))['devices']
 devices=[]
@@ -90,7 +91,7 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
             source=data/'Documents/StoreScreenshots'
             if source.exists():shutil.copytree(source,folder/'screenshots',dirs_exist_ok=True)
         except (subprocess.CalledProcessError,subprocess.TimeoutExpired):pass
-        evidence.append({'device':device['name'],'source':'Actual native SwiftUI app and XCTest UI tests','xcode':version,'exitCode':exit_code,'attempts':attempts,'screenshots':sorted(p.name for p in (folder/'screenshots').glob('*.png'))})
+        evidence.append({'device':device['name'],'source':'Actual native SwiftUI app and XCTest UI tests','xcode':version,'hostArchitecture':platform.machine(),'exitCode':exit_code,'attempts':attempts,'screenshots':sorted(p.name for p in (folder/'screenshots').glob('*.png'))})
     except (subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
         failed=True
         evidence.append({'device':device['name'],'error':str(error),'exitCode':1})
