@@ -76,6 +76,11 @@ for label,match in [('iPhone',lambda n:'iPhone' in n and 'Pro Max' in n),('iPad'
             except subprocess.TimeoutExpired:pass
         # Keep exact failure screenshots and logs from the moment of assertion,
         # rather than only the simulator home screen after XCTest terminates.
+        if exit_code:
+            reports=folder/'crash-reports';reports.mkdir(exist_ok=True)
+            for crash in (Path.home()/'Library/Logs/DiagnosticReports').glob('*'):
+                if crash.is_file() and crash.name.startswith(('App-','App_','NativeUITests','JetsamEvent')):
+                    shutil.copy2(crash,reports/crash.name)
         for bundle in folder.glob('*.xcresult'):
             try:
                 subprocess.run(['xcrun','xcresulttool','export','attachments','--path',str(bundle),'--output-path',str(folder/(bundle.stem+'-attachments'))],check=False,timeout=90,stdout=subprocess.DEVNULL)

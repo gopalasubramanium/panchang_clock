@@ -45,14 +45,6 @@ final class NativeUITests: XCTestCase {
         app.buttons["anga.tithi"].tap()
         XCTAssertTrue(app.staticTexts["Transition"].waitForExistence(timeout:5))
         try capture("02-tithi")
-        app.buttons["Plan for this transition"].tap()
-        let add = app.buttons["addToCalendar"]
-        XCTAssertTrue(add.waitForExistence(timeout:5)); add.tap()
-        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout:15),app.debugDescription)
-        XCTAssertEqual(app.webViews.count,0)
-        try capture("qa-calendar-editor")
-        app.buttons["Cancel"].firstMatch.tap()
-        if app.buttons["Discard Changes"].exists { app.buttons["Discard Changes"].tap() }
         tab("Month")
         let date = app.buttons["calendar.day.2026-09-24"]
         XCTAssertTrue(date.waitForExistence(timeout:45),app.debugDescription)
@@ -87,14 +79,24 @@ final class NativeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["importBackup"].exists)
         XCTAssertEqual(app.webViews.count,0)
     }
+    func testSystemCalendarEditor() throws {
+        app.buttons["anga.tithi"].tap()
+        XCTAssertTrue(app.staticTexts["Transition"].waitForExistence(timeout:15))
+        app.buttons["Plan for this transition"].tap()
+        let add = app.buttons["addToCalendar"]
+        XCTAssertTrue(add.waitForExistence(timeout:5)); add.tap()
+        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout:60),app.debugDescription)
+        XCTAssertEqual(app.webViews.count,0)
+        try capture("qa-calendar-editor")
+        app.buttons["Cancel"].firstMatch.tap()
+        if app.buttons["Discard Changes"].exists { app.buttons["Discard Changes"].tap() }
+        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForNonExistence(timeout:30),app.debugDescription)
+        XCTAssertTrue(app.buttons["addToCalendar"].isHittable,app.debugDescription)
+    }
     func testOfflineLocationAndMonth() throws {
         tapVisibleButton(app.buttons["chooseLocation"])
         try capture("qa-location-picker")
         let search = app.searchFields.firstMatch
-        if !search.waitForExistence(timeout:10) {
-            let activateSearch = app.buttons["Search"].firstMatch
-            if activateSearch.exists { tapVisibleButton(activateSearch) }
-        }
         XCTAssertTrue(search.waitForExistence(timeout:30),app.debugDescription)
         search.tap();search.typeText("Singapore")
         let city = app.buttons["city.Singapore"]

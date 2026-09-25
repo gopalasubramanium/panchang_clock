@@ -32,4 +32,4 @@ The app has no account, advertising or app-operated analytics. No guarantee of u
 
 ## Review remediation
 
-Apple rejected iOS 2.0.0 (4) under guideline 4.2 on 23 September 2026. Build 5 replaces the web-shell experience with the native workflows above. It must pass simulator tests and be delivered, attached and resubmitted before its status can be described as submitted. macOS and Android packaging are separate and unchanged by this iOS redesign.
+Apple rejected iOS 2.0.0 (4) under guideline 4.2 on 23 September 2026. Build 5 replaced the web-shell experience with the native workflows above. Build 6 also keeps city search visible when opening the iPad location picker. It must pass simulator tests and be delivered, attached and resubmitted before its status can be described as submitted. macOS and Android packaging are separate and unchanged by this iOS redesign.

@@ -65,7 +65,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:ios-native
       - name: Archive the device release without uploading signing credentials
-        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath store-release/Eksaar-Panchang-UNSIGNED.xcarchive CODE_SIGNING_ALLOWED=NO MARKETING_VERSION=2.0.0 CURRENT_PROJECT_VERSION=5 archive
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath store-release/Eksaar-Panchang-UNSIGNED.xcarchive CODE_SIGNING_ALLOWED=NO MARKETING_VERSION=2.0.0 CURRENT_PROJECT_VERSION=6 archive
       - name: Preserve archive permissions and provenance
         run: |
           xcodebuild -version > store-release/Xcode-version.txt

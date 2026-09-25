@@ -26,7 +26,7 @@ struct NativePlacePicker: View {
                 ForEach(results) { place in Button { choose(place) } label:{placeRow(place)}.accessibilityIdentifier("city.\(place.name)") }
                 if results.isEmpty { Text("No city found. Enter coordinates and a time zone instead.").foregroundStyle(.secondary) }
             }
-        }.searchable(text:$search,prompt:"City or time zone").navigationTitle("Choose a place")
+        }.searchable(text:$search,placement:.navigationBarDrawer(displayMode:.always),prompt:"City or time zone").navigationTitle("Choose a place")
             .toolbar { ToolbarItem(placement:.cancellationAction) { Button("Done") { dismiss() } } }
             .sheet(isPresented:$custom) { NavigationStack { NativeCustomPlace { place in choose(place) } } }
     }
