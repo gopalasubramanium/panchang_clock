@@ -193,7 +193,7 @@ struct NativeMonthView: View {
                                 }
                             }
                         }
-                    }.padding(.vertical,5).accessibilityIdentifier("nativeMonthGrid")
+                    }.padding(.vertical,5)
                 }
                 Text("Orange: observance preview · Green: your lunar date").font(.caption).foregroundStyle(.secondary)
             } footer: { Text("Tap a date for its Panchang. Tithis are shown at local sunrise, or at local noon when sunrise does not occur. All times use \(store.location.zone).") }
