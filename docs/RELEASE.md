@@ -1,6 +1,6 @@
 # Release and publication status
 
-Status checked 25 September 2026. The direct-download beta is 2.0.0-beta.3; store build numbers and review states are separate. Traditional-rule and physical-device validation limitations remain explicit.
+Status checked 26 September 2026. The direct-download beta is 2.0.0-beta.3; store build numbers and review states are separate. Traditional-rule and physical-device validation limitations remain explicit.
 
 ## Build outputs
 
@@ -11,7 +11,7 @@ Status checked 25 September 2026. The direct-download beta is 2.0.0-beta.3; stor
 | Linux | Electron AppImage and Debian package | Distribution testing on supported distros |
 | macOS | Mac App Store 2.0.0; separate notarized Apple Silicon beta DMG | App Store version approved and publicly listed; France excluded pending documentation |
 | Android | Capacitor APK and signed Play bundle | Closed-test release prepared/submitted; production eligibility still needs the required consenting testers |
-| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | Native 2.0.0 build 9 restores individual calendar-date accessibility identifiers; final device checks and review resubmission pending |
+| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | Native 2.0.0 build 9 resubmitted 26 September at 08:05 Singapore time; Waiting for Review |
 
 A Simulator app is not installable on a physical iPhone. An unsigned Android bundle is not ready for Play upload. Unsigned desktop packages can trigger OS trust prompts. Build success is not equivalent to real-device acceptance.
 
@@ -21,7 +21,7 @@ Published store listings: [Mac App Store](https://apps.apple.com/sg/app/eksaar-p
 
 ## Account-dependent steps
 
-The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. App Store Connect has processed native iOS build 5; build 9 is the intended replacement after native device tests. Microsoft Store publication is confirmed. Google Play production eligibility remains a separate step; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
+The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. Apple Transporter delivered native iOS build 9 on 26 September. Its iPhone, iPad Air and iPad Pro simulator workflows passed; matching native screenshots are uploaded. App Store Connect confirms build 9 was resubmitted on 26 September at 08:05 Singapore time and is Waiting for Review. Microsoft Store publication is confirmed. Google Play production eligibility remains a separate step; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
 
 - [Apple enrollment](https://developer.apple.com/programs/enroll/)
 - [Google testing requirements](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
