@@ -23,7 +23,7 @@ with (out/'emulator.log').open('w') as log:
   run(adb,'shell','svc','wifi','disable');run(adb,'shell','svc','data','disable')
   result=run(adb,'shell','am','instrument','-w','-r','-e','class','com.eksaar.panchang.NativeExperienceTest','com.eksaar.panchang.test/androidx.test.runner.AndroidJUnitRunner',timeout=600)
   (out/'instrumentation.txt').write_text(result)
-  assert 'OK (4 tests)' in result,result
+  assert 'OK (5 tests)' in result,result
   import xml.etree.ElementTree as ET
   def hierarchy():
    run(adb,'shell','uiautomator','dump','/sdcard/native-screen.xml');return run(adb,'shell','cat','/sdcard/native-screen.xml')
@@ -35,7 +35,7 @@ with (out/'emulator.log').open('w') as log:
    run(adb,'shell','wm','size',size);run(adb,'shell','wm','density',density);run(adb,'shell','settings','put','system','font_scale',font);run(adb,'shell','am','force-stop','com.eksaar.panchang');run(adb,'shell','am','start','-W','-n','com.eksaar.panchang/.MainActivity');time.sleep(4)
    for tab in ['today','month','timings','personal','settings']:
     click_tab(tab);time.sleep(3);xml=hierarchy();(out/f'{label}-{tab}.xml').write_text(xml);(out/f'{label}-{tab}.png').write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=30));assert 'android.webkit.WebView' not in xml;assert 'EKSAAR PANCHANG' in xml
-  (out/'evidence.json').write_text(json.dumps({'androidAPI':int(api),'instrumentedTests':4,'network':'disabled','screens':'Native emulator pixels; phone, tablet, landscape and large text'},indent=2))
+  (out/'evidence.json').write_text(json.dumps({'androidAPI':int(api),'instrumentedTests':5,'network':'disabled','screens':'Native emulator pixels; phone, tablet, landscape and large text'},indent=2))
  finally:
   try:(out/'last-screen.png').write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=20))
   except Exception:pass

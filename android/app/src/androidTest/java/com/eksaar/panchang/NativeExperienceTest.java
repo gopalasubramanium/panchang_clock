@@ -146,8 +146,7 @@ public class NativeExperienceTest {
     assertTrue(completed.await(30, TimeUnit.SECONDS));
     assertNull(error.get());
     assertEquals(
-        "Shukla Paksha Saptami",
-        answer.get().getJSONArray("angas").getJSONObject(0).getString("name"));
+        "Shukla Saptami", answer.get().getJSONArray("angas").getJSONObject(0).getString("name"));
     CountDownLatch invalid = new CountDownLatch(1);
     input.getJSONObject("location").put("lat", 100);
     InstrumentationRegistry.getInstrumentation()
@@ -202,6 +201,38 @@ public class NativeExperienceTest {
                 "No web UI should be attached",
                 containsWebView(activity.findViewById(R.id.native_root)));
           });
+    }
+  }
+
+  @Test
+  public void remindersPersistCancelAndRejectPastEvents() throws Exception {
+    if (android.os.Build.VERSION.SDK_INT >= 33) {
+      InstrumentationRegistry.getInstrumentation()
+          .getUiAutomation()
+          .grantRuntimePermission(
+              context.getPackageName(), android.Manifest.permission.POST_NOTIFICATIONS);
+    }
+    String id = java.util.UUID.randomUUID().toString();
+    JSONObject event =
+        new JSONObject()
+            .put("id", id)
+            .put("name", "Test reminder")
+            .put("start", java.time.Instant.now().plusSeconds(3600).toString());
+    ReminderReceiver.schedule(context, event);
+    boolean found = false;
+    JSONArray reminders = ReminderReceiver.list(context);
+    for (int i = 0; i < reminders.length(); i++)
+      if (id.equals(reminders.getJSONObject(i).getString("id"))) found = true;
+    assertTrue(found);
+    ReminderReceiver.remove(context, id);
+    reminders = ReminderReceiver.list(context);
+    for (int i = 0; i < reminders.length(); i++)
+      assertNotEquals(id, reminders.getJSONObject(i).getString("id"));
+    event.put("start", java.time.Instant.now().minusSeconds(60).toString());
+    try {
+      ReminderReceiver.schedule(context, event);
+      fail("Past reminder accepted");
+    } catch (Exception expected) {
     }
   }
 

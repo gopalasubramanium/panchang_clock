@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
           card("Saved data protected"),
           store.issue == null
               ? "Your original saved data is preserved. Export new changes or import a valid backup"
-                    + " to restore saving."
+                  + " to restore saving."
               : store.issue);
     locationButton.setText(store.location().optString("name"));
     locationButton.setContentDescription("Choose location: " + store.location().optString("name"));
@@ -1175,6 +1175,9 @@ public class MainActivity extends AppCompatActivity {
                       + store.settings().optString("sunriseMode")
                       + " sunrise. Review according to your tradition.")
               .putExtra(CalendarContract.Events.EVENT_LOCATION, store.location().optString("name"))
+              .putExtra(
+                  CalendarContract.Events.EVENT_TIMEZONE,
+                  all ? "UTC" : store.location().optString("zone"))
               .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start.toEpochMilli())
               .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.toEpochMilli())
               .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, all);
