@@ -15,6 +15,8 @@ with (out/'emulator.log').open('w') as log:
    if '\tdevice' in run(adb,'devices') and run(adb,'shell','getprop','sys.boot_completed')=='1':break
    time.sleep(2)
   else:raise RuntimeError('Emulator boot timed out')
+  # These are disposable Google APIs debug emulators. Root allows radio control on API 24.
+  run(adb,'root');run(adb,'wait-for-device')
   run(adb,'shell','input','keyevent','82')
   for apk in ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk']:run(adb,'install','-r',apk,timeout=120)
   # Disable networking: every calculation, city search and saved-date test must still work.
@@ -35,6 +37,8 @@ with (out/'emulator.log').open('w') as log:
     click_tab(tab);time.sleep(3);xml=hierarchy();(out/f'{label}-{tab}.xml').write_text(xml);(out/f'{label}-{tab}.png').write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=30));assert 'android.webkit.WebView' not in xml;assert 'EKSAAR PANCHANG' in xml
   (out/'evidence.json').write_text(json.dumps({'androidAPI':int(api),'instrumentedTests':4,'network':'disabled','screens':'Native emulator pixels; phone, tablet, landscape and large text'},indent=2))
  finally:
+  try:(out/'last-screen.png').write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=20))
+  except Exception:pass
   try:(out/'logcat.txt').write_text(run(adb,'logcat','-d','-t','1500',timeout=30))
   except Exception:pass
   subprocess.run([adb,'emu','kill'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=20)

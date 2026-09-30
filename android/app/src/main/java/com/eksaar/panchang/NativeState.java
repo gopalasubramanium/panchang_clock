@@ -121,6 +121,9 @@ final class NativeState {
     name(p.get("name"));
     for (String key : new String[] {"lat", "lon"})
       require(p.get(key) instanceof Number, "Invalid coordinates.");
+    require(
+        !p.has("elevation") || p.isNull("elevation") || p.get("elevation") instanceof Number,
+        "Invalid elevation.");
     double lat = p.getDouble("lat"), lon = p.getDouble("lon"), e = p.optDouble("elevation", 0);
     require(
         Double.isFinite(lat)

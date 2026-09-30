@@ -101,7 +101,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm build:android-native
-      - run: bash ./gradlew assembleDebug
+      - run: bash ./gradlew assembleDebug assembleAndroidTest
         working-directory: android
       - name: Enable emulator acceleration on the disposable runner
         run: sudo chmod a+rw /dev/kvm

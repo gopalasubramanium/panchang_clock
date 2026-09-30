@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
               monthAnchor = date;
               monthKey = "";
             }
-            loadDay();
+            loadDay(true);
           }
           handler.postDelayed(this, 60_000);
         }
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
     handler.postDelayed(tick, 60_000);
     if (calculator != null && live) {
       date = LocalDate.now(store.zone());
-      loadDay();
+      loadDay(true);
     }
   }
 
@@ -239,7 +239,8 @@ public class MainActivity extends AppCompatActivity {
     scroll.setFillViewport(true);
     content = column();
     content.setId(R.id.native_content);
-    content.setPadding(dp(16), dp(6), dp(16), dp(24));
+    int side = dp(Math.max(16, (getResources().getConfiguration().screenWidthDp - 760) / 2));
+    content.setPadding(side, dp(6), side, dp(24));
     scroll.addView(content);
     root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
     nav = new BottomNavigationView(this);
@@ -262,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
           render();
           if (tab == 1) loadMonth();
           if (tab == 3) loadUpcoming();
-          scroll.scrollTo(0, 0);
+          scroll.post(() -> scroll.scrollTo(0, 0));
           return true;
         });
     root.addView(nav);
@@ -359,10 +360,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void loadDay() {
+    loadDay(false);
+  }
+
+  private void loadDay(boolean preservingDay) {
     if (calculator == null) return;
     int request = ++revision;
     loading = true;
-    day = null;
+    if (!preservingDay || day == null || !date.toString().equals(day.optString("date"))) day = null;
     error = null;
     render();
     JSONObject p = input("day", date);
@@ -433,7 +438,15 @@ public class MainActivity extends AppCompatActivity {
 
   private void render() {
     if (content == null) return;
+    int previousScroll = scroll.getScrollY();
     content.removeAllViews();
+    if (!store.writable)
+      note(
+          card("Saved data protected"),
+          store.issue == null
+              ? "Your original saved data is preserved. Export new changes or import a valid backup"
+                    + " to restore saving."
+              : store.issue);
     locationButton.setText(store.location().optString("name"));
     locationButton.setContentDescription("Choose location: " + store.location().optString("name"));
     if (error != null) {
@@ -457,6 +470,7 @@ public class MainActivity extends AppCompatActivity {
       default:
         settings();
     }
+    scroll.post(() -> scroll.scrollTo(0, previousScroll));
   }
 
   private void changeDate(LocalDate value) {

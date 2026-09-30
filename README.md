@@ -37,7 +37,7 @@ On macOS browser tests use installed Google Chrome. Set `CHROME_PATH` to overrid
 - Worker-based monthly calendar, personal lunar dates and JSON backup/restore.
 - Offline PWA, light/dark modes, Urdu RTL, mobile layouts and accessible controls.
 - Share text/link/image, UTC calendar exports with reminders, JSON export, and browser print/PDF without a CDN.
-- Electron desktop and Capacitor Android projects; optional native sharing, location and notifications.
+- Electron desktop and native Android views for daily Panchang, month planning, timing details, personal lunar dates and settings. Android uses system pickers, calendar review, sharing and optional local notifications. Its package has no internet permission.
 - A native SwiftUI iPhone/iPad target with daily and month views, saved lunar rules, Apple Calendar event editing, protected local storage and offline JavaScriptCore calculations. See [iOS workflows and scope](docs/IOS-NATIVE.md); the native target does not embed the web UI.
 
 Traditional labels are carried over from the original twelve-language dictionary. New explanations remain English; full translation review is pending. The original implementation is preserved in `legacy/index-v1.html` and Git history, excluded from the production build.
@@ -63,6 +63,8 @@ pnpm pack:desktop
 pnpm exec cap sync android
 pnpm exec cap open android
 # Native iPhone/iPad (requires Xcode 26+):
+pnpm build:android-native
+# Android: cd android && ./gradlew assembleDebug bundleRelease lintDebug
 pnpm build:ios-native
 open ios/App/App.xcodeproj
 ```
