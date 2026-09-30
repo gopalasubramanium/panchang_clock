@@ -35,6 +35,6 @@ textarea{font:inherit;width:100%;padding:.75rem;border:1px solid var(--border);b
 
 .apps-link{font-size:.8125rem;white-space:nowrap;text-underline-offset:4px;min-height:44px;display:inline-flex;align-items:center;padding:8px}
 .app-availability{display:flex;align-items:center;justify-content:space-between;gap:22px;border:1px solid var(--border);background:var(--soft);border-radius:12px;padding:22px 24px;margin-top:34px}
-.app-availability strong{font-family:Georgia,serif;font-size:1.3rem;font-weight:400}.app-availability p{font-size:.8125rem;color:var(--muted);margin:5px 0 0}.app-availability>a{font-weight:600;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;gap:10px}
+.app-availability strong{font-family:Georgia,serif;font-size:1.3rem;font-weight:400}.app-availability p{font-size:.8125rem;color:var(--text);margin:5px 0 0}.app-availability>a{font-weight:600;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;gap:10px}
 @media(max-width:600px){.app-availability{align-items:start;flex-direction:column;gap:8px;padding:20px}.apps-link{font-size:.75rem;padding:5px}}
 @media print{.app-availability{display:none!important}}
