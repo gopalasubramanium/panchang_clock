@@ -222,6 +222,12 @@ public class MainActivity extends AppCompatActivity {
     WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), root);
     controller.setAppearanceLightStatusBars(light);
     controller.setAppearanceLightNavigationBars(light);
+    if (Build.VERSION.SDK_INT < 35) {
+      getWindow().setStatusBarColor(color(R.color.native_background));
+      getWindow()
+          .setNavigationBarColor(
+              Build.VERSION.SDK_INT >= 26 ? color(R.color.native_background) : 0xff19332b);
+    }
     ViewCompat.setOnApplyWindowInsetsListener(
         root,
         (v, insets) -> {
