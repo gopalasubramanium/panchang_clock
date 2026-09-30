@@ -100,8 +100,8 @@ jobs:
       - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' emulator 'system-images;android-36;google_apis;x86_64'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm exec cap sync android
-      - run: bash ./gradlew assembleDebug
+      - run: pnpm build:android-native
+      - run: bash ./gradlew assembleDebug assembleAndroidTest
         working-directory: android
       - name: Enable emulator acceleration on the disposable runner
         run: sudo chmod a+rw /dev/kvm

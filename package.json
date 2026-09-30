@@ -16,11 +16,12 @@
     "test:browser": "node tests/browser.mjs",
     "desktop": "electron .",
     "pack:desktop": "electron-builder --publish never",
-    "mobile:sync": "cap sync android",
+    "mobile:sync": "pnpm build:android-native",
     "check": "npm run test && npm run build && npm run test:browser",
     "icons": "node scripts/icons.mjs",
     "test:reference": "node scripts/compare.mjs",
-    "test:desktop": "node tests/desktop.mjs"
+    "test:desktop": "node tests/desktop.mjs",
+    "build:android-native": "vite build --config vite.android.config.js && node scripts/native-resources.mjs android/app/src/main/native-assets/"
   },
   "dependencies": {
     "@capacitor/core": "^8.0.0",

@@ -31,11 +31,11 @@ export function parts(instant, zone) {
     validateZone(zone);
     formatters.set(zone, new Intl.DateTimeFormat('en-CA', {
       timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23', hour12:false
     }));
   }
   return Object.fromEntries(formatters.get(zone).formatToParts(new Date(instant))
-    .filter(p => p.type !== 'literal').map(p => [p.type, Number(p.value)]));
+    .filter(p => p.type !== 'literal').map(p => [p.type, p.type==='hour'?Number(p.value)%24:Number(p.value)]));
 }
 
 export function dateKey(instant, zone) {

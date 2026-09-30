@@ -1,27 +1,27 @@
 # Release and publication status
 
-Status checked 26 September 2026. The direct-download beta is 2.0.0-beta.3; store build numbers and review states are separate. Traditional-rule and physical-device validation limitations remain explicit.
+Status checked 30 September 2026. The direct-download beta is 2.0.0-beta.3; store build numbers and review states are separate. Traditional-rule and physical-device validation limitations remain explicit.
 
 ## Build outputs
 
 | Platform | Delivery | Signing/account requirement |
 |---|---|---|
 | Web | Static offline PWA | HTTPS host; browser installation |
-| Windows | Microsoft Store x64/ARM64 packages 2.0.1.0; separate direct-download beta | Published in Microsoft Store; public listing verified 25 September |
+| Windows | Microsoft Store x64/ARM64 packages 2.0.1.0; separate direct-download beta | Published in Microsoft Store; public listing verified 30 September |
 | Linux | Electron AppImage and Debian package | Distribution testing on supported distros |
 | macOS | Mac App Store 2.0.0; separate notarized Apple Silicon beta DMG | App Store version approved and publicly listed; France excluded pending documentation |
-| Android | Capacitor APK and signed Play bundle | Closed-test release prepared/submitted; production eligibility still needs the required consenting testers |
-| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | Native 2.0.0 build 9 resubmitted 26 September at 08:05 Singapore time; Waiting for Review |
+| Android | Native Android 2.1.0 (20003) candidate; previous 20002 is the web-shell closed test | Android 7/16 emulator workflows passed; signed closed-test rollout is separate from production eligibility |
+| iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | Native 2.0.0 approved and publicly available for iPhone/iPad; public listing verified 30 September |
 
 A Simulator app is not installable on a physical iPhone. An unsigned Android bundle is not ready for Play upload. Unsigned desktop packages can trigger OS trust prompts. Build success is not equivalent to real-device acceptance.
 
 The `Verify and build all platforms` GitHub workflow first runs numerical and browser tests, then builds each native target on its own OS. Results and packages appear as workflow artifacts. No signing credentials are stored in the repository.
 
-Published store listings: [Mac App Store](https://apps.apple.com/sg/app/eksaar-panchang/id6813494538?mt=12) and [Microsoft Store](https://apps.microsoft.com/detail/9n70c3rzmchv).
+Published store listings: [iPhone and iPad App Store](https://apps.apple.com/app/eksaar-panchang/id6813494538), [Mac App Store](https://apps.apple.com/sg/app/eksaar-panchang/id6813494538?mt=12) and [Microsoft Store](https://apps.microsoft.com/detail/9n70c3rzmchv).
 
 ## Account-dependent steps
 
-The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. Apple Transporter delivered native iOS build 9 on 26 September. Its iPhone, iPad Air and iPad Pro simulator workflows passed; matching native screenshots are uploaded. App Store Connect confirms build 9 was resubmitted on 26 September at 08:05 Singapore time and is Waiting for Review. Microsoft Store publication is confirmed. Google Play production eligibility remains a separate step; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
+The Apple Silicon Mac installer has completed notarization using the owner’s local Keychain profile. Existing Developer ID and Mac App Store signing identities are available on the owner’s Mac; no credentials or private keys are stored in this repository. Store account access and signing are configured locally. Apple Transporter delivered native iOS build 9 on 26 September. Its iPhone, iPad Air and iPad Pro simulator workflows passed; matching native screenshots are uploaded. Apple approved iOS 2.0.0 and automatic release completed. The public Apple listing now identifies iPhone, iPad and Mac, verified 30 September. France remains excluded pending clearance. Microsoft Store publication is confirmed. Google Play production eligibility remains a separate step; approval is not implied by a successful upload. For new personal Google Play accounts, current guidance requires at least 12 continuously opted-in testers for 14 days before applying for production access. Check the policy again at submission.
 
 - [Apple enrollment](https://developer.apple.com/programs/enroll/)
 - [Google testing requirements](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
@@ -46,6 +46,14 @@ Beta limitations: festival dates are previews; advanced regional and fasting rul
 ## Growth plan
 
 Start with a transparent beta and a readable methods page. Recruit regional reviewers and an opt-in group of diaspora families. Use their mismatch reports to improve rule packs before promotion. Shareable cards and persistent date/location links support organic discovery. No claim of guaranteed virality, no purchased reviews, no unsolicited bulk outreach.
+
+## Native Android 2.1 validation
+
+The Android 7 (API 24, bundled WebView 69) and Android 16 (API 36) emulators each passed five instrumented tests with Wi-Fi and mobile data disabled: calculation/invalid-input handling, native tab navigation and saved-date persistence, backup validation/merge, legacy-data conversion and unreadable-file protection, and reminder scheduling/cancellation. Screenshots cover all five tabs on phone, tablet, landscape, 150% text and dark mode. The shared suite contains 365 passing tests; browser checks, dependency audit, Android lint and all six platform build jobs passed. CI runs: 36727533957 and 36727534075. Subsequent UI refinements require the same workflow before signing.
+
+The release bundle contains only the offline engine, city directory and notices. Its merged manifest has no internet or calendar database permissions. Native Java controls supply Today, Month, Timings, My dates and Settings, with Android calendar review, sharing, optional approximate location and inexact local reminders. Native iOS/Android backups share schema version 1. Earlier Android local data is preserved and offered for import. Emulator checks do not replace physical-device tests, TalkBack review or real-world reminder delivery checks.
+
+Google Play confirmed zero opted-in testers on 30 September. The existing Alpha build is 20002 until 20003 has been uploaded, reviewed and released. Production remains unavailable until the account's closed-test requirement is satisfied.
 
 ## Verified during this implementation
 
