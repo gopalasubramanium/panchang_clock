@@ -215,6 +215,13 @@ public class MainActivity extends AppCompatActivity {
     root.setOrientation(LinearLayout.VERTICAL);
     root.setBackgroundColor(color(R.color.native_background));
     WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+    boolean light =
+        (getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+            != android.content.res.Configuration.UI_MODE_NIGHT_YES;
+    WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), root);
+    controller.setAppearanceLightStatusBars(light);
+    controller.setAppearanceLightNavigationBars(light);
     ViewCompat.setOnApplyWindowInsetsListener(
         root,
         (v, insets) -> {
@@ -673,7 +680,10 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout sky = card("Sun & Moon");
     JSONObject s = day.optJSONObject("sun");
     for (String k : new String[] {"sunrise", "sunset", "moonrise", "moonset"})
-      row(sky, k.substring(0, 1).toUpperCase() + k.substring(1), time(s.optString(k)));
+      row(
+          sky,
+          k.substring(0, 1).toUpperCase(Locale.ENGLISH) + k.substring(1),
+          time(s.optString(k)));
     row(sky, "Moon illuminated", Math.round(day.optDouble("illumination") * 100) + "%");
     LinearLayout actions = card(null);
     actions.addView(

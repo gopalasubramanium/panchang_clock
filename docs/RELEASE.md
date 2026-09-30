@@ -10,7 +10,7 @@ Status checked 30 September 2026. The direct-download beta is 2.0.0-beta.3; stor
 | Windows | Microsoft Store x64/ARM64 packages 2.0.1.0; separate direct-download beta | Published in Microsoft Store; public listing verified 30 September |
 | Linux | Electron AppImage and Debian package | Distribution testing on supported distros |
 | macOS | Mac App Store 2.0.0; separate notarized Apple Silicon beta DMG | App Store version approved and publicly listed; France excluded pending documentation |
-| Android | Native Android 2.1.0 (20003) candidate; previous 20002 is the web-shell closed test | Native device validation in progress; production eligibility still needs the required consenting testers |
+| Android | Native Android 2.1.0 (20003) candidate; previous 20002 is the web-shell closed test | Android 7/16 emulator workflows passed; signed closed-test rollout is separate from production eligibility |
 | iOS/iPadOS | Native SwiftUI app with bundled JavaScriptCore calculations | Native 2.0.0 approved and publicly available for iPhone/iPad; public listing verified 30 September |
 
 A Simulator app is not installable on a physical iPhone. An unsigned Android bundle is not ready for Play upload. Unsigned desktop packages can trigger OS trust prompts. Build success is not equivalent to real-device acceptance.
@@ -46,6 +46,14 @@ Beta limitations: festival dates are previews; advanced regional and fasting rul
 ## Growth plan
 
 Start with a transparent beta and a readable methods page. Recruit regional reviewers and an opt-in group of diaspora families. Use their mismatch reports to improve rule packs before promotion. Shareable cards and persistent date/location links support organic discovery. No claim of guaranteed virality, no purchased reviews, no unsolicited bulk outreach.
+
+## Native Android 2.1 validation
+
+The Android 7 (API 24, bundled WebView 69) and Android 16 (API 36) emulators each passed five instrumented tests with Wi-Fi and mobile data disabled: calculation/invalid-input handling, native tab navigation and saved-date persistence, backup validation/merge, legacy-data conversion and unreadable-file protection, and reminder scheduling/cancellation. Screenshots cover all five tabs on phone, tablet, landscape, 150% text and dark mode. The shared suite contains 365 passing tests; browser checks, dependency audit, Android lint and all six platform build jobs passed. CI runs: 36727533957 and 36727534075. Subsequent UI refinements require the same workflow before signing.
+
+The release bundle contains only the offline engine, city directory and notices. Its merged manifest has no internet or calendar database permissions. Native Java controls supply Today, Month, Timings, My dates and Settings, with Android calendar review, sharing, optional approximate location and inexact local reminders. Native iOS/Android backups share schema version 1. Earlier Android local data is preserved and offered for import. Emulator checks do not replace physical-device tests, TalkBack review or real-world reminder delivery checks.
+
+Google Play confirmed zero opted-in testers on 30 September. The existing Alpha build is 20002 until 20003 has been uploaded, reviewed and released. Production remains unavailable until the account's closed-test requirement is satisfied.
 
 ## Verified during this implementation
 
