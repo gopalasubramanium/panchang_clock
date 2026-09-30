@@ -215,19 +215,6 @@ public class MainActivity extends AppCompatActivity {
     root.setOrientation(LinearLayout.VERTICAL);
     root.setBackgroundColor(color(R.color.native_background));
     WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-    boolean light =
-        (getResources().getConfiguration().uiMode
-                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
-            != android.content.res.Configuration.UI_MODE_NIGHT_YES;
-    WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), root);
-    controller.setAppearanceLightStatusBars(light);
-    controller.setAppearanceLightNavigationBars(light);
-    if (Build.VERSION.SDK_INT < 35) {
-      getWindow().setStatusBarColor(color(R.color.native_background));
-      getWindow()
-          .setNavigationBarColor(
-              Build.VERSION.SDK_INT >= 26 ? color(R.color.native_background) : 0xff19332b);
-    }
     ViewCompat.setOnApplyWindowInsetsListener(
         root,
         (v, insets) -> {
@@ -298,6 +285,19 @@ public class MainActivity extends AppCompatActivity {
         });
     root.addView(nav);
     setContentView(root);
+    boolean light =
+        (getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+            != android.content.res.Configuration.UI_MODE_NIGHT_YES;
+    WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), root);
+    controller.setAppearanceLightStatusBars(light);
+    controller.setAppearanceLightNavigationBars(light);
+    if (Build.VERSION.SDK_INT < 35) {
+      getWindow().setStatusBarColor(color(R.color.native_background));
+      getWindow()
+          .setNavigationBarColor(
+              Build.VERSION.SDK_INT >= 26 ? color(R.color.native_background) : 0xff19332b);
+    }
   }
 
   private LinearLayout column() {
