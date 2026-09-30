@@ -15,3 +15,5 @@ minimumReleaseAgeExclude:
   - wrangler@4.134.0
 overrides:
   'xcode>uuid': 11.1.1
+  # Miniflare pins 7.29.0; use its security-patched release until upstream updates.
+  'miniflare>undici': 7.29.1
