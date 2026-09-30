@@ -86,7 +86,7 @@ jobs:
       - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm exec cap sync android
+      - run: pnpm build:android-native
       - run: chmod +x gradlew && ./gradlew assembleDebug bundleRelease lintDebug
         working-directory: android
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

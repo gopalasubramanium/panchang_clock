@@ -1,5 +1,5 @@
 import {readFile,writeFile} from 'node:fs/promises';
-const out='ios/App/App/NativeResources/';
+const out=process.argv[2] || 'ios/App/App/NativeResources/';
 const presets=JSON.parse(await readFile('src/cities.json','utf8'));
 const world=JSON.parse(await readFile('public/cities-world.json','utf8'));
 const places=world.cities.map(([name,ascii,country,lat,lon,zone])=>({
