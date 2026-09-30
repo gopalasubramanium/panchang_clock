@@ -14,7 +14,7 @@
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <header class="topbar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">☼</span><span>E K S A A R<small>PANCHANG</small></span></a><div class="top-actions"><span class="badge" id="connection">Loading…</span><button id="update-app" hidden>Update available</button><button id="install" hidden>Install app</button><button id="settings-open" class="icon-button" aria-label="Open settings">⚙ <span>Settings</span></button></div></header>
+  <header class="topbar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">☼</span><span>E K S A A R<small>PANCHANG</small></span></a><div class="top-actions"><a class="apps-link" href="./apps.html">Get the app</a><span class="badge" id="connection">Loading…</span><button id="update-app" hidden>Update available</button><button id="install" hidden>Install app</button><button id="settings-open" class="icon-button" aria-label="Open settings">⚙ <span>Settings</span></button></div></header>
   <main id="main">
     <div class="page-intro"><div><p class="eyebrow">A LITTLE CLOSER TO THE COSMOS</p><h1>Your day, in rhythm.</h1><p class="muted">The sky above you. The traditions that connect us.</p></div><div class="live-clock"><span id="clock">--:--:--</span><small id="clock-zone">Local time</small></div></div>
     <form id="controls" class="controls"><label><span data-l="lblLocation">Location</span><select id="city"></select></label><label><span data-l="lblDate">Date</span><input id="date" type="date" min="1900-01-01" max="2100-12-31" required></label><label><span data-l="lblTime">Time</span><input id="time" type="time" step="60" required></label><button type="submit" class="primary" data-l="applyBtn">Apply</button><button type="button" id="today">Today / live</button></form>
@@ -26,6 +26,7 @@
     <section id="view-sky" class="view" aria-label="Sky and planets" hidden></section>
     <section id="view-personal" class="view" aria-label="Personal dates" hidden></section>
     <section id="view-guide" class="view" aria-label="Guide and accuracy" hidden></section>
+    <aside class="app-availability" aria-label="Available apps"><div><strong>Your Panchang, on your device.</strong><p>Available on iPhone, iPad, Mac and Windows. Free, with no ads or account.</p></div><a href="./apps.html">Find your app <span aria-hidden="true">→</span></a></aside>
     <footer><span class="creator-credit">Made by <a href="https://me.sgopala.com" target="_blank" rel="noopener noreferrer">Gopala Subramanium</a><span>Free to use. No ads. No paywalls. <button id="purpose-open" class="link-button">Why I built this</button></span></span><span>Eksaar Panchang · 2.0 beta · <button id="privacy-open" class="link-button">Privacy</button> · <button id="report-open" class="link-button">Report a difference</button> · <button id="print" class="link-button">Print / PDF</button></span></footer>
   </main>
   <dialog id="settings"><form id="settings-form"><div class="section-head"><h2>Make it yours</h2><button type="button" id="settings-close" aria-label="Close settings">✕</button></div><p>Times follow the selected location, including daylight saving.</p>

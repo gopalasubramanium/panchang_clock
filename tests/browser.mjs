@@ -51,6 +51,18 @@ try{
  const api=await context.newPage();await api.goto(base+'/?api=true&date=2026-09-17&time=12:00&lat=0&lon=0&zone=UTC');await api.locator('#api-output').waitFor();const payload=JSON.parse(await api.locator('#api-output').innerText());assert.equal(payload.location.lat,0);assert.equal(payload.location.lon,0);
  await api.goto(base+'/?api=true&date=2026-02-30');await api.locator('#api-output').waitFor();assert.match(JSON.parse(await api.locator('#api-output').innerText()).error,/valid date/);
  await page.goto(base+'/?date=2026-03-08&time=01:30&lat=40.7128&lon=-74.006&zone=America%2FNew_York');await page.locator('.hero h2').waitFor();await page.locator('#time').fill('02:30');await page.getByRole('button',{name:'Apply',exact:true}).click();assert.match(await page.locator('#error').innerText(),/does not exist/);assert.equal(await page.locator('.hero').count(),0);
+ await page.getByRole('link',{name:'Get the app',exact:true}).click();
+ await page.getByRole('heading',{name:'A little closer, wherever you are.'}).waitFor();
+ for(const width of [320,390,1440]){
+  await page.setViewportSize({width,height:900});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Download page fits ${width}px`);
+ }
+ for(const colorScheme of ['light','dark']){
+  await page.emulateMedia({colorScheme});
+  axe=await new AxeBuilder({page}).analyze();results.push({check:`download page ${colorScheme} accessibility`,violations:axe.violations});assert.equal(axe.violations.length,0,JSON.stringify(axe.violations.map(v=>v.id)));
+ }
+ await page.screenshot({path:'test-results/apps.png',fullPage:true});
+ await context.setOffline(true);await page.reload();await page.getByRole('link',{name:'Get on the App Store',exact:true}).waitFor();await context.setOffline(false);
  assert.deepEqual(errors,[]);results.push({check:'functional and offline scenarios',passed:true});
  console.log(`${browserName}: desktop/mobile, accessibility, calendar, personal dates, Tamil/Urdu, ICS, ${browserName==='chromium'?'offline reload':'offline calculations (reload not covered)'}, JSON mode passed.`);
 }finally{await writeFile(`test-results/${browserName}-report.json`,JSON.stringify(results,null,2));await browser.close();}
