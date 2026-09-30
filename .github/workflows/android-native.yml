@@ -1,6 +1,14 @@
 name: Android native device checks
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'src/**'
+      - 'scripts/android-native-tests.py'
+      - 'scripts/native-resources.mjs'
+      - 'vite.android.config.js'
+      - '.github/workflows/android-native.yml'
 permissions:
   contents: read
 jobs:
