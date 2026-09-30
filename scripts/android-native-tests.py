@@ -31,11 +31,12 @@ with (out/'emulator.log').open('w') as log:
    tree=ET.fromstring(hierarchy());matches=[x for x in tree.iter('node') if x.get('resource-id')==f'com.eksaar.panchang:id/tab_{name}'];assert matches,name
    import re
    l,t,r,b=map(int,re.findall(r'\d+',matches[0].get('bounds')));run(adb,'shell','input','tap',str((l+r)//2),str((t+b)//2))
-  for label,size,density,font in [('phone','1080x1920','420','1.0'),('tablet','1600x2560','240','1.0'),('large-text','1080x1920','420','1.5'),('landscape','1920x1080','420','1.0')]:
+  for label,size,density,font in [('phone','1080x1920','420','1.0'),('tablet','1600x2560','240','1.0'),('large-text','1080x1920','420','1.5'),('landscape','1920x1080','420','1.0'),('dark','1080x1920','420','1.0')]:
+   run(adb,'shell','cmd','uimode','night','yes' if label=='dark' else 'no')
    run(adb,'shell','wm','size',size);run(adb,'shell','wm','density',density);run(adb,'shell','settings','put','system','font_scale',font);run(adb,'shell','am','force-stop','com.eksaar.panchang');run(adb,'shell','am','start','-W','-n','com.eksaar.panchang/.MainActivity');time.sleep(4)
    for tab in ['today','month','timings','personal','settings']:
     click_tab(tab);time.sleep(3);xml=hierarchy();(out/f'{label}-{tab}.xml').write_text(xml);(out/f'{label}-{tab}.png').write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=30));assert 'android.webkit.WebView' not in xml;assert 'EKSAAR PANCHANG' in xml
-  (out/'evidence.json').write_text(json.dumps({'androidAPI':int(api),'instrumentedTests':5,'network':'disabled','screens':'Native emulator pixels; phone, tablet, landscape and large text'},indent=2))
+  (out/'evidence.json').write_text(json.dumps({'androidAPI':int(api),'instrumentedTests':5,'network':'disabled','screens':'Native emulator pixels; phone, tablet, landscape, large text and dark mode'},indent=2))
  finally:
   try:(out/'last-screen.png').write_bytes(subprocess.check_output([adb,'exec-out','screencap','-p'],timeout=20))
   except Exception:pass

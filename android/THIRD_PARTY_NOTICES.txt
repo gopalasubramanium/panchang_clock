@@ -213,7 +213,7 @@ https://github.com/JetBrains/kotlin
 
 Android desugar_jdk_libs 2.1.5 includes OpenJDK-derived runtime classes.
 Licensed under GPL version 2 with the Classpath Exception.
-Unmodified corresponding source: https://github.com/google/desugar_jdk_libs/tree/2.1.5
+Unmodified corresponding source: https://github.com/google/desugar_jdk_libs
 
 The GNU General Public License (GPL)
 

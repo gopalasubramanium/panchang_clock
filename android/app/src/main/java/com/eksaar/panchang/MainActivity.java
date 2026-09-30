@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                   WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
           Insets keyboard = insets.getInsets(WindowInsetsCompat.Type.ime());
           v.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, keyboard.bottom));
-          return insets;
+          return WindowInsetsCompat.CONSUMED;
         });
     LinearLayout header = column();
     header.setPadding(dp(20), dp(8), dp(20), dp(8));
@@ -233,6 +233,15 @@ public class MainActivity extends AppCompatActivity {
     locationButton = button(store.location().optString("name"), this::placePicker);
     locationButton.setContentDescription("Choose location: " + store.location().optString("name"));
     header.addView(locationButton);
+    locationButton.setBackgroundTintList(ColorStateList.valueOf(color(R.color.native_accent)));
+    locationButton.setTextColor(color(R.color.native_on_accent));
+    if (getResources().getConfiguration().screenHeightDp < 480
+        && getResources().getConfiguration().screenWidthDp > 600) {
+      header.setOrientation(LinearLayout.HORIZONTAL);
+      header.setGravity(Gravity.CENTER_VERTICAL);
+      brand.setLayoutParams(new LinearLayout.LayoutParams(0, -2, 1));
+      locationButton.setLayoutParams(new LinearLayout.LayoutParams(0, -2, 1));
+    }
     root.addView(header);
     scroll = new ScrollView(this);
     scroll.setId(R.id.native_scroll);
@@ -245,6 +254,14 @@ public class MainActivity extends AppCompatActivity {
     root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
     nav = new BottomNavigationView(this);
     nav.setId(R.id.native_nav);
+    nav.setBackgroundColor(color(R.color.native_surface));
+    nav.setItemActiveIndicatorColor(ColorStateList.valueOf(color(R.color.native_selection)));
+    ColorStateList navigationColors =
+        new ColorStateList(
+            new int[][] {new int[] {android.R.attr.state_checked}, new int[] {}},
+            new int[] {color(R.color.native_accent), color(R.color.native_muted)});
+    nav.setItemIconTintList(navigationColors);
+    nav.setItemTextColor(navigationColors);
     nav.setLabelVisibilityMode(NavigationBarView.LABEL_VISIBILITY_LABELED);
     nav.setItemHorizontalTranslationEnabled(false);
     int[] icons = {
@@ -287,7 +304,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private MaterialButton button(String title, Runnable action) {
-    MaterialButton b = new MaterialButton(this);
+    MaterialButton b =
+        new MaterialButton(
+            this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+    b.setBackgroundTintList(ColorStateList.valueOf(color(R.color.native_surface)));
+    b.setTextColor(color(R.color.native_accent));
+    b.setStrokeColor(ColorStateList.valueOf(color(R.color.native_outline)));
+    b.setCornerRadius(dp(12));
+    b.setPadding(dp(12), dp(8), dp(12), dp(8));
     b.setText(title);
     b.setAllCaps(false);
     b.setMinHeight(dp(48));
@@ -295,11 +319,28 @@ public class MainActivity extends AppCompatActivity {
     return b;
   }
 
+  private void arrangeActions(LinearLayout row) {
+    boolean stacked =
+        getResources().getConfiguration().fontScale > 1.3f
+            && getResources().getConfiguration().screenWidthDp < 600;
+    row.setOrientation(stacked ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+    for (int i = 0; i < row.getChildCount(); i++) {
+      LinearLayout.LayoutParams params =
+          new LinearLayout.LayoutParams(stacked ? -1 : 0, -2, stacked ? 0 : 1);
+      if (!stacked) {
+        if (i > 0) params.leftMargin = dp(4);
+        if (i < row.getChildCount() - 1) params.rightMargin = dp(4);
+      }
+      row.getChildAt(i).setLayoutParams(params);
+    }
+  }
+
   private LinearLayout card(String heading) {
     MaterialCardView c = new MaterialCardView(this);
     c.setCardBackgroundColor(color(R.color.native_surface));
     c.setRadius(dp(18));
     c.setCardElevation(0);
+    c.setStrokeColor(color(R.color.native_outline));
     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
     lp.bottomMargin = dp(14);
     c.setLayoutParams(lp);
@@ -571,6 +612,7 @@ public class MainActivity extends AppCompatActivity {
     days.addView(
         button("Next", () -> changeDate(date.plusDays(1))),
         new LinearLayout.LayoutParams(0, -2, 1));
+    arrangeActions(days);
     controls.addView(days);
     LinearLayout times = new LinearLayout(this);
     times.addView(button("Choose time", this::pickTime), new LinearLayout.LayoutParams(0, -2, 1));
@@ -583,6 +625,7 @@ public class MainActivity extends AppCompatActivity {
               loadDay();
             }),
         new LinearLayout.LayoutParams(0, -2, 1));
+    arrangeActions(times);
     controls.addView(times);
     note(controls, store.location().optString("zone"));
     if (day == null) {
@@ -739,6 +782,7 @@ public class MainActivity extends AppCompatActivity {
         button("Previous month", () -> moveMonth(-1)), new LinearLayout.LayoutParams(0, -2, 1));
     arrows.addView(
         button("Next month", () -> moveMonth(1)), new LinearLayout.LayoutParams(0, -2, 1));
+    arrangeActions(arrows);
     c.addView(arrows);
     note(c, "Tithi at local sunrise · " + store.location().optString("zone"));
     if (month.length() == 0) {

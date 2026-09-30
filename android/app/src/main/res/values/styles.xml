@@ -3,7 +3,14 @@
  <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
   <item name="colorPrimary">@color/native_accent</item>
   <item name="colorOnPrimary">@color/native_on_accent</item>
-  <item name="android:windowLightStatusBar">true</item>
+  <item name="colorSecondary">@color/native_accent</item>
+  <item name="colorOnSecondary">@color/native_on_accent</item>
+  <item name="colorSecondaryContainer">@color/native_selection</item>
+  <item name="colorOnSecondaryContainer">@color/native_text</item>
+  <item name="colorSurface">@color/native_surface</item>
+  <item name="colorOnSurface">@color/native_text</item>
+  <item name="colorOnSurfaceVariant">@color/native_muted</item>
+  <item name="colorOutline">@color/native_outline</item>
   <item name="android:fontFamily">sans</item>
  </style>
 </resources>
